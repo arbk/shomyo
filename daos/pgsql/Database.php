@@ -99,7 +99,8 @@ class Database {
                         spout       TEXT NOT NULL,
                         params      TEXT NOT NULL,
                         error       TEXT,
-                        lastupdate  INTEGER
+                        lastupdate  INTEGER,
+                		lastentry   INTEGER
                     );
                 ');
                 $isNewestSourcesTable = true;
@@ -114,7 +115,7 @@ class Database {
                 ');
                 
                 \F3::get('db')->exec('
-                    INSERT INTO version (version) VALUES (5);
+                    INSERT INTO version (version) VALUES (8);
                 ');
                 
                 \F3::get('db')->exec('
@@ -181,6 +182,15 @@ class Database {
                         'INSERT INTO version (version) VALUES (6);'
                     ));
                 }
+                // Jump straight from v6 to v8 due to bug in previous version of the code
+                // in /daos/sqlite/Database.php which
+                // set the database version to "7" for initial installs.
+                if(strnatcmp($version, "8") < 0){
+                	\F3::get('db')->exec(array(
+                			'ALTER TABLE sources ADD lastentry INT;',
+                			'INSERT INTO version (version) VALUES (8);'
+                	));
+                }
             }
             
             // just initialize once
@@ -201,10 +211,6 @@ class Database {
      * @return  void
      */
     public function optimize() {
-        $result = @\F3::get('db')->exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'");
-        $tables = array();
-        foreach($result as $table)
-            foreach($table as $key=>$value)
-                @\F3::get('db')->exec("VACUUM ANALYZE " . $value);
+        \F3::get('db')->exec("VACUUM ANALYZE");
     }
 }

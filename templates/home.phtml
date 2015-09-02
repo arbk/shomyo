@@ -6,7 +6,7 @@
 
     <meta name="robots" content="noarchive" />
 
-    <title>shomyo</title>
+    <title><?PHP echo trim(\F3::get('html_title')); ?></title>
 
     <meta name="description" content="shomyo is the web based feed reader and aggregator." />
     <meta name="author" content="arbk" />
@@ -69,12 +69,16 @@
     <!-- other settings -->
     <span id="config"
         data-anonymizer="<?PHP echo \helpers\Anonymizer::getAnonymizer(); ?>"
+        data-share="<?PHP echo \F3::get('share'); ?>"
         data-wallabag="<?PHP echo \F3::get('wallabag'); ?>"
+        data-wordpress="<?PHP echo \F3::get('wordpress'); ?>"
         data-auto_mark_as_read="<?PHP echo \F3::get('auto_mark_as_read'); ?>"
         data-auto_stream_more="<?PHP echo \F3::get('auto_stream_more'); ?>"
         data-load_images_on_mobile="<?PHP echo \F3::get('load_images_on_mobile'); ?>"
         data-fullscreen_on_mobile="<?PHP echo \F3::get('fullscreen_on_mobile'); ?>"
-        data-items_perpage="<?PHP echo \F3::get('items_perpage'); ?>"></span>
+        data-items_perpage="<?PHP echo \F3::get('items_perpage'); ?>"
+        data-auto_hide_read_on_mobile="<?PHP echo \F3::get('auto_hide_read_on_mobile'); ?>"
+        data-html_title="<?PHP echo trim(\F3::get('html_title')); ?>"></span>
 
     <!-- menue open for smartphone -->
     <div id="nav-mobile">
@@ -91,7 +95,7 @@
         <ul id="nav-filter">
             <li id="nav-filter-newest" class="nav-filter-newest<?PHP if($this->homepage==='newest') : ?> active<?PHP endif; ?>"><?PHP echo \F3::get('lang_newest')?> <span><?PHP echo $this->statsAll; ?></span></li>
             <?PHP if($this->loggedin===true) : ?>
-            <li id="nav-filter-unread" class="nav-filter-unread<?PHP if($this->homepage==='unread') : ?> active<?PHP endif; ?>"><?PHP echo \F3::get('lang_unread')?> <span <?PHP echo $this->statsUnread>0 ? 'class="unread"' : ''; ?>><?PHP echo $this->statsUnread; ?></span></li>
+            <li id="nav-filter-unread" class="nav-filter-unread<?PHP if($this->homepage==='unread') : ?> active<?PHP endif; ?>"><?PHP echo \F3::get('lang_unread')?> <span class="unread-count<?PHP echo $this->statsUnread>0 ? ' unread' : ''; ?>"><?PHP echo $this->statsUnread; ?></span></li>
             <?PHP endif; ?>
             <li id="nav-filter-starred" class="nav-filter-starred<?PHP if($this->homepage==='starred') : ?> active<?PHP endif; ?>"><?PHP echo \F3::get('lang_starred') ?> <span><?PHP echo $this->statsStarred; ?></span></li>
         </ul>
@@ -133,7 +137,7 @@
         <div id="nav-login" title="<?PHP echo trim(\F3::get('lang_loginbutton')); ?>"></div>
         <?PHP endif; ?>
 
-        <a id="nav-copyright" href="http://aruo.net/" target="_blank">shomyo (remod selfoss<?PHP echo \F3::get('version'); ?>)</a>
+        <a id="nav-copyright" href="http://aruo.net/" target="_blank">shomyo (based selfoss<?PHP echo \F3::get('version'); ?>)</a>
     </div>
 
     <!-- search -->

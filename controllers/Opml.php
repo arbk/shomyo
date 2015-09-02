@@ -7,11 +7,10 @@ namespace controllers;
  *
  * @package    controllers
  * @copyright  Copyright (c) Tobias Zeising (http://www.aditu.de)
- * @copyright  Copyright (c) arbk (http://aruo.net/)
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Michael Moore <stuporglue@gmail.com>
  * @author     Sean Rand <asanernd@gmail.com>
- * @author     arbk
+ * @author     arbk (http://aruo.net/)
  */
 
 class Opml extends BaseController {

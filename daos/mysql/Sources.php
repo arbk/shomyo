@@ -108,13 +108,23 @@ class Sources extends Database {
      *
      * @return void
      * @param int $id the source id
+     * @param int $lastEntry timestamp of the newest item or NULL when no items were added
      */
-    public function saveLastUpdate($id) {
+    public function saveLastUpdate($id, $lastEntry) {
         \F3::get('db')->exec('UPDATE '.\F3::get('db_prefix').'sources SET lastupdate=:lastupdate WHERE id=:id',
                     array(
                         ':id'         => $id,
                         ':lastupdate' => time()
                     ));
+        
+        if ($lastEntry !== null) {
+        	\F3::get('db')->exec('UPDATE '.\F3::get('db_prefix').'sources SET lastentry=:lastentry WHERE id=:id',
+        			array(
+        					':id'         => $id,
+        					':lastentry' => $lastEntry
+        			));
+        }
+        
     }
 
 
@@ -124,7 +134,7 @@ class Sources extends Database {
      * @return mixed all sources
      */
     public function getByLastUpdate() {
-        $ret = \F3::get('db')->exec('SELECT id, title, tags, spout, params, filter, error, lastupdate FROM '.\F3::get('db_prefix').'sources ORDER BY lastupdate ASC');
+        $ret = \F3::get('db')->exec('SELECT id, title, tags, spout, params, filter, error, lastupdate, lastentry FROM '.\F3::get('db_prefix').'sources ORDER BY lastupdate ASC');
         $spoutLoader = new \helpers\SpoutLoader();
         for($i=0;$i<count($ret);$i++)
             $ret[$i]['spout_obj'] = $spoutLoader->get( $ret[$i]['spout'] );
@@ -185,7 +195,7 @@ class Sources extends Database {
     public function getWithIcon() {
         $ret = \F3::get('db')->exec('SELECT
                 sources.id, sources.title, sources.tags, sources.spout,
-                sources.params, sources.filter, sources.error,
+                sources.params, sources.filter, sources.error, sources.lastentry, 
                 sourceicons.icon AS icon
             FROM '.\F3::get('db_prefix').'sources AS sources
             LEFT OUTER JOIN

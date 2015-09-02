@@ -7,10 +7,9 @@ namespace controllers;
  *
  * @package    controllers
  * @copyright  Copyright (c) Tobias Zeising (http://www.aditu.de)
- * @copyright  Copyright (c) arbk (http://aruo.net/)
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
- * @author     arbk
+ * @author     arbk (http://aruo.net/)
  */
 class Sources extends BaseController {
 
@@ -211,6 +210,22 @@ class Sources extends BaseController {
         }
 
         $this->view->jsonSuccess($return);
+    }
+
+
+    /**
+     * return source stats in HTML for nav update
+     * json
+     *
+     * @return void
+     */
+    public function sourcesStats() {
+        $this->needsLoggedIn();
+
+        $this->view->jsonSuccess(array(
+            'success' => true,
+            'sources' => $this->sourcesListAsString()
+        ));
     }
 
 

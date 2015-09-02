@@ -7,10 +7,9 @@ namespace controllers;
  *
  * @package    controllers
  * @copyright  Copyright (c) Tobias Zeising (http://www.aditu.de)
- * @copyright  Copyright (c) arbk (http://aruo.net/)
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
- * @author     arbk
+ * @author     arbk (http://aruo.net/)
  */
 class Index extends BaseController {
 
@@ -61,11 +60,16 @@ class Index extends BaseController {
         $tagsController = new \controllers\Tags();
         $this->view->tags = $tagsController->renderTags($tags);
 
-        // prepare sources display list
-        $sourcesDao = new \daos\Sources();
-        $sources = $sourcesDao->getWithUnread();
-        $sourcesController = new \controllers\Sources();
-        $this->view->sources = $sourcesController->renderSources($sources);
+        if(isset($options['sourcesNav']) && $options['sourcesNav'] == 'true' ) {
+          // prepare sources display list
+          $sourcesDao = new \daos\Sources();
+          $sources = $sourcesDao->getWithUnread();
+          $sourcesController = new \controllers\Sources();
+          $this->view->sources = $sourcesController->renderSources($sources);
+        }
+        else{
+          $this->view->sources = '';
+        }
 
         // ajax call = only send entries and statistics not full template
         if(isset($options['ajax'])) {

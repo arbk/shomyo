@@ -7,11 +7,10 @@ namespace daos\sqlite;
  *
  * @package     daos
  * @copyright   Copyright (c) Harald Lapp (harald.lapp@gmail.com)
- * @copyright   Copyright (c) arbk (http://aruo.net/)
  * @license     GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author      Harald Lapp (harald.lapp@gmail.com)
  * @author      Tobias Zeising <tobias.zeising@aditu.de>
- * @author      arbk
+ * @author      arbk (http://aruo.net/)
  */
 class Database {
 
@@ -96,7 +95,8 @@ class Database {
                         params      TEXT NOT NULL,
                         filter      TEXT,
                         error       TEXT,
-                        lastupdate  INTEGER
+                        lastupdate  INTEGER,
+                		lastentry   INTEGER
                     );
                 ');
                 $isNewestSourcesTable = true;
@@ -111,7 +111,7 @@ class Database {
                 ');
                 
                 \F3::get('db')->exec('
-                    INSERT INTO version (version) VALUES (7);
+                    INSERT INTO version (version) VALUES (8);
                 ');
                 
                 \F3::get('db')->exec('
@@ -181,6 +181,19 @@ class Database {
                         INSERT INTO version (version) VALUES (6);
                     ');
                 }
+                // Jump straight from v6 to v8 due to bug in previous version of the code 
+                // in /daos/sqlite/Database.php which 
+                // set the database version to "7" for initial installs.
+                if(strnatcmp($version, "8") < 0){
+                	\F3::get('db')->exec('
+                        ALTER TABLE sources ADD lastentry INT;
+                    ');
+                	\F3::get('db')->exec('
+                        INSERT INTO version (version) VALUES (8);
+                    ');
+
+                	$this->initLastEntryFieldDuringUpgrade();
+                }
             }
             
             // just initialize once
@@ -199,4 +212,27 @@ class Database {
             VACUUM;
         ');
     }
+    
+    /**
+     * Initialize 'lastentry' Field in Source table during database upgrade
+     *
+     * @return void
+     */
+    private function initLastEntryFieldDuringUpgrade() { 	
+    	$sources = @\F3::get('db')->exec('SELECT id FROM sources');
+   
+    	// have a look at each entry in the source table
+    	foreach($sources as $current_src) {
+    		//get the date of the newest entry found in the database   		
+    		$latestEntryDate = @\F3::get('db')->exec('SELECT datetime FROM items WHERE source=' . 
+    				                              $current_src['id'] . ' ORDER BY datetime DESC LIMIT 0, 1');
+    		
+    		//if an entry for this source was found in the database, write the date of the newest one into the sources table 
+            if (isset ($latestEntryDate[0]['datetime']))
+            	@\F3::get('db')->exec('UPDATE sources SET lastentry=' . strtotime($latestEntryDate[0]['datetime']) . 
+            			              ' WHERE id=' . $current_src['id']);          	 
+    	}
+
+    }
+    
 }

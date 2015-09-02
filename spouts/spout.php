@@ -59,24 +59,6 @@ abstract class spout implements \Iterator {
 
 
     /**
-     * get the user agent to use for web based spouts
-     *
-     * @return the user agent string for this spout
-     */
-    protected function getUserAgent($agentInfo=null){
-        $userAgent = 'shomyo/'.\F3::get('version');
-
-        if( is_null($agentInfo) )
-            $agentInfo = array();
-
-        $agentInfo[] = $this->name.' spout';
-        $agentInfo[] = '+http://aruo.net';
-
-        return $userAgent.' ('.implode('; ', $agentInfo).')';
-    }
-
-
-    /**
      * loads content for given source
      *
      * @return void
@@ -184,7 +166,7 @@ abstract class spout implements \Iterator {
 
 
     /**
-     * returns an instance of shomyo image helper
+     * returns an instance of image helper
      * for fetching favicons
      *
      * @return \helpers\Image

@@ -7,10 +7,9 @@ namespace helpers;
  *
  * @package    helpers
  * @copyright  Copyright (c) Tobias Zeising (http://www.aditu.de)
- * @copyright  Copyright (c) arbk (http://aruo.net/)
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
- * @author     arbk
+ * @author     arbk (http://aruo.net/)
  */
 class Authentication {
 
@@ -19,15 +18,15 @@ class Authentication {
      * @var bool
      */
     private $loggedin = false;
-    
-    
+
+
     /**
      * start session and check login
      */
     public function __construct() {
         if ($this->enabled()===false)
             return;
-    
+
         // session cookie will be valid for one month.
         $cookie_expire = 3600*24*30;
         $cookie_secure = isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS']!=="off";
@@ -46,7 +45,7 @@ class Authentication {
         session_set_cookie_params($cookie_expire, $cookie_path, $cookie_domain,
                                   $cookie_secure, $cookie_httponly);
         \F3::get('logger')->log("set cookie on $cookie_domain$cookie_path expiring in $cookie_expire seconds", \DEBUG);
-        
+
 //        session_name();
         if(session_id()==""){
             $save_path = "/tmp/shomyo";
@@ -63,7 +62,7 @@ class Authentication {
         } else {
             \F3::get('logger')->log('session does not contain valid auth', \DEBUG);
         }
-        
+
         // autologin if request contains unsername and password
         if($this->loggedin===false
             && isset($_REQUEST['username'])
@@ -71,8 +70,8 @@ class Authentication {
             $this->login($_REQUEST['username'], $_REQUEST['password']);
         }
     }
-    
-    
+
+
     /**
      * login enabled
      *
@@ -83,8 +82,8 @@ class Authentication {
     public function enabled() {
         return strlen(trim(\F3::get('username')))!=0 && strlen(trim(\F3::get('password')))!=0;
     }
-    
-    
+
+
     /**
      * login user
      *
@@ -95,8 +94,8 @@ class Authentication {
     public function loginWithoutUser() {
         $this->loggedin = true;
     }
-    
-    
+
+
     /**
      * login user
      *
@@ -107,7 +106,7 @@ class Authentication {
     public function login($username, $password) {
         if($this->enabled()) {
             if( \F3::get('login_invalidate')==1 ){ return false; }
-                  
+
             if(
                 $username == \F3::get('username') &&  hash("sha512", \F3::get('salt') . $password) == \F3::get('password')
             ) {
@@ -123,8 +122,8 @@ class Authentication {
         }
         return true;
     }
-    
-    
+
+
     /**
      * isloggedin
      *
@@ -135,8 +134,8 @@ class Authentication {
             return true;
         return $this->loggedin;
     }
-    
-    
+
+
     /**
      * logout
      *
