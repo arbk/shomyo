@@ -19,9 +19,10 @@ class WebClient {
     public static function getUserAgent($agentInfo=null){
         $userAgent = 'shomyo/'.\F3::get('version');
 
-        if( empty($agentInfo) || !is_array($agentInfo) ){
-          return $userAgent;
-        }
+        if( is_null($agentInfo) )
+          $agentInfo = array();
+
+        $agentInfo[] = '+https://github.com/arbk/shomyo';
 
         return $userAgent.' ('.implode('; ', $agentInfo).')';
     }
