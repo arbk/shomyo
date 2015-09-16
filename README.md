@@ -1,9 +1,9 @@
 shomyo
 ======
 
-Author arbk (http://aruo.net/)
+Author arbk (http://aruo.net/)  
 Licensed under the GPLv3 license  
-Version 2.14
+Version 2.14.1  
 
 
 DESCRIPTION
