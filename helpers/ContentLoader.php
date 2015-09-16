@@ -108,18 +108,13 @@ class ContentLoader {
         }
         $itemsFound = $this->itemsDao->findAll($itemsInFeed);
 
-        // exclusion filter function
-        $efkeys=(array)(\F3::get('exclusion_filter'));
-        $exfilter = function($str,$keys){
-            if(is_string($str) && is_array($keys)){
-                foreach($keys as $key){
-                    if( false !== strpos($str,$key) ){
-                        return true;
-                    }
-                }
-            }
-            return false;
-        };
+        // exclusion filter keys
+        $efkeys = (array)(\F3::get('exclusion_filter'));
+        if( is_string($source['filter']) && !empty($source['filter']) ){
+            $srckeys = explode(',', $source['filter']);
+            foreach( $srckeys as $key ){ $efkeys[] = $key; }
+        }
+        \F3::get('logger')->log('exclusion filter keys: '.print_r($efkeys,true), \DEBUG);
 
         $lasticon = false;
         foreach ($spout as $item) {
@@ -161,8 +156,8 @@ class ContentLoader {
                 $title = "[" . \F3::get('lang_no_title') . "]";
 
             // Check sanitized title against filter
-                if($this->filter($source, $title,$content)===false)
-                    continue;
+//          if($this->filter($source, $title,$content)===false)
+//              continue;
 
             // sanitize author
             $author = $this->sanitizeField($item->getAuthor());
@@ -170,8 +165,8 @@ class ContentLoader {
             \F3::get('logger')->log('item content sanitized', \DEBUG);
 
             // exclusion filter
-            if( $exfilter($title,$efkeys) ){
-                \F3::get('logger')->log('item is excluded. "'.$item->getTitle().'"', \DEBUG);
+            if( $this->exfilter($efkeys, array($title, $author)) ){
+                \F3::get('logger')->log('item is excluded: '.$title.', '.$author.', '.$source['title'].' (id:'.$source['id'].')', \INFO);
                 continue;
             }
 
@@ -237,6 +232,26 @@ class ContentLoader {
                 return false;
         }
         return true;
+    }
+
+    /**
+     * Check if a new item matches the exclusion filter.
+     *
+     * @param array $keys filter keys. (key is strings.)
+     * @param array $targs strings of filter target.
+     * @return boolean indicating filter success
+     */
+    protected function exfilter($keys, $targs) {
+        if( !is_array($keys) || empty($keys) ||
+            !is_array($targs) || empty($targs) ){ return false; }
+        foreach($keys as $key){
+            foreach( $targs as $targ ){
+                if( !is_string($key) || empty($key) ||
+                    !is_string($targ) || empty($targ) ){ continue; }
+                if( false !== strpos($targ,$key) ){ return true; }
+            }
+        }
+        return false;
     }
 
     /**
