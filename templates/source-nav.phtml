@@ -1,4 +1,5 @@
-<li id="source<?PHP echo $this->sourceid; ?>" class="<?PHP if($this->unread>0) echo 'unread';?>">
+<li id="source<?PHP echo $this->sourceid; ?>" class="<?PHP if($this->unread>0) echo 'unread';?>"
+ title="<?PHP echo $this->source; ?><?PHP if ($this->unread>0) echo ' ('.$this->unread.')'; ?>">
     <span class="nav-source"><?PHP echo $this->source; ?></span>
     <span class="unread"><?PHP if ($this->unread>0) echo $this->unread; ?></span>
 </li>
