@@ -9,6 +9,7 @@ namespace controllers;
  * @copyright  Copyright (c) Tobias Zeising (http://www.aditu.de)
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
+ * @author     arbk (http://aruo.net/)
  */
 class Items extends BaseController {
 
@@ -146,6 +147,8 @@ class Items extends BaseController {
 
         $itemsDao = new \daos\Items();
         $stats = $itemsDao->stats();
+
+        if( \F3::get('auth')->isLoggedin()!==true ){ unset($stats['unread']); }
 
         if( array_key_exists('tags', $_GET) && $_GET['tags'] == 'true' ) {
             $tagsDao = new \daos\Tags();

@@ -95,7 +95,7 @@ class Sources extends BaseController {
         foreach($sources as $source) {
             $this->view->source = $source['title'];
             $this->view->sourceid = $source['id'];
-            $this->view->unread = $source['unread'];
+            $this->view->unread = (\F3::get('auth')->isLoggedin()===true)?$source['unread']:0;
             $html .= $this->view->render('templates/source-nav.phtml');
         }
 
@@ -220,7 +220,8 @@ class Sources extends BaseController {
      * @return void
      */
     public function sourcesStats() {
-        $this->needsLoggedIn();
+//      $this->needsLoggedIn();
+        $this->needsLoggedInOrPublicMode();
 
         $this->view->jsonSuccess(array(
             'success' => true,
@@ -298,7 +299,7 @@ class Sources extends BaseController {
 
 
     /**
-     * returns all sources with unread items
+     * returns all sources
      * json
      *
      * @return void
@@ -306,11 +307,16 @@ class Sources extends BaseController {
     public function stats() {
         $this->needsLoggedInOrPublicMode();
 
-        $itemDao = new \daos\Items();
+//      $itemDao = new \daos\Items();
 
         // load sources
         $sourcesDao = new \daos\Sources();
-        $sources = $sourcesDao->getWithUnread();
+        if( \F3::get('auth')->isLoggedin()===true ){
+            $sources = $sourcesDao->getWithUnread();
+        }
+        else{
+            $sources = $sourcesDao->getLess();
+        }
 
         $this->view->jsonSuccess($sources);
     }
