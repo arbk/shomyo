@@ -4,6 +4,7 @@
 /data/thumbnails/*.png
 /data/thumbnails/*.jpg
 /data/cache/*.spc
+/data/export/custom/*.php
 /data/logs/*.log
 /data/sqlite/*.db
 /public/all.*
