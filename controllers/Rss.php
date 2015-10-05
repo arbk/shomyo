@@ -41,6 +41,9 @@ class Rss extends BaseController {
         if(\F3::get('PARAMS["type"]')!=null)
             $options['type'] = \F3::get('PARAMS["type"]');
 
+        if( isset($options['type']) && $options['type']==='unread' && \F3::get('auth')->isLoggedin()!==true ){
+            $options['type'] = 'newest';
+        }
 
         // get items
         $newestEntryDate = false;
@@ -62,7 +65,7 @@ class Rss extends BaseController {
                 }
             }
 
-            $newItem->setTitle(html_entity_decode($item['title'] . " (" . $lastSourceName .")", ENT_QUOTES, 'UTF-8'));
+            $newItem->setTitle(str_replace('&', '&amp;', $this->UTF8entities($item['title'] . " (" . $lastSourceName . ")")));
             @$newItem->setLink($item['link']);
             $newItem->setDate($item['datetime']);
             $newItem->setDescription(str_replace('&#34;', '"', $item['content']));
