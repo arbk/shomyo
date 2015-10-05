@@ -14,10 +14,11 @@ var selfoss = {
      */
     filter: {
         offset: 0,
-        itemsPerPage: 0,
+        items: 0,
         search: '',
         type: 'unread',
         tag: '',
+        date: '',
         source: '',
         sourcesNav: false,
         ajax: true
@@ -50,7 +51,7 @@ var selfoss = {
             }
         
             // set items per page
-            selfoss.filter.itemsPerPage = $('#config').data('items_perpage');
+            selfoss.filter.items = $('#config').data('items_perpage');
             
             // initialize type by homepage config param
             selfoss.filter.type = $('#nav-filter li.active').attr('id').replace('nav-filter-', '');
@@ -67,8 +68,11 @@ var selfoss = {
             // init shortcut handler
             selfoss.shortcuts.init();
 
-            // setup periodic stats reloader
-            window.setInterval(selfoss.reloadStats, 60*1000);
+            // auto reload settings
+            if( $('#config').data('auto_reload')=="1" ){
+                // setup periodic stats reloader
+                window.setInterval(selfoss.reloadStats, 60*1000);
+            }
         });
     },
     
