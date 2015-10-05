@@ -9,6 +9,7 @@ namespace daos\mysql;
  * @copyright  Copyright (c) Tobias Zeising (http://www.aditu.de)
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
+ * @author     arbk (http://aruo.net/)
  */
 class Tags extends Database {
 
@@ -26,10 +27,10 @@ class Tags extends Database {
                           ':color' => $color));
         } else {
             \F3::get('db')->exec('INSERT INTO '.\F3::get('db_prefix').'tags (
-                    tag, 
+                    tag,
                     color
                   ) VALUES (
-                    :tag, 
+                    :tag,
                     :color
                   )',
                  array(
@@ -38,8 +39,8 @@ class Tags extends Database {
                  ));
         }
     }
-    
-    
+
+
     /**
      * save given tag with random color
      *
@@ -49,31 +50,31 @@ class Tags extends Database {
     public function autocolorTag($tag) {
         if(strlen(trim($tag))==0)
             return;
-        
+
         // tag color allready defined
         if($this->hasTag($tag))
             return;
-        
+
         // get unused random color
         while(true) {
             $color = \helpers\Color::randomColor();
             if($this->isColorUsed($color)===false)
                 break;
         }
-        
+
         $this->saveTagColor($tag, $color);
     }
-    
-    
+
+
     /**
      * returns all tags with color
      *
      * @return array of all tags
      */
     public function get() {
-        return \F3::get('db')->exec('SELECT 
+        return \F3::get('db')->exec('SELECT
                     tag, color
-                   FROM '.\F3::get('db_prefix').'tags 
+                   FROM '.\F3::get('db_prefix').'tags
                    ORDER BY LOWER(tag);');
     }
 
@@ -84,7 +85,7 @@ class Tags extends Database {
      * @return array of all tags
      */
     public function getWithUnread() {
-        $select = 'SELECT tag, color, COUNT(items.id) AS unread
+        $select = 'SELECT tag, color, '.(\F3::get('auth')->isLoggedin()===true?'COUNT(items.id)':'0').' AS unread
                    FROM '.\F3::get('db_prefix').'tags AS tags,
                         '.\F3::get('db_prefix').'sources AS sources
                    LEFT OUTER JOIN '.\F3::get('db_prefix').'items AS items
@@ -94,7 +95,7 @@ class Tags extends Database {
                    ORDER BY LOWER(tags.tag);';
         return \F3::get('db')->exec($select);
     }
-    
+
     /**
      * remove all unused tag color definitions
      *
@@ -109,8 +110,8 @@ class Tags extends Database {
             }
         }
     }
-    
-    
+
+
     /**
      * returns whether a color is used or not
      *
@@ -121,8 +122,8 @@ class Tags extends Database {
                     array(':color' => $color));
         return $res[0]['amount']>0;
     }
-    
-    
+
+
     /**
      * check whether tag color is defined.
      *
@@ -138,8 +139,8 @@ class Tags extends Database {
                     array(':tag' => $tag));
         return $res[0]['amount']>0;
     }
-    
-    
+
+
     /**
      * delete tag
      *

@@ -23,23 +23,33 @@ class Index extends BaseController {
         // check login
         $this->authentication();
 
-        // homepage type
-        $this->view->homepage
-          = \F3::get('homepage') && !(\F3::get('homepage')=='unread' && \F3::get('auth')->isLoggedin()!==true) ? \F3::get('homepage') : 'newest';
-
         // parse params
         $options = array();
-
-        // type
-        $options = array( 'type' => $this->view->homepage );
 
         // use ajax given params?
         if(count($_GET)>0)
             $options = $_GET;
 
+        // type
+        if( !isset($options['type']) ){
+            $options['type'] = \F3::get('homepage');
+        }
+        if( !in_array($options['type'], array('unread','newest','starred'), true) ){
+            $options['type'] = 'unread';
+        }
+        if( $options['type']==='unread' && \F3::get('auth')->isLoggedin()!==true ){
+            $options['type'] = 'newest';
+        }
+        $this->view->homepage = $options['type'];
+
         // get search param
         if(isset($options['search']) && strlen($options['search'])>0)
             $this->view->search = $options['search'];
+
+        // get date param
+        if(isset($options['date']) && strlen($options['date'])>0){
+            $this->view->date = $options['date'];
+        }
 
         // load tags
         $tagsDao = new \daos\Tags();

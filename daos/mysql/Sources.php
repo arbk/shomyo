@@ -9,7 +9,6 @@ namespace daos\mysql;
  * @copyright  Copyright (c) Tobias Zeising (http://www.aditu.de)
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
- * @author     arbk (http://aruo.net/)
  */
 class Sources extends Database {
 
@@ -173,23 +172,13 @@ class Sources extends Database {
 
 
     /**
-     * returns all sources (less information)
-     *
-     * @return mixed all sources
-     */
-    public function getLess() {
-        return \F3::get('db')->exec('SELECT id, title FROM '.\F3::get('db_prefix').'sources ORDER BY lower(title) ASC');
-    }
-
-
-    /**
      * returns all sources including unread count
      *
      * @return mixed all sources
      */
     public function getWithUnread() {
         return \F3::get('db')->exec('SELECT
-            sources.id, sources.title, COUNT(items.id) AS unread
+            sources.id, sources.title, '.(\F3::get('auth')->isLoggedin()===true?'COUNT(items.id)':'0').' AS unread
             FROM '.\F3::get('db_prefix').'sources AS sources
             LEFT OUTER JOIN '.\F3::get('db_prefix').'items AS items
                  ON (items.source=sources.id AND '.$this->stmt->isTrue('items.unread').')

@@ -10,6 +10,7 @@ namespace daos\mysql;
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     Harald Lapp <harald.lapp@gmail.com>
+ * @author     arbk (http://aruo.net/)
  */
 class Items extends Database {
 
@@ -201,7 +202,7 @@ class Items extends Database {
             $where .= ' AND '.$this->stmt->isTrue('starred');
 
         // only unread
-        else if(isset($options['type']) && $options['type']=='unread'){
+        else if(isset($options['type']) && $options['type']=='unread' && \F3::get('auth')->isLoggedin()===true){
             $where .= ' AND '.$this->stmt->isTrue('unread');
             if(\F3::get('unread_order')=='asc'){
                 $order = 'ASC';
@@ -213,6 +214,22 @@ class Items extends Database {
             $search = implode('%', \helpers\Search::splitTerms($options['search']));
             $params[':search'] = $params[':search2'] = $params[':search3'] = array("%".$search."%", \PDO::PARAM_STR);
             $where .= ' AND (items.title LIKE :search OR items.content LIKE :search2 OR sources.title LIKE :search3) ';
+        }
+
+        // date filter
+        // ex1)  2015-09-28             (start only)
+        // ex2)  2015-01-01_2015-12-31  (start to end)
+        if(isset($options['date']) && strlen($options['date'])>0) {
+            $dates = explode('_', $options['date'], 2 );
+            if( $dates[0] === date("Y-m-d", strtotime($dates[0])) ){
+              $params[':date_start'] = array($dates[0]." 00:00:00", \PDO::PARAM_STR);
+              $where .= " AND items.datetime >= :date_start ";
+
+              if( isset($dates[1]) && $dates[1] === date("Y-m-d", strtotime($dates[1])) ){
+                $params[':date_end'] = array($dates[1]." 23:59:59", \PDO::PARAM_STR);
+                $where .= " AND items.datetime <= :date_end ";
+              }
+            }
         }
 
         // tag filter
@@ -237,8 +254,12 @@ class Items extends Database {
         }
 
         // set limit
-        if(!is_numeric($options['items']) || $options['items']>200 || 0>$options['items'])
+        if(is_numeric($options['items'])===false || 0>$options['items']){
             $options['items'] = \F3::get('items_perpage');
+        }
+        if( \F3::get('public_max_items')<$options['items'] && \F3::get('auth')->isLoggedin()!==true ){
+            $options['items'] = \F3::get('public_max_items');
+        }
 
         // set offset
         if(is_numeric($options['offset'])===false || 0>$options['offset'])
@@ -253,7 +274,7 @@ class Items extends Database {
 
         // get items from database
         return \F3::get('db')->exec('SELECT
-                    items.id, datetime, items.title AS title, content, unread, starred, source, thumbnail, icon, uid, link, updatetime, author, sources.title as sourcetitle, sources.tags as tags
+                    items.id, datetime, items.title AS title, content, '.(\F3::get('auth')->isLoggedin()===true?'unread':'1 AS unread').', starred, source, thumbnail, icon, uid, link, updatetime, author, sources.title as sourcetitle, sources.tags as tags
                    FROM '.\F3::get('db_prefix').'items AS items, '.\F3::get('db_prefix').'sources AS sources
                    WHERE items.source=sources.id '.$where.'
                    ORDER BY items.datetime '.$order.'
@@ -391,6 +412,8 @@ class Items extends Database {
      * @return int amount of entries in database which are unread
      */
     public function numberOfUnread() {
+        if(\F3::get('auth')->isLoggedin()!==true){ return 0; }
+
         $res = \F3::get('db')->exec('SELECT count(*) AS amount
                    FROM '.\F3::get('db_prefix').'items
                    WHERE '.$this->stmt->isTrue('unread'));
@@ -406,7 +429,7 @@ class Items extends Database {
     public function stats() {
         $res = \F3::get('db')->exec('SELECT
             COUNT(*) AS total,
-            '.$this->stmt->sumBool('unread').' AS unread,
+            '.(\F3::get('auth')->isLoggedin()===true?$this->stmt->sumBool('unread'):'0').' AS unread,
             '.$this->stmt->sumBool('starred').' AS starred
             FROM '.\F3::get('db_prefix').'items;');
         return $res[0];
