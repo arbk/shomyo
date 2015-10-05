@@ -9,7 +9,6 @@ namespace controllers;
  * @copyright  Copyright (c) Tobias Zeising (http://www.aditu.de)
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
- * @author     arbk (http://aruo.net/)
  */
 class Tags extends BaseController {
 
@@ -49,7 +48,7 @@ class Tags extends BaseController {
         foreach($tags as $tag) {
             $this->view->tag = $tag['tag'];
             $this->view->color = $tag['color'];
-            $this->view->unread = (\F3::get('auth')->isLoggedin()===true)?$tag['unread']:0;
+            $this->view->unread = $tag['unread'];
             $html .= $this->view->render('templates/tag.phtml');
         }
 
@@ -86,7 +85,7 @@ class Tags extends BaseController {
 
     /**
      * returns all tags
-     * json
+     * html
      *
      * @return void
      */
@@ -94,12 +93,7 @@ class Tags extends BaseController {
         $this->needsLoggedInOrPublicMode();
 
         $tagsDao = new \daos\Tags();
-        if( \F3::get('auth')->isLoggedin()===true ){
-            $tags = $tagsDao->getWithUnread();
-        }
-        else{
-            $tags = $tagsDao->get();
-        }
+        $tags = $tagsDao->getWithUnread();
 
         $this->view->jsonSuccess($tags);
     }

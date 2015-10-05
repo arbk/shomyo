@@ -91,11 +91,11 @@ class Sources extends BaseController {
      */
     public function renderSources($sources) {
         $html = "";
-        $itemsDao = new \daos\Items();
+//      $itemsDao = new \daos\Items();
         foreach($sources as $source) {
             $this->view->source = $source['title'];
             $this->view->sourceid = $source['id'];
-            $this->view->unread = (\F3::get('auth')->isLoggedin()===true)?$source['unread']:0;
+            $this->view->unread = $source['unread'];
             $html .= $this->view->render('templates/source-nav.phtml');
         }
 
@@ -311,12 +311,7 @@ class Sources extends BaseController {
 
         // load sources
         $sourcesDao = new \daos\Sources();
-        if( \F3::get('auth')->isLoggedin()===true ){
-            $sources = $sourcesDao->getWithUnread();
-        }
-        else{
-            $sources = $sourcesDao->getLess();
-        }
+        $sources = $sourcesDao->getWithUnread();
 
         $this->view->jsonSuccess($sources);
     }
