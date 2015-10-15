@@ -97,6 +97,14 @@ class View {
 
 
     /**
+     * json_encode
+     */
+    protected function jsonEncode($data) {
+        \F3::get('logger')->log('json_encode data: '.print_r($data,true), \TRACE);
+        return json_encode($data);
+    }
+
+    /**
      * send error message as json string
      *
      * @return void
@@ -104,7 +112,7 @@ class View {
      */
     public function jsonError($data) {
         header('Content-type: application/json');
-        $this->error( json_encode($data) );
+        $this->error( $this->jsonEncode($data) );
     }
 
 
@@ -116,7 +124,7 @@ class View {
      */
     public function jsonSuccess($data) {
         header('Content-type: application/json');
-        die(json_encode($data));
+        die($this->jsonEncode($data));
     }
 
 
