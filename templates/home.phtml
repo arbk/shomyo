@@ -138,7 +138,8 @@
         <div id="nav-login" title="<?PHP echo trim(\F3::get('lang_loginbutton')); ?>"></div>
         <?PHP endif; ?>
 
-        <a id="nav-copyright" href="http://aruo.net/" target="_blank">shomyo (based selfoss<?PHP echo \F3::get('version'); ?>)</a>
+        <?PHP $verstr = 'shomyo '.\F3::get('version').' (based on selfoss)'; ?>
+        <div><a id="nav-copyright" href="http://aruo.net/" title="<?PHP echo $verstr; ?>" target="_blank"><?PHP echo $verstr; ?></a></div>
     </div>
 
     <!-- search -->
