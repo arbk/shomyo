@@ -104,5 +104,7 @@ $f3->route('GET  /opmlexport', 'controllers\Opml->export'); // xml
 
 $f3->route('GET  /export', 'controllers\Export->export'); // text,html,csv,etc.
 
+$f3->route('GET  /develop/info', 'controllers\Develop->info'); // html
+
 // dispatch
 $f3->run();
