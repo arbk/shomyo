@@ -81,6 +81,14 @@
         data-auto_reload="<?PHP echo \F3::get('auto_reload'); ?>"
         data-html_title="<?PHP echo trim(\F3::get('html_title')); ?>"></span>
 
+    <!-- date dialog -->
+    <div id="date-dialog">
+        <div><label for="date-from">From:</label><br>
+             <input type="text" id="date-from" /></div>
+        <div><label for="date-to">To:</label><br>
+             <input type="text" id="date-to"  /></div>
+    </div>
+
     <!-- menue open for smartphone -->
     <div id="nav-mobile">
         <div id="nav-mobile-filter"></div>
@@ -119,7 +127,9 @@
 
         <!-- navigation search input just for smartphone version -->
         <div id="nav-search">
-            <input type="text" id="nav-search-term" /> <input type="button" id="nav-search-button" value="<?PHP echo \F3::get('lang_searchbutton')?>" />
+            <input type="text" id="nav-search-term" />
+            <div id="nav-search-calendar" /></div>
+            <input type="button" id="nav-search-button" value="<?PHP echo \F3::get('lang_searchbutton')?>" />
             <hr>
         </div>
 
@@ -144,6 +154,7 @@
 
     <!-- search -->
     <div id="search">
+        <div id="search-calendar"></div>
         <input type="text" id="search-term" />
         <div id="search-remove"></div>
         <div id="search-button"></div>

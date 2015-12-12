@@ -299,9 +299,9 @@ input {
 #search {
     z-index:9;
     position:absolute;
-    left:-118px;
+    left:-148px;
     top:25px;
-    width:330px;
+    width:360px;
     padding:5px;
     background:rgba(72, 61,139, 0.4);
 
@@ -324,7 +324,7 @@ input {
 
     #search-term {
         width:250px;
-        margin-left:10px;
+        margin-left:35px;
     }
 
     #search-shownav {
@@ -332,22 +332,66 @@ input {
     }
 
     #search-button,
-    #search-remove {
-        position:absolute;
+    #search-remove,
+    #search-calendar {
         width:30px;
         height:20px;
-        top:11px;
-        left:280px;
         cursor:pointer;
+        position:absolute;
+        top:11px;
     }
-
+    #nav-search-calendar {
+        display:inline-block;
+        width:30px;
+        height:31px;
+        cursor:pointer;
+        border:2px solid #333;
+        -webkit-border-radius:4px;
+        -moz-border-radius:4px;
+        border-radius:4px;
+        vertical-align: bottom;
+    }
+    #search-button {
+        left:335px;
+        background:url(images/search.png) no-repeat center center;
+    }
     #search-remove {
+        left:308px;
         background:url(images/remove.png) no-repeat center center;
     }
+    #search-calendar {
+        left:5px;
+    }
+    #search-calendar,
+    #nav-search-calendar {
+        background:url(images/calendar.png) no-repeat center center;
+    }
 
-    #search-button {
-        background:url(images/search.png) no-repeat center center;
-        left:305px;
+    #date-dialog,
+    .date-dialog{
+        font-size:85%;
+    }
+    #date-dialog {
+        display:none;
+        background:rgba(72, 61,139, 0.4);
+    }
+    #date-dialog img{
+        margin-left:6px;
+    }
+    .date-dialog .ui-dialog-titlebar{
+        display:none;
+    }
+    .date-dialog .ui-dialog-buttonpane{
+        font-size:85%;
+        background:rgba(72, 61,139, 0.4);
+        border:none;
+        margin:0;
+        padding:0 5px 5px 0;
+    }
+    
+    .ui-datepicker{
+        font-size:85%;
+        width:16em;
     }
 
 #search-list  {
@@ -985,7 +1029,7 @@ body.publicmode.notloggedin .entry-unread {
     }
 
     #search {
-        width:305px;
+        width:335px;
         top:-46px;
         left:100%;
         margin-left:-370px;

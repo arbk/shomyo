@@ -146,7 +146,7 @@ selfoss.events.entries = function(e) {
     // more
     $('.stream-more').unbind('click').click(function () {
         var streamMore = $(this);
-        selfoss.filter.offset += selfoss.filter.items;
+        selfoss.filter.offset += parseInt(selfoss.filter.items, 10);
 
         streamMore.addClass('loading');
         $.ajax({

@@ -51,7 +51,7 @@ var selfoss = {
             }
         
             // set items per page
-            selfoss.filter.items = $('#config').data('items_perpage');
+            selfoss.filter.items = parseInt($('#config').data('items_perpage'), 10);
             
             // initialize type by homepage config param
             selfoss.filter.type = $('#nav-filter li.active').attr('id').replace('nav-filter-', '');
