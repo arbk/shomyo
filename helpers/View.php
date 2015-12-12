@@ -185,7 +185,7 @@ class View {
     private function minifyJs($content) {
         if(\F3::get('DEBUG')!=0)
             return $content;
-        return \JSMin::minify($content);
+        return \JShrink\Minifier::minify($content);
     }
 
 
