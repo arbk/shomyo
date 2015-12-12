@@ -9,6 +9,7 @@ namespace controllers;
  * @copyright  Copyright (c) Tobias Zeising (http://www.aditu.de)
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
+ * @author     arbk (http://aruo.net/)
  */
 class Items extends BaseController {
 
@@ -19,27 +20,7 @@ class Items extends BaseController {
      * @return void
      */
     public function mark() {
-        $this->needsLoggedIn();
-
-        if(\F3::get('PARAMS["item"]')!=null)
-            $lastid = \F3::get('PARAMS["item"]');
-        else if(isset($_POST['ids'])) {
-            $lastid = $_POST['ids'];
-        }
-
-        $itemDao = new \daos\Items();
-
-        // validate id or ids
-        if (!$itemDao->isValid('id', $lastid))
-            $this->view->error('invalid id');
-
-        $itemDao->mark($lastid);
-
-        $return = array(
-            'success' => true
-        );
-
-        $this->view->jsonSuccess($return);
+      $this->updateItemStatus('mark');
     }
 
 
@@ -50,20 +31,7 @@ class Items extends BaseController {
      * @return void
      */
     public function unmark() {
-        $this->needsLoggedIn();
-
-        $lastid = \F3::get('PARAMS["item"]');
-
-        $itemDao = new \daos\Items();
-
-        if (!$itemDao->isValid('id', $lastid))
-            $this->view->error('invalid id');
-
-        $itemDao->unmark($lastid);
-
-        $this->view->jsonSuccess(array(
-            'success' => true
-        ));
+      $this->updateItemStatus('unmark');
     }
 
 
@@ -74,19 +42,7 @@ class Items extends BaseController {
      * @return void
      */
     public function starr() {
-        $this->needsLoggedIn();
-
-        $id = \F3::get('PARAMS["item"]');
-
-        $itemDao = new \daos\Items();
-
-        if (!$itemDao->isValid('id', $id))
-            $this->view->error('invalid id');
-
-        $itemDao->starr($id);
-        $this->view->jsonSuccess(array(
-            'success' => true
-        ));
+      $this->updateItemStatus('starr');
     }
 
 
@@ -97,19 +53,48 @@ class Items extends BaseController {
      * @return void
      */
     public function unstarr() {
-        $this->needsLoggedIn();
+      $this->updateItemStatus('unstarr');
+    }
 
-        $id = \F3::get('PARAMS["item"]');
 
-        $itemDao = new \daos\Items();
+    /**
+     * update item status
+     * json
+     *
+     * @return void
+     * @param string $type ('mark' or 'unmark' or 'starr' or 'unstarr')
+     */
+    private function updateItemStatus($type) {
+      $this->needsLoggedIn();
 
-        if (!$itemDao->isValid('id', $id))
-            $this->view->error('invalid id');
+      $id = null;
+      if( null!=\F3::get('PARAMS.item') ){ $id = \F3::get('PARAMS.item'); }  // id: numeric
+      else if( isset($_POST['ids']) ){ $id = $_POST['ids']; }               // id: array
 
-        $itemDao->unstarr($id);
-        $this->view->jsonSuccess(array(
-            'success' => true
-        ));
+      $itemDao = new \daos\Items();
+
+      if( !$itemDao->isValid('id', $id) ){ $this->view->error('invalid id'); }
+
+      $success = true;
+      switch( $type ){
+        case 'mark':
+          $itemDao->mark($id);
+          break;
+        case 'unmark':
+          $itemDao->unmark($id);
+          break;
+        case 'starr':
+          $itemDao->starr($id);
+          break;
+        case 'unstarr':
+          $itemDao->unstarr($id);
+          break;
+        default:
+          $success = false;
+          break;
+      }
+
+      $this->view->jsonSuccess( array('success' => $success) );
     }
 
 

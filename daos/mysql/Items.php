@@ -26,17 +26,10 @@ class Items extends Database {
      * mark item as read
      *
      * @return void
-     * @param int $id
+     * @param mixed $id
      */
     public function mark($id) {
-        if($this->isValid('id', $id)===false)
-            return;
-
-        if(is_array($id))
-            $id = implode(",", $id);
-
-        // i used string concatenation after validating $id
-        \F3::get('db')->exec('UPDATE '.\F3::get('db_prefix').'items SET '.$this->stmt->isFalse('unread').' WHERE id IN (' . $id . ')');
+     $this->updateItemflg($id, 'unread', false);
     }
 
 
@@ -44,16 +37,10 @@ class Items extends Database {
      * mark item as unread
      *
      * @return void
-     * @param int $id
+     * @param mixed $id
      */
     public function unmark($id) {
-        if(is_array($id)) {
-            $id = implode(",", $id);
-        } else if(!is_numeric($id)) {
-            return;
-        }
-        \F3::get('db')->exec('UPDATE '.\F3::get('db_prefix').'items SET '.$this->stmt->isTrue('unread').' WHERE id IN (:id)',
-                    array(':id' => $id));
+     $this->updateItemflg($id, 'unread', true);
     }
 
 
@@ -61,11 +48,10 @@ class Items extends Database {
      * starr item
      *
      * @return void
-     * @param int $id the item
+     * @param mixed $id
      */
     public function starr($id) {
-        \F3::get('db')->exec('UPDATE '.\F3::get('db_prefix').'items SET '.$this->stmt->isTrue('starred').' WHERE id=:id',
-                    array(':id' => $id));
+        $this->updateItemflg($id, 'starred', true);
     }
 
 
@@ -73,11 +59,27 @@ class Items extends Database {
      * unstarr item
      *
      * @return void
-     * @param int $id the item
+     * @param mixed $id
      */
     public function unstarr($id) {
-        \F3::get('db')->exec('UPDATE '.\F3::get('db_prefix').'items SET '.$this->stmt->isFalse('starred').' WHERE id=:id',
-                    array(':id' => $id));
+        $this->updateItemflg($id, 'starred', false);
+    }
+
+
+    /**
+     * update item flag.
+     *
+     * @return void
+     * @param mixed $id
+     * @param string $flg ('unread' or 'starred')
+     * @param bool $on
+     */
+    private function updateItemflg($id, $flg, $on) {
+        if( false===$this->isValid('id', $id) ) { return; }
+        if( is_array($id) ){ $id = implode(",", $id); }
+
+        \F3::get('db')->exec('UPDATE '.\F3::get('db_prefix')
+            .'items SET '.($on?$this->stmt->isTrue($flg):$this->stmt->isFalse($flg)).' WHERE id IN ('.$id.')');
     }
 
 
@@ -217,18 +219,18 @@ class Items extends Database {
         }
 
         // date filter
-        // ex1)  2015-09-28             (start only)
-        // ex2)  2015-01-01_2015-12-31  (start to end)
+        //  ex1)  2015-09-28             (start only)
+        //  ex2)  2015-01-01_2015-12-31  (start to end)
+        //  ex3)  _2015-12-31            (end only)
         if(isset($options['date']) && strlen($options['date'])>0) {
             $dates = explode('_', $options['date'], 2 );
-            if( $dates[0] === date("Y-m-d", strtotime($dates[0])) ){
+            if( isset($dates[0]) && $dates[0] === date("Y-m-d", strtotime($dates[0])) ){
               $params[':date_start'] = array($dates[0]." 00:00:00", \PDO::PARAM_STR);
               $where .= " AND items.datetime >= :date_start ";
-
-              if( isset($dates[1]) && $dates[1] === date("Y-m-d", strtotime($dates[1])) ){
-                $params[':date_end'] = array($dates[1]." 23:59:59", \PDO::PARAM_STR);
-                $where .= " AND items.datetime <= :date_end ";
-              }
+            }
+            if( isset($dates[1]) && $dates[1] === date("Y-m-d", strtotime($dates[1])) ){
+              $params[':date_end'] = array($dates[1]." 23:59:59", \PDO::PARAM_STR);
+              $where .= " AND items.datetime <= :date_end ";
             }
         }
 
