@@ -36,10 +36,10 @@ class Rss extends BaseController {
         if(count($_GET)>0)
             $options = $_GET;
         $options['items'] = \F3::get('rss_max_items');
-        if(\F3::get('PARAMS["tag"]')!=null)
-            $options['tag'] = \F3::get('PARAMS["tag"]');
-        if(\F3::get('PARAMS["type"]')!=null)
-            $options['type'] = \F3::get('PARAMS["type"]');
+        if(\F3::get('PARAMS.tag')!=null)
+            $options['tag'] = \F3::get('PARAMS.tag');
+        if(\F3::get('PARAMS.type')!=null)
+            $options['type'] = \F3::get('PARAMS.type');
 
         if( isset($options['type']) && $options['type']==='unread' && \F3::get('auth')->isLoggedin()!==true ){
             $options['type'] = 'newest';

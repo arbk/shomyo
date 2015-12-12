@@ -152,7 +152,7 @@ class Sources extends BaseController {
         $spout = str_replace("_", "\\", $spout);
 
         // check if source already exists
-        $id = \F3::get('PARAMS["id"]');
+        $id = \F3::get('PARAMS.id');
         $sourceExists = $sourcesDao->isValid('id', $id);
 
         // load password value if not changed for spouts containing passwords
@@ -239,7 +239,7 @@ class Sources extends BaseController {
     public function remove() {
         $this->needsLoggedIn();
 
-        $id = \F3::get('PARAMS["id"]');
+        $id = \F3::get('PARAMS.id');
 
         $sourceDao = new \daos\Sources();
 

@@ -26,7 +26,7 @@ class Export extends BaseController {
         $this->needsLoggedIn();
 
         $options = array();
-        if(count(\F3::get('GET'))>0){ $options = \F3::get('GET'); }
+        if(count($_GET)>0){ $options = $_GET; }
 
         $tmpl = 'data/export/default.tpl.php';
         if( isset($options['tmpl']) && strlen($options['tmpl'])>0 ){
