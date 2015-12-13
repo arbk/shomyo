@@ -201,24 +201,30 @@ class View {
         return \CssMin::minify($content);
     }
 
+
     /**
-     * echo text for html.
+     * echo.
      */
-    public function eh($str, $output=true){
-      $cnv_str = htmlspecialchars($str,ENT_QUOTES,'UTF-8',false);
-      if($output){ echo $cnv_str; }
-      return $cnv_str;
+    public static function e($str, $output = true){
+      if( $output ){
+        echo $str;
+      }
+      return $str;
     }
 
     /**
-     * echo text (remove tag string.)
+     * echo text for html.
      */
-    public function et($str, $output=true){
-        $cnv_str = $this->eh(
-                     strip_tags(
-                       html_entity_decode($str,ENT_QUOTES,'UTF-8'))
-                   ,false);
-        if($output){ echo $cnv_str; }
-        return $cnv_str;
+    public static function eh($str, $output = true){
+      return self::e(htmlspecialchars($str, ENT_QUOTES|ENT_HTML5, 'UTF-8'), $output);
+    }
+
+    /**
+     * echo text (remove tag string).
+     */
+    public static function et($str, $output = true){
+      return self::e(
+          self::eh(strip_tags(html_entity_decode($str, ENT_QUOTES|ENT_HTML5, 'UTF-8')), false),
+          $output);
     }
 }
