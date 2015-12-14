@@ -288,7 +288,11 @@ class Index extends BaseController {
             $itemsHtml = '<div class="stream-empty">'. \F3::get('lang_no_entries').'</div>';
         } else {
             if(\F3::get('auth')->isLoggedin()===true){
-                $itemsHtml .= '<div id="entry-markread'.$lastItemId.'" data-itemid="'.$lastItemId.'" class="entry-markread"><span>'. \F3::get('lang_markread').'</span></div>';
+                $itemsHtml .= '<div class="entry-batchtool"><div id="entry-markread'.$lastItemId.'" data-itemid="'.$lastItemId.'" class="entry-markread">'.\F3::get('lang_markread').'</div>';
+                if('starred'===$options['type']){
+                  $itemsHtml .= '<div id="entry-unstarr'.$lastItemId.'" data-itemid="'.$lastItemId.'" class="entry-unstarr">'.\F3::get('lang_unstar').'</div>';
+                }
+                $itemsHtml .= '</div>';
             }
 
             if($itemDao->hasMore()) {

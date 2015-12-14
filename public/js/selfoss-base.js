@@ -419,44 +419,34 @@ var selfoss = {
     },
 
     /**
-     * Mark all visible items as read
+     * Change all visible items flag
      */
-    markVisibleRead: function (itemId) {
+    changeVisibleItemsFlag: function (path, itemId) {
         var ids = new Array();
         $('.entry').each(function(index, item) {
             var id = $(item).attr('id').substr(5);
-            if( $(item).hasClass('unread') ){ ids.push( id ); }
+            if( ('mark'===path && $(item).hasClass('unread'))
+                || ('unstarr'===path && $(item).find('.entry-starr').hasClass('active')) ){
+              ids.push( id ); 
+            }
             if( undefined !== itemId && id === String(itemId) ){ return false; }
         });
 
-        if(ids.length === 0){
-            return;
-        }
-
+        if(0 === ids.length){ return; }
+        
         // show loading
         var content = $('#content');
         var articleList = content.html();
         $('#content').addClass('loading').html("");
 
         $.ajax({
-            url: $('base').attr('href') + 'mark',
+            url: $('base').attr('href') + path,
             type: 'POST',
             dataType: 'json',
             data: {
                 ids: ids
             },
             success: function(response) {
-                $('.entry').removeClass('unread');
-
-                // update unread stats
-                var unreadstats = parseInt($('.nav-filter-unread span').html()) - ids.length;
-                selfoss.refreshUnread(unreadstats);
-
-                // update mobile filter view
-                if( 'unread' === selfoss.filter.type ){
-                    $('#nav-mobile-filter').html( $('#nav-filter-unread').html() );
-                }
-
                 // hide nav on smartphone if visible
                 if(selfoss.isSmartphone() && $('#nav').is(':visible')==true)
                     $('#nav-mobile-settings').click();
@@ -476,7 +466,21 @@ var selfoss = {
                                     textStatus+' '+errorThrown);
             }
         });
-    }
+    },
+
+    /**
+     * Mark all visible items as read
+     */
+    markVisibleRead: function (itemId) {
+        selfoss.changeVisibleItemsFlag('mark', itemId);
+    },
+
+    /**
+     * Unstarr all visible items
+     */
+    unstarrVisible: function (itemId) {
+        selfoss.changeVisibleItemsFlag('unstarr', itemId);
+    },
 
 };
 

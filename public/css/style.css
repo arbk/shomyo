@@ -285,7 +285,7 @@ input {
 
     #nav-copyright {
         position:absolute;
-        top:100%;
+        top:99%;
         margin-top:-25px;
         margin-left:20px;
         font-size:0.6em;
@@ -681,18 +681,27 @@ input {
             background-size: 28px 28px;
         }
 
-    .stream-more, .entry-markread {
-        padding-top:10px;
-        margin-top:10px;
-        margin-bottom:10px;
+    .entry-batchtool,
+    .stream-more {
         height:35px;
         font-size:16px;
         font-weight:bold;
         cursor:pointer;
         text-align:center;
+        clear:both;
+    }
+    .entry-batchtool{
+        padding-top:0px;
+        margin-top:5px;
+        margin-bottom:15px;
+    }
+    .stream-more {
+        padding-top:10px;
+        margin-top:10px;
+        margin-bottom:10px;
     }
 
-        .touch .entry-markread,
+        .touch .entry-batchtool,
         .touch .stream-more {
             padding-bottom:10px;
         }
@@ -705,8 +714,21 @@ input {
             display:none;
         }
 
-    .entry-markread {
+    .entry-markread,
+    .entry-unstarr {
         display:none;
+        float:left;
+        padding:10px 0;
+    }
+    .entry-markread {
+        width:100%
+    }
+    .entry-batchtool > div:nth-last-of-type(2){
+        width:49%;
+    }
+    .entry-unstarr {
+        width:49%;
+        border-left:1px solid #ddd;
     }
 
 #fullscreen-entry {
@@ -926,7 +948,7 @@ body.publicmode.notloggedin #nav-mark {
     cursor:auto;
 }
 
-body.publicmode.notloggedin .entry-markread,
+body.publicmode.notloggedin .entry-batchtool,
 body.publicmode.notloggedin .entry-starr,
 body.publicmode.notloggedin .entry-unread {
     display:none;
@@ -1227,7 +1249,7 @@ body.publicmode.notloggedin .entry-unread {
         #nav-copyright {
             margin-top:-20px;
             margin-left:-60px;
-            left:100%;
+            right:5px;
         }
 
         #search {
@@ -1280,7 +1302,7 @@ body.publicmode.notloggedin .entry-unread {
             padding: 0;
         }
 
-        .entry-markread {
+        . {
             height:50px;
         }
 
