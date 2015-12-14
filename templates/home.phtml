@@ -1,177 +1,181 @@
 <!doctype html>
 <head>
-    <base href="<?PHP echo $this->base; ?>" />
+ <base href="<?PHP echo $this->base; ?>" />
 
-    <meta charset="utf-8">
+ <meta charset="utf-8">
 
-    <meta name="robots" content="noarchive" />
+ <meta name="robots" content="noarchive" />
 
-    <title><?PHP echo trim(\F3::get('html_title')); ?></title>
+ <title><?PHP echo trim(\F3::get('html_title')); ?></title>
 
-    <meta name="description" content="shomyo is the web based feed reader and aggregator." />
-    <meta name="author" content="arbk" />
+ <meta name="description" content="shomyo is the web based feed reader and aggregator." />
+ <meta name="author" content="arbk" />
 
-    <meta name="version" content="<?PHP echo \F3::get('version'); ?>" />
+ <meta name="version" content="<?PHP echo \F3::get('version'); ?>" />
 
-    <!--  Mobile viewport optimized: j.mp/bplateviewport -->
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1" />
+ <!--  Mobile viewport optimized: j.mp/bplateviewport -->
+ <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1" />
 
-    <!--  Add support for fullscreen Webapp on iPhone 5 -->
-    <meta name="viewport" content="initial-scale=1, user-scalable=no, maximum-scale=1" media="(device-height: 568px)" />
+ <!--  Add support for fullscreen Webapp on iPhone 5 -->
+ <meta name="viewport" content="initial-scale=1, user-scalable=no, maximum-scale=1" media="(device-height: 568px)" />
 
-    <!-- app 'behaviour' when adding link to iDevice springboard -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+ <!-- app 'behaviour' when adding link to iDevice springboard -->
+ <meta name="apple-mobile-web-app-capable" content="yes" />
 
-    <!-- app 'behaviour' when adding link to Android Home  -->
-    <meta name="mobile-web-app-capable" content="yes" />
+ <!-- app 'behaviour' when adding link to Android Home  -->
+ <meta name="mobile-web-app-capable" content="yes" />
 
-    <!-- app tile and notification when adding link to Windows 8 start screen -->
-    <meta name="application-name" content="shomyo" />
-    <meta name="msapplication-TileColor" content="#3d6d69" />
-    <meta name="msapplication-square70x70logo" content="<?php echo $this->base; ?>win8-70-icon.png" />
-    <meta name="msapplication-square150x150logo" content="<?php echo $this->base; ?>win8-150-icon.png" />
-    <meta name="msapplication-wide310x150logo" content="<?php echo $this->base; ?>win8-150-icon.png" />
-    <meta name="msapplication-square310x310logo" content="<?php echo $this->base; ?>win8-310-icon.png" />
-    <meta name="msapplication-notification" content="cycle=1; frequency=30; polling-uri=<?php echo $this->base; ?>win8notifs" />
-    <meta name="msapplication-badge" content="frequency=30; polling-uri=<?php echo $this->base; ?>badge" />
+ <!-- app tile and notification when adding link to Windows 8 start screen -->
+ <meta name="application-name" content="shomyo" />
+ <meta name="msapplication-TileColor" content="#3d6d69" />
+ <meta name="msapplication-square70x70logo" content="<?php echo $this->base; ?>win8-70-icon.png" />
+ <meta name="msapplication-square150x150logo" content="<?php echo $this->base; ?>win8-150-icon.png" />
+ <meta name="msapplication-wide310x150logo" content="<?php echo $this->base; ?>win8-150-icon.png" />
+ <meta name="msapplication-square310x310logo" content="<?php echo $this->base; ?>win8-310-icon.png" />
+ <meta name="msapplication-notification" content="cycle=1; frequency=30; polling-uri=<?php echo $this->base; ?>win8notifs" />
+ <meta name="msapplication-badge" content="frequency=30; polling-uri=<?php echo $this->base; ?>badge" />
 
-    <!--  RSS Feed -->
-    <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="feed" />
+ <!--  RSS Feed -->
+ <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="feed" />
 
-    <link rel="shortcut icon" href="favicon.ico" />
-    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+ <link rel="shortcut icon" href="favicon.ico" />
+ <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
-    <!-- all css definitions -->
-    <?PHP if(\F3::get('use_system_font')!=true) : ?>
-    <link rel="stylesheet" href="css/fonts.css" />
-    <?PHP endif; ?>
-    <link rel="stylesheet" href="<?PHP echo \helpers\View::getGlobalCssFileName(); ?>" />
+ <!-- all css definitions -->
+ <?PHP if(\F3::get('use_system_font')!=true) : ?>
+ <link rel="stylesheet" href="css/fonts.css" />
+ <?PHP endif; ?>
+ <link rel="stylesheet" href="<?PHP echo \helpers\View::getGlobalCssFileName(); ?>" />
 
 </head>
 <body class="
-    <?PHP echo $this->publicMode===true ? "publicmode" : ""; ?>
-    <?PHP echo $this->loggedin===true ? "loggedin" : "notloggedin"; ?>
-    <?PHP echo \F3::get('auto_mark_as_read')==1 ? "auto_mark_as_read" : ""; ?>
+ <?PHP echo $this->publicMode===true ? "publicmode" : ""; ?>
+ <?PHP echo $this->loggedin===true ? "loggedin" : "notloggedin"; ?>
+ <?PHP echo \F3::get('auto_mark_as_read')==1 ? "auto_mark_as_read" : ""; ?>
 ">
 
-    <div id="error"></div>
+ <div id="error"></div>
 
-    <!-- language settings for jQuery -->
-    <span id="lang"
-        data-mark="<?PHP echo \F3::get('lang_mark'); ?>"
-        data-unmark="<?PHP echo \F3::get('lang_unmark'); ?>"
-        data-star="<?PHP echo \F3::get('lang_star'); ?>"
-        data-unstar="<?PHP echo \F3::get('lang_unstar'); ?>"
-        data-source_warn="<?PHP echo \F3::get('lang_source_warn'); ?>"
-        data-source_saved="<?PHP echo \F3::get('lang_source_saved'); ?>"
-        data-source_edit="<?PHP echo \F3::get('lang_source_edit'); ?>"></span>
+ <!-- language settings for jQuery -->
+ <span id="lang"
+  data-mark="<?PHP echo \F3::get('lang_mark'); ?>"
+  data-unmark="<?PHP echo \F3::get('lang_unmark'); ?>"
+  data-star="<?PHP echo \F3::get('lang_star'); ?>"
+  data-unstar="<?PHP echo \F3::get('lang_unstar'); ?>"
+  data-source_warn="<?PHP echo \F3::get('lang_source_warn'); ?>"
+  data-source_saved="<?PHP echo \F3::get('lang_source_saved'); ?>"
+  data-source_edit="<?PHP echo \F3::get('lang_source_edit'); ?>"></span>
 
-    <!-- other settings -->
-    <span id="config"
-        data-anonymizer="<?PHP echo \helpers\Anonymizer::getAnonymizer(); ?>"
-        data-share="<?PHP echo \F3::get('share'); ?>"
-        data-wallabag="<?PHP echo \F3::get('wallabag'); ?>"
-        data-wordpress="<?PHP echo \F3::get('wordpress'); ?>"
-        data-auto_mark_as_read="<?PHP echo \F3::get('auto_mark_as_read'); ?>"
-        data-auto_stream_more="<?PHP echo \F3::get('auto_stream_more'); ?>"
-        data-load_images_on_mobile="<?PHP echo \F3::get('load_images_on_mobile'); ?>"
-        data-fullscreen_on_mobile="<?PHP echo \F3::get('fullscreen_on_mobile'); ?>"
-        data-items_perpage="<?PHP echo \F3::get('items_perpage'); ?>"
-        data-auto_hide_read_on_mobile="<?PHP echo \F3::get('auto_hide_read_on_mobile'); ?>"
-        data-auto_reload="<?PHP echo \F3::get('auto_reload'); ?>"
-        data-html_title="<?PHP echo trim(\F3::get('html_title')); ?>"></span>
+ <!-- other settings -->
+ <span id="config"
+  data-anonymizer="<?PHP echo \helpers\Anonymizer::getAnonymizer(); ?>"
+  data-share="<?PHP echo \F3::get('share'); ?>"
+  data-wallabag="<?PHP echo \F3::get('wallabag'); ?>"
+  data-wordpress="<?PHP echo \F3::get('wordpress'); ?>"
+  data-auto_mark_as_read="<?PHP echo \F3::get('auto_mark_as_read'); ?>"
+  data-auto_stream_more="<?PHP echo \F3::get('auto_stream_more'); ?>"
+  data-load_images_on_mobile="<?PHP echo \F3::get('load_images_on_mobile'); ?>"
+  data-fullscreen_on_mobile="<?PHP echo \F3::get('fullscreen_on_mobile'); ?>"
+  data-items_perpage="<?PHP echo \F3::get('items_perpage'); ?>"
+  data-auto_hide_read_on_mobile="<?PHP echo \F3::get('auto_hide_read_on_mobile'); ?>"
+  data-auto_reload="<?PHP echo \F3::get('auto_reload'); ?>"
+  data-html_title="<?PHP echo trim(\F3::get('html_title')); ?>"></span>
 
-    <!-- date dialog -->
-    <div id="date-dialog">
-        <div><label for="date-from">From:</label><br>
-             <input type="text" id="date-from" /></div>
-        <div><label for="date-to">To:</label><br>
-             <input type="text" id="date-to"  /></div>
-    </div>
+ <!-- date dialog -->
+ <div id="date-dialog">
+  <div>
+   <label for="date-from">From:</label><br>
+   <input type="text" id="date-from" />
+  </div>
+  <div>
+   <label for="date-to">To:</label><br>
+   <input type="text" id="date-to"  />
+  </div>
+ </div>
 
-    <!-- menue open for smartphone -->
-    <div id="nav-mobile">
-        <div id="nav-mobile-filter"></div>
-        <a rel="nofollow" href="."><div id="nav-mobile-logo"></div></a>
-        <div id="nav-mobile-settings"></div>
-    </div>
+ <!-- menue open for smartphone -->
+ <div id="nav-mobile">
+  <div id="nav-mobile-filter"></div>
+  <a rel="nofollow" href="."><div id="nav-mobile-logo"></div></a>
+  <div id="nav-mobile-settings"></div>
+ </div>
 
-    <!-- navigation -->
-    <div id="nav">
-        <a rel="nofollow" href="."><div id="nav-logo"></div></a>
-        <div id="nav-mark"><?PHP echo \F3::get('lang_markread')?></div>
+ <!-- navigation -->
+ <div id="nav">
+  <a rel="nofollow" href="."><div id="nav-logo"></div></a>
+  <div id="nav-mark"><?PHP echo \F3::get('lang_markread')?></div>
 
-        <ul id="nav-filter">
-            <li id="nav-filter-newest" class="nav-filter-newest<?PHP if($this->homepage==='newest') : ?> active<?PHP endif; ?>"><?PHP echo \F3::get('lang_newest')?> <span><?PHP echo $this->statsAll; ?></span></li>
-            <?PHP if($this->loggedin===true) : ?>
-            <li id="nav-filter-unread" class="nav-filter-unread<?PHP if($this->homepage==='unread') : ?> active<?PHP endif; ?>"><?PHP echo \F3::get('lang_unread')?> <span class="unread-count<?PHP echo $this->statsUnread>0 ? ' unread' : ''; ?>"><?PHP echo $this->statsUnread; ?></span></li>
-            <?PHP endif; ?>
-            <li id="nav-filter-starred" class="nav-filter-starred<?PHP if($this->homepage==='starred') : ?> active<?PHP endif; ?>"><?PHP echo \F3::get('lang_starred') ?> <span><?PHP echo $this->statsStarred; ?></span></li>
-        </ul>
+  <ul id="nav-filter">
+   <li id="nav-filter-newest" class="nav-filter-newest<?PHP if($this->homepage==='newest') : ?> active<?PHP endif; ?>"><?PHP echo \F3::get('lang_newest')?> <span><?PHP echo $this->statsAll; ?></span></li>
+   <?PHP if($this->loggedin===true) : ?>
+   <li id="nav-filter-unread" class="nav-filter-unread<?PHP if($this->homepage==='unread') : ?> active<?PHP endif; ?>"><?PHP echo \F3::get('lang_unread')?> <span class="unread-count<?PHP echo $this->statsUnread>0 ? ' unread' : ''; ?>"><?PHP echo $this->statsUnread; ?></span></li>
+   <?PHP endif; ?>
+   <li id="nav-filter-starred" class="nav-filter-starred<?PHP if($this->homepage==='starred') : ?> active<?PHP endif; ?>"><?PHP echo \F3::get('lang_starred') ?> <span><?PHP echo $this->statsStarred; ?></span></li>
+  </ul>
 
-        <hr>
+  <hr>
 
-        <div id="nav-tags-wrapper">
-        <h2 id="nav-tags-title" class="nav-tags-expanded"><?PHP echo \F3::get('lang_tags') ?></h2>
-        <ul id="nav-tags">
-            <li class="active nav-tags-all"><?PHP echo \F3::get('lang_alltags')?></li>
-            <?PHP echo $this->tags; ?>
-        </ul>
-        <h2 id="nav-sources-title" class="nav-sources-collapsed"><?PHP echo \F3::get('lang_sources') ?></h2>
-        <ul id="nav-sources">
-            <?PHP echo $this->sources; ?>
-        </ul>
-        </div>
+  <div id="nav-tags-wrapper">
+  <h2 id="nav-tags-title" class="nav-tags-expanded"><?PHP echo \F3::get('lang_tags') ?></h2>
+  <ul id="nav-tags">
+   <li class="active nav-tags-all"><?PHP echo \F3::get('lang_alltags')?></li>
+   <?PHP echo $this->tags; ?>
+  </ul>
+  <h2 id="nav-sources-title" class="nav-sources-collapsed"><?PHP echo \F3::get('lang_sources') ?></h2>
+  <ul id="nav-sources">
+   <?PHP echo $this->sources; ?>
+  </ul>
+  </div>
 
-        <hr>
+  <hr>
 
-        <!-- navigation search input just for smartphone version -->
-        <div id="nav-search">
-            <input type="text" id="nav-search-term" />
-            <div id="nav-search-calendar" /></div>
-            <input type="button" id="nav-search-button" value="<?PHP echo \F3::get('lang_searchbutton')?>" />
-            <hr>
-        </div>
+  <!-- navigation search input just for smartphone version -->
+  <div id="nav-search">
+   <input type="text" id="nav-search-term" />
+   <div id="nav-search-calendar" /></div>
+   <input type="button" id="nav-search-button" value="<?PHP echo \F3::get('lang_searchbutton')?>" />
+   <hr>
+  </div>
 
-        <?PHP if($this->loggedin===true && \F3::get('auth')->enabled()===false) : ?>
-        <div id="nav-refresh" title="<?PHP echo trim(\F3::get('lang_refreshbutton')); ?>" class="nologin"></div>
-        <div id="nav-settings" title="<?PHP echo trim(\F3::get('lang_settingsbutton')); ?>" class="nologin"></div>
-        <?PHP endif; ?>
+  <?PHP if($this->loggedin===true && \F3::get('auth')->enabled()===false) : ?>
+  <div id="nav-refresh" title="<?PHP echo trim(\F3::get('lang_refreshbutton')); ?>" class="nologin"></div>
+  <div id="nav-settings" title="<?PHP echo trim(\F3::get('lang_settingsbutton')); ?>" class="nologin"></div>
+  <?PHP endif; ?>
 
-        <?PHP if($this->loggedin===true && \F3::get('auth')->enabled()===true) : ?>
-        <div id="nav-refresh" title="<?PHP echo trim(\F3::get('lang_refreshbutton')); ?>"></div>
-        <div id="nav-settings" title="<?PHP echo trim(\F3::get('lang_settingsbutton')); ?>"></div>
-        <div id="nav-logout" title="<?PHP echo trim(\F3::get('lang_logoutbutton')); ?>"></div>
-        <?PHP endif; ?>
+  <?PHP if($this->loggedin===true && \F3::get('auth')->enabled()===true) : ?>
+  <div id="nav-refresh" title="<?PHP echo trim(\F3::get('lang_refreshbutton')); ?>"></div>
+  <div id="nav-settings" title="<?PHP echo trim(\F3::get('lang_settingsbutton')); ?>"></div>
+  <div id="nav-logout" title="<?PHP echo trim(\F3::get('lang_logoutbutton')); ?>"></div>
+  <?PHP endif; ?>
 
-        <?PHP if($this->loggedin===false && $this->loginInvalidate===false) : ?>
-        <div id="nav-login" title="<?PHP echo trim(\F3::get('lang_loginbutton')); ?>"></div>
-        <?PHP endif; ?>
+  <?PHP if($this->loggedin===false && $this->loginInvalidate===false) : ?>
+  <div id="nav-login" title="<?PHP echo trim(\F3::get('lang_loginbutton')); ?>"></div>
+  <?PHP endif; ?>
 
-        <?PHP $verstr = 'shomyo '.\F3::get('version').' (based on selfoss)'; ?>
-        <div><a id="nav-copyright" href="http://aruo.net/" title="<?PHP echo $verstr; ?>" target="_blank"><?PHP echo $verstr; ?></a></div>
-    </div>
+  <?PHP $verstr = 'shomyo '.\F3::get('version').' (based on selfoss)'; ?>
+  <a id="nav-copyright" href="http://aruo.net/" title="<?PHP echo $verstr; ?>" target="_blank"><?PHP echo $verstr; ?></a>
+ </div>
 
-    <!-- search -->
-    <div id="search">
-        <div id="search-calendar"></div>
-        <input type="text" id="search-term" />
-        <div id="search-remove"></div>
-        <div id="search-button"></div>
-        <div id="search-shownav"></div>
-    </div>
+ <!-- search -->
+ <div id="search">
+  <div id="search-calendar"></div>
+  <input type="text" id="search-term" />
+  <div id="search-remove"></div>
+  <div id="search-button"></div>
+  <div id="search-shownav"></div>
+ </div>
 
-    <ul id="search-list">
-    </ul>
+ <ul id="search-list">
+ </ul>
 
-    <!-- content -->
-    <div id="content">
-        <?PHP echo $this->content; ?>
-    </div>
+ <!-- content -->
+ <div id="content">
+  <?PHP echo $this->content; ?>
+ </div>
 
-    <!-- fullscreen popup -->
-    <div id="fullscreen-entry"></div>
+ <!-- fullscreen popup -->
+ <div id="fullscreen-entry"></div>
 
-    <script src="<?PHP echo \helpers\View::getGlobalJsFileName(); ?>"></script>
+ <script src="<?PHP echo \helpers\View::getGlobalJsFileName(); ?>"></script>
 </body>
 </html>
