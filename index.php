@@ -20,23 +20,23 @@ $f3->set('auth', new \helpers\Authentication());
 
 // define js files
 $js=array(
-    'public/js/jquery-2.1.1.min.js',
-    'public/js/jquery-ui.js',
-    'public/js/jquery.mCustomScrollbar.min.js',
-    'public/js/jquery.mousewheel.min.js',
-    'public/js/lazy-image-loader.js',
-    'public/js/spectrum.js',
-    'public/js/jquery.hotkeys.js',
-    'public/js/selfoss-base.js',
-    'public/js/selfoss-shares.js',
-    'public/js/selfoss-events.js',
-    'public/js/selfoss-events-navigation.js',
-    'public/js/selfoss-events-search.js',
-    'public/js/selfoss-events-entries.js',
-    'public/js/selfoss-events-entriestoolbar.js',
-    'public/js/selfoss-events-sources.js',
-    'public/js/selfoss-shortcuts.js',
-    'public/js/jquery.fancybox.pack.js'
+  'public/js/jquery-2.1.4.min.js',
+  'public/js/jquery-ui.min.js',
+  'public/js/jquery.mCustomScrollbar.min.js',
+  'public/js/jquery.mousewheel.min.js',
+  'public/js/lazy-image-loader.js',
+  'public/js/spectrum.js',
+  'public/js/jquery.hotkeys.js',
+  'public/js/selfoss-base.js',
+  'public/js/selfoss-shares.js',
+  'public/js/selfoss-events.js',
+  'public/js/selfoss-events-navigation.js',
+  'public/js/selfoss-events-search.js',
+  'public/js/selfoss-events-entries.js',
+  'public/js/selfoss-events-entriestoolbar.js',
+  'public/js/selfoss-events-sources.js',
+  'public/js/selfoss-shortcuts.js',
+  'public/js/jquery.fancybox.pack.js'
 );
 if(file_exists("user.js"))
     $js[] = "user.js";
@@ -44,11 +44,12 @@ $f3->set('js', $js);
 
 // define css files
 $css = array(
-    'public/css/jquery.mCustomScrollbar.css',
-    'public/css/jquery.fancybox.css',
-    'public/css/spectrum.css',
-    'public/css/reset.css',
-    'public/css/style.css'
+  'public/css/jquery-ui.min.css',
+  'public/css/jquery.mCustomScrollbar.css',
+  'public/css/jquery.fancybox.css',
+  'public/css/spectrum.css',
+  'public/css/reset.css',
+  'public/css/style.css'
 );
 if(file_exists("user.css"))
     $css[] = "user.css";
@@ -81,10 +82,11 @@ $f3->route('GET /sources/statslist', 'controllers\Sources->sourcesStats'); // js
 
 // only loggedin users
 $f3->route('POST /mark/@item',    'controllers\Items->mark');    // json
-$f3->route('POST /mark',          'controllers\Items->mark');    // json
+$f3->route('POST /mark',          'controllers\Items->mark');    // json [mark for multiple]
 $f3->route('POST /unmark/@item',  'controllers\Items->unmark');  // json
 $f3->route('POST /starr/@item',   'controllers\Items->starr');   // json
 $f3->route('POST /unstarr/@item', 'controllers\Items->unstarr'); // json
+$f3->route('POST /unstarr',       'controllers\Items->unstarr'); // json [unstarr for multiple]
 
 $f3->route('GET    /source/params',     'controllers\Sources->params');      // html
 $f3->route('GET    /sources',           'controllers\Sources->show');        // html
@@ -104,7 +106,9 @@ $f3->route('GET  /opmlexport', 'controllers\Opml->export'); // xml
 
 $f3->route('GET  /export', 'controllers\Export->export'); // text,html,csv,etc.
 
-$f3->route('GET  /develop/info', 'controllers\Develop->info'); // html
+if(\F3::get('DEBUG')!=0){
+  $f3->route('GET  /develop/info', 'controllers\Develop->info'); // html
+}
 
 // dispatch
 $f3->run();
