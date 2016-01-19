@@ -662,6 +662,10 @@ input {
         .entry-newwindow {
             background-image:url(images/open.png);
         }
+        .entry-newwindow a {
+            color: inherit;
+            text-decoration: none;
+        }
 
         .entry-next {
             background-image:url(images/arrow-right.png);
@@ -1352,6 +1356,13 @@ body.publicmode.notloggedin .entry-unread {
             #fullscreen-entry .entry-close {
                 display:block;
             }
+
+    .entry-toolbar li {
+        margin-left:5px;
+    }
+    .entry-toolbar li:nth-of-type(1) {
+        margin-left:9px;
+    }
 
     .entry-toolbar .entry-newwindow {
         display:none;
