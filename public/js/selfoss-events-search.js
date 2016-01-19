@@ -4,19 +4,19 @@
 selfoss.events.search = function(){
 
   var splitTerm = function(term){
-    if( term == "" ) return [];
+    if( term == '' ) return [];
     var words = term.match(/"[^"]+"|\S+/g);
     for( var i = 0; i < words.length; i++ )
-      words[i] = words[i].replace(/"/g, "");
+      words[i] = words[i].replace(/"/g, '');
     return words;
   };
 
   var joinTerm = function(words){
-    if( !words || words.length <= 0 ) return "";
+    if( !words || words.length <= 0 ) return '';
     for( var i = 0; i < words.length; i++ ){
-      if( words[i].indexOf(" ") >= 0 ) words[i] = '"' + words[i] + '"';
+      if( words[i].indexOf(' ') >= 0 ) words[i] = '"' + words[i] + '"';
     }
-    return words.join(" ");
+    return words.join(' ');
   };
 
   var setFilter = function(filter, words){
@@ -66,17 +66,19 @@ selfoss.events.search = function(){
     setFilter(selfoss.filter, words);
     selfoss.reloadList();
 
-    if( term == "" ) $('#search-list').hide();
+    if( term == '' ) $('#search-list').hide();
     else $('#search-list').show();
   };
 
   var datepickerOptions = {
-    dateFormat: "yy-mm-dd",
+    monthNames: ['01','02','03','04','05','06','07','08','09','10','11','12'],
+    monthNamesShort: ['01','02','03','04','05','06','07','08','09','10','11','12'],
+    dateFormat: 'yy-mm-dd',
     firstDay: 1,
-    showOn: "button",
-    buttonImage: "images/calendar.png",
+    showOn: 'button',
+    buttonImage: 'images/calendar.png',
     buttonImageOnly: true,
-    buttonText: "Select date",
+    buttonText: 'Select date',
     changeMonth: true,
     changeYear: true,
     minDate: null,
@@ -95,7 +97,7 @@ selfoss.events.search = function(){
   var inputDate = function(){
     var dfm = $('#date-from').val();
     var dto = $('#date-to').val();
-    if( 0 >= dfm.length && 0 >= dto.length ){ return; }
+    if( 0 >= dfm.length && 0 >= dto.length ){ return null; }
 
     var dOpr = 'date:';
     if( 0 < dfm.length ){
@@ -111,45 +113,55 @@ selfoss.events.search = function(){
 
     $('#search-term').val(reKywd(dOpr, $('#search-term').val()));
     $('#nav-search-term').val(reKywd(dOpr, $('#nav-search-term').val()));
+    return dOpr;
   };
 
-  var initDateDialog = function(){
+  var initDateDialog = function(dlgObj){
     $('#date-from').val('');
     $('#date-from').datepicker('option', 'maxDate', 0);
     $('#date-to').val('');
     $('#date-to').datepicker('option', 'minDate', null);
+    dlgObj.dialog('option', 'ex.action', null);
   }
 
-  var dateDialog = $("#date-dialog").dialog({
-    dialogClass: "date-dialog",
+  var dateDialog = $('#date-dialog').dialog({
+    dialogClass: 'date-dialog',
     autoOpen: false,
     width: 200,
     modal: true,
     buttons: {
       Ok: function(){
-        inputDate();
-        $(this).dialog("close");
+        if( null != inputDate() ){
+          $(this).dialog('option', 'ex.action', 'accept');
+        }
+        $(this).dialog('close');
       },
       Cancel: function(){
-        $(this).dialog("close");
+        $(this).dialog('close');
       }
     },
     close: function(event, ui){
-      initDateDialog();
-      $($(this).dialog("option", "ex.target")).focus();
+      var action = $(this).dialog('option', 'ex.action');
+      initDateDialog( $(this) );
+      $($(this).dialog('option', 'ex.input')).focus();
+      if( 'accept' == action ){
+        $($(this).dialog('option', 'ex.button')).click();
+      }
     }
   });
   $('#search-calendar').unbind('click').click(function(){
-    dateDialog.dialog("option", "ex.target", '#search-term');
-    dateDialog.dialog("option", "position", 
-        { my: "left top", at: "left bottom", of: "#search-calendar" });
-    dateDialog.dialog("open");
+    dateDialog.dialog('option', 'ex.input', '#search-term');
+    dateDialog.dialog('option', 'ex.button', '#search-button');
+    dateDialog.dialog('option', 'position', 
+        { my: 'left top', at: 'left bottom', of: '#search-calendar' });
+    dateDialog.dialog('open');
   });
   $('#nav-search-calendar').unbind('click').click(function(){
-    dateDialog.dialog("option", "ex.target", '#nav-search-term');
-    dateDialog.dialog("option", "position", 
-        { my: "right bottom", at: "right top", of: "#nav-search-calendar" });
-    dateDialog.dialog("open");
+    dateDialog.dialog('option', 'ex.input', '#nav-search-term');
+    dateDialog.dialog('option', 'ex.button', '#nav-search-button');
+    dateDialog.dialog('option', 'position', 
+        { my: 'right bottom', at: 'right top', of: '#nav-search-calendar' });
+    dateDialog.dialog('open');
   });
 
   // search button shows search input or executes search
@@ -196,7 +208,7 @@ selfoss.events.search = function(){
   // search term list in top of the page
   $('#search-list li').unbind('click').click(function(){
     var termArray = splitTerm($('#search-term').val());
-    termId = $(this).attr('id').replace("search-item-", "");
+    termId = $(this).attr('id').replace('search-item-', '');
     termArray.splice(termId, 1);
     var newterm = joinTerm(termArray);
     $('#search-term').val(newterm);
