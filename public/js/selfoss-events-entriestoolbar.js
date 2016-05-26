@@ -49,18 +49,27 @@ selfoss.events.entriesToolbar = function(parent) {
         if (parent.find('ul.entry-toolbar').has('img.entry-share'+shares[0]).length == 0)
         {
             // add the share toolbar entries
-            parent.find('ul.entry-smartphone-share li.entry-newwindow').after(selfoss.shares.buildLinks(shares, function(name) { return '<li><span class="entry-share entry-share'+name+'" title="'+name+'"><img class="entry-share" title="'+name+'" src="images/'+name+'.png" height="16" width="16">'+name+'</span></li>'}));
-            parent.find('ul.entry-toolbar li.entry-next').after(selfoss.shares.buildLinks(shares, function(name) { return '<li><img class="entry-share entry-share'+name+'" title="'+name+'" src="images/'+name+'.png" height="16" width="16"></li>'}));
+            parent.find('ul.entry-smartphone-share li.entry-newwindow').after(
+              selfoss.shares.buildLinks(shares, function(id, name, image) { 
+                return '<li><span class="entry-share entry-share'+id+'" title="'+name+'"><img class="entry-share" title="'+name+'" src="images/'+image+'" height="16" width="16">'+name+'</span></li>'
+              })
+            );
+            parent.find('ul.entry-toolbar li.entry-next').after(
+              selfoss.shares.buildLinks(shares, function(id, name, image) { 
+                return '<li><img class="entry-share entry-share'+id+'" title="'+name+'" src="images/'+image+'" height="16" width="16"></li>'
+              })
+            );
             // hookup the share icon click events
-            for (var i = 0; i < shares.length; i++) {
-                (function(share){
-                    parent.find('.entry-share' + share).unbind('click').click(function(e) {
-                        var entry = $(this).parents(".entry");
-                        selfoss.shares.share(share, entry.children(".entry-link").eq(0).attr("href"), entry.children(".entry-title").html());
-        e.preventDefault();
-        return false;
-    });
-                })(shares[i]);
+            for(var i = 0; i < shares.length; i++){
+              (function(share){
+                parent.find('.entry-share' + share).unbind('click').click(function(e) {
+                  var entry = $(this).parents(".entry");
+                  selfoss.shares.share(
+                    share, entry.children(".entry-link").eq(0).attr("href"), entry.children(".entry-title").html());
+                  e.preventDefault();
+                  return false;
+                });
+              })(shares[i]);
             }
         }
     }

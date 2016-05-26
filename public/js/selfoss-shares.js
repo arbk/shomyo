@@ -1,69 +1,69 @@
 selfoss.shares = {
   initialized: false,
-  urlBuilders: {},
-  openInNewWindows: {},
+  enabledShares: {},
   names: {},
-  enabledShares: '',
+  images: {},
+  openInNewWindows: {},
+  urlBuilders: {},
 
   init: function(enabledShares) {
-    this.enabledShares = enabledShares;
-    this.initialized = true;
+	this.initialized = true;
 
-    this.register('delicious', 'd', true, function(url, title) {
-      return "https://delicious.com/save?url="+encodeURIComponent(url) +"&title="+ encodeURIComponent(title);
-    });
-    this.register('googleplus', 'g', true, function(url, title) {
-      return "https://plus.google.com/share?url="+encodeURIComponent(url);
-    });
-    this.register('twitter', 't', true, function(url, title) {
+	if(null!=enabledShares){ this.enabledShares = enabledShares.split(','); }
+
+    this.register('twtr', 'Twitter', 'share-twtr.png', true, function(url, title) {
       return "https://twitter.com/intent/tweet?source=webclient&text="+encodeURIComponent(title)+" "+encodeURIComponent(url);
     });
-    this.register('facebook', 'f', true, function(url, title) {
+    this.register('fcbk', 'Facebook', 'share-fcbk.png', true, function(url, title) {
       return "https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(url)+"&t="+encodeURIComponent(title);
     });
-    this.register('pocket', 'p', true, function(url, title) {
+    this.register('pket', 'Pocket', 'share-pket.png', true, function(url, title) {
       return "https://getpocket.com/save?url="+encodeURIComponent(url)+"&title="+encodeURIComponent(title);
     });
-    this.register('readability', 'r', true, function(url, title) {
-      return "http://www.readability.com/save?url="+encodeURIComponent(url);
+    this.register('rbly', 'Readability', 'share-rbly.png', true, function(url, title) {
+      return "https://www.readability.com/save?url="+encodeURIComponent(url);
     });
-    this.register('wallabag', 'w', true, function(url, title) {
+    this.register('gglp', 'Google+', 'share-gglp.png', true, function(url, title) {
+      return "https://plus.google.com/share?url="+encodeURIComponent(url);
+    });
+    this.register('deli', 'Delicious', 'share-deli.png', true, function(url, title) {
+        return "https://delicious.com/save?url="+encodeURIComponent(url) +"&title="+ encodeURIComponent(title);
+    });
+
+    this.register('wllg', 'wallabag', 'share-wllg.png', true, function(url, title) {
       return $('#config').data('wallabag')+'/?action=add&url='+btoa(url);
     });
-    this.register('wordpress', 's', true, function(url, title) {
+    this.register('wrdp', 'WordPress', 'share-wrdp.png', true, function(url, title) {
       return $('#config').data('wordpress')+'/wp-admin/press-this.php?u='+encodeURIComponent(url)+'&t='+encodeURIComponent(title);
     });
-    this.register('mail', 'e', false, function(url, title) {
-      return "mailto:?body="+encodeURIComponent(url)+"&subject="+encodeURIComponent(title);
+
+    this.register('mail', 'Mail', 'share-mail.png', false, function(url, title) {
+        return "mailto:?body="+encodeURIComponent(url)+"&subject="+encodeURIComponent(title);
     });
   },
 
-  register: function(name, id, openInNewWindow, urlBuilder) {
+  register: function(id, name, image, openInNewWindow, urlBuilder) {
     if (!this.initialized) {
       return false;
     }
-    this.urlBuilders[name] = urlBuilder;
-    this.openInNewWindows[name] = openInNewWindow;
     this.names[id] = name;
+    this.images[id] = image;
+    this.openInNewWindows[id] = openInNewWindow;
+    this.urlBuilders[id] = urlBuilder;
     return true;
   },
 
   getAll: function() {
-    var allNames = new Array();
-    if (this.enabledShares != null) {
-      for (var i = 0; i < this.enabledShares.length; i++) {
-        var enabledShare = this.enabledShares[i];
-        if (enabledShare in this.names) {
-          allNames.push(this.names[enabledShare]);
-        }
-      }
+    var allIds = new Array();
+    if( 0 < this.enabledShares.length ){
+    	allIds = this.enabledShares.concat();
     }
-    return allNames;
+    return allIds;
   },
 
-  share: function(name, url, title) {
-    var url = this.urlBuilders[name](url, title);
-    if (this.openInNewWindows[name]) {
+  share: function(id, url, title) {
+    var url = this.urlBuilders[id](url, title);
+    if (this.openInNewWindows[id]) {
       window.open(url);
     } else {
       document.location.href = url;
@@ -74,8 +74,8 @@ selfoss.shares = {
     var links = '';
     if (shares != null) {
       for (var i = 0; i < shares.length; i++) {
-        var name = shares[i];
-        links += linkBuilder(name);
+        var id = shares[i];
+        links += linkBuilder(id, this.names[id], this.images[id]);
       }
     }
     return links;
