@@ -3,7 +3,7 @@ shomyo
 
 Author arbk (http://aruo.net/)  
 Licensed under the GPLv3 license  
-Version 2.14.4  
+Version 2.14.5  
 
 
 DESCRIPTION
