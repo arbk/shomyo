@@ -9,6 +9,7 @@ namespace helpers;
  * @copyright  Copyright (c) Tobias Zeising (http://www.aditu.de)
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
+ * @author     arbk (http://aruo.net/)
  */
 class Image {
     
@@ -92,10 +93,11 @@ class Image {
             $data = \helpers\WebClient::request($url);
         }
         catch ( \exception $e ) {
-            \F3::get('logger')->log("failed to retrieve image $url," . $e->getMessage(), \ERROR);
+            \F3::get('logger')->log("failed to retrieve image $url", \ERROR);
+            \F3::get('logger')->log("response: " . $e->getMessage(), \DEBUG);
             return false;
         }
-        
+
         // get image type
         $tmp = \F3::get('cache') . '/' . md5($url);
         file_put_contents($tmp, $data);

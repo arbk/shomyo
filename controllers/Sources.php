@@ -28,7 +28,7 @@ class Sources extends BaseController {
 
         // load sources
         $sourcesDao = new \daos\Sources();
-        echo '<div class="source-add">' . \F3::get('lang_source_add') . '</div>' .
+        echo '<button class="source-add">' . \F3::get('lang_source_add') . '</button>' .
              '<a rel="nofollow" class="source-export" href="opmlexport">' . \F3::get('lang_source_export') . '</a>' .
              '<a rel="nofollow" class="source-opml" href="opml">' . \F3::get('lang_source_opml');
         $sourcesHtml = '</a>';
@@ -78,8 +78,10 @@ class Sources extends BaseController {
         if($this->view->spout===false)
             $this->view->error('invalid spout type given');
 
-        if($this->view->spout->params!==false)
+        if($this->view->spout->params!==false){
+            $this->view->idAttr = 'new-' . rand();
             echo $this->view->render('templates/source_params.phtml');
+        }
     }
 
 
@@ -299,7 +301,7 @@ class Sources extends BaseController {
 
 
     /**
-     * returns all sources
+     * returns all sources with unread items
      * json
      *
      * @return void

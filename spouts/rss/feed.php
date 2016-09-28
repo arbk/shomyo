@@ -10,6 +10,7 @@ namespace spouts\rss;
  * @copyright  Copyright (c) Tobias Zeising (http://www.aditu.de)
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
+ * @author     arbk (http://aruo.net/)
  */
 class feed extends \spouts\spout {
 
@@ -53,7 +54,7 @@ class feed extends \spouts\spout {
     public $params = array(
         "url" => array(
             "title"      => "URL",
-            "type"       => "text",
+            "type"       => "url",
             "default"    => "",
             "required"   => true,
             "validation" => array("notempty")
@@ -153,18 +154,18 @@ class feed extends \spouts\spout {
         @$this->feed->set_cache_duration(1800);
         @$this->feed->set_feed_url(htmlspecialchars_decode($params['url']));
         @$this->feed->set_autodiscovery_level( SIMPLEPIE_LOCATOR_AUTODISCOVERY | SIMPLEPIE_LOCATOR_LOCAL_EXTENSION | SIMPLEPIE_LOCATOR_LOCAL_BODY);
-        $this->feed->set_useragent(\helpers\WebClient::getUserAgent(array('SimplePie/'.SIMPLEPIE_VERSION)));
-         
+        $this->feed->set_useragent(\helpers\WebClient::getUserAgent(/*array('SimplePie/'.SIMPLEPIE_VERSION)*/));
+
         // fetch items
         @$this->feed->init();
-        
+
         // on error retry with force_feed
         if(@$this->feed->error()) {
             @$this->feed->set_autodiscovery_level(SIMPLEPIE_LOCATOR_NONE);
             @$this->feed->force_feed(true);
             @$this->feed->init();
         }
-        
+
         // check for error
         if(@$this->feed->error()) {
             throw new \exception($this->feed->error());
@@ -172,7 +173,7 @@ class feed extends \spouts\spout {
             // save fetched items
             $this->items = @$this->feed->get_items();
         }
-        
+
         // return html url
         $this->htmlUrl = @$this->feed->get_link();
     }

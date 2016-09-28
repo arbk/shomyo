@@ -15,14 +15,15 @@
     $date = $this->viewHelper->dateago($this->item['datetime']);
     $anonlink = \helpers\Anonymizer::anonymize($this->item['link']);
 ?>
-<div id="entry<?PHP echo $this->item['id']; ?>"
-     class="entry
-            <?PHP echo $this->item['unread']==1 ? 'unread' : ''; ?>">
+<div id="entry<?PHP echo $this->item['id']; ?>" 
+     class="entry 
+            <?PHP echo $this->item['unread']==1 ? 'unread' : ''; ?>" 
+     role="article">
 
     <!-- icon -->
     <a rel="nofollow" href="<?PHP echo $anonlink; ?>" class="entry-icon">
         <?PHP if(strlen(trim($this->item['icon']))>0 && $this->item['icon']!="0") : ?>
-        <img src="<?PHP echo 'favicons/'.$this->item['icon']; ?>" alt="<?PHP echo $sourcetitle ?>" />
+        <img src="<?PHP echo 'favicons/'.$this->item['icon']; ?>" alt="" >
         <?PHP endif; ?>
     </a>
 
@@ -65,19 +66,19 @@
     <div class="entry-content <?PHP if(strlen(strip_tags($content))<500) : ?>entry-content-nocolumns<?PHP endif; ?>">
         <?PHP echo $content; ?>
 
-        <ul class="entry-smartphone-share">
-            <li class="entry-newwindow"><a rel="nofollow" href="<?PHP echo $anonlink; ?>" target="_blank"><?PHP echo \F3::get('lang_open_window')?></a></li>
-            <li class="entry-next"><?PHP echo \F3::get('lang_next')?></li>
-        </ul>
+        <div class="entry-smartphone-share">
+            <button class="entry-newwindow"><a rel="nofollow" href="<?PHP echo $anonlink; ?>" target="_blank"><?PHP echo \F3::get('lang_open_window')?></a></button>
+            <button class="entry-next"><?PHP echo \F3::get('lang_next')?></button>
+        </div>
     </div>
 
     <!-- toolbar -->
-    <ul class="entry-toolbar">
-        <li class="entry-starr <?PHP echo $this->item['starred']==1 ? 'active' : ''; ?>"><?PHP echo $this->item['starred']==1 ? \F3::get('lang_unstar') : \F3::get('lang_star'); ?></li>
-        <li class="entry-unread <?PHP echo $this->item['unread']==1 ? 'active' : ''; ?>"><?PHP echo $this->item['unread']==1 ? \F3::get('lang_mark') : \F3::get('lang_unmark'); ?></li>
-        <li class="entry-newwindow"><a rel="nofollow" href="<?PHP echo $anonlink; ?>" target="_blank"><?PHP echo \F3::get('lang_open_window')?></a></li>
-        <li class="entry-loadimages"><?PHP echo \F3::get('lang_load_img')?> </li>
-        <li class="entry-next" style="display:none;"><?PHP echo \F3::get('lang_next')?></li>
-        <li class="entry-close"></li>
-    </ul>
+    <div class="entry-toolbar">
+        <button class="entry-starr <?PHP echo $this->item['starred']==1 ? 'active' : ''; ?>"><?PHP echo $this->item['starred']==1 ? \F3::get('lang_unstar') : \F3::get('lang_star'); ?></button>
+        <button class="entry-unread <?PHP echo $this->item['unread']==1 ? 'active' : ''; ?>"><?PHP echo $this->item['unread']==1 ? \F3::get('lang_mark') : \F3::get('lang_unmark'); ?></button>
+        <button class="entry-newwindow"><a rel="nofollow" href="<?PHP echo $anonlink; ?>" target="_blank"><?PHP echo \F3::get('lang_open_window')?></a></button>
+        <button class="entry-loadimages"><?PHP echo \F3::get('lang_load_img')?> </button>
+        <button class="entry-next" style="display:none;"><?PHP echo \F3::get('lang_next')?></button>
+        <button class="entry-close"></button>
+    </div>
 </div>

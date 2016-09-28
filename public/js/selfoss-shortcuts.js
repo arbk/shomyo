@@ -123,6 +123,12 @@ selfoss.shortcuts = {
             $('#nav-filter-unread').click();
         });
         
+        // 'Shift + r': Refresh sources
+        $(document).bind('keydown', 'Shift+r', function(e) {
+            e.preventDefault();
+            $('#nav-refresh').click();
+        });
+        
         // 'Ctrl+m': mark all as read
         $(document).bind('keydown', 'ctrl+m', function(e) {
             $('#nav-mark').click();
@@ -235,6 +241,9 @@ selfoss.shortcuts = {
         
         // scroll to element
         selfoss.shortcuts.autoscroll(current);
+
+        // focus the icon for better keyboard navigation
+        current.find('.entry-icon').focus();
     },
     
     

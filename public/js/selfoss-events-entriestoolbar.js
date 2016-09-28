@@ -46,26 +46,17 @@ selfoss.events.entriesToolbar = function(parent) {
     var shares = selfoss.shares.getAll();
     if (shares.length > 0)
     {
-        if (parent.find('ul.entry-toolbar').has('img.entry-share'+shares[0]).length == 0)
+        if (parent.find('.entry-toolbar').has('button.entry-share'+shares[0]).length == 0)
         {
             // add the share toolbar entries
-            parent.find('ul.entry-smartphone-share li.entry-newwindow').after(
-              selfoss.shares.buildLinks(shares, function(id, name, image) { 
-                return '<li><span class="entry-share entry-share'+id+'" title="'+name+'"><img class="entry-share" title="'+name+'" src="images/'+image+'" height="16" width="16">'+name+'</span></li>'
-              })
-            );
-            parent.find('ul.entry-toolbar li.entry-next').after(
-              selfoss.shares.buildLinks(shares, function(id, name, image) { 
-                return '<li><img class="entry-share entry-share'+id+'" title="'+name+'" src="images/'+image+'" height="16" width="16"></li>'
-              })
-            );
+            parent.find('.entry-smartphone-share button.entry-newwindow').after(selfoss.shares.buildLinks(shares, function(id, name, image) { return '<button class="entry-share entry-share'+id+'" title="'+name+'"><img class="entry-share" title="'+name+'" src="images/'+image+'" height="16" width="16">'+name+'</button>'}));
+            parent.find('.entry-toolbar button.entry-next').after(selfoss.shares.buildLinks(shares, function(id, name, image) { return '<button class="entry-share entry-share'+id+'"><img title="'+name+'" src="images/'+image+'" height="16" width="16"></button>'}));
             // hookup the share icon click events
             for(var i = 0; i < shares.length; i++){
               (function(share){
                 parent.find('.entry-share' + share).unbind('click').click(function(e) {
                   var entry = $(this).parents(".entry");
-                  selfoss.shares.share(
-                    share, entry.children(".entry-link").eq(0).attr("href"), entry.children(".entry-title").html());
+                        selfoss.shares.share(share, entry.children(".entry-link").eq(0).attr("href"), entry.children(".entry-title").html());
                   e.preventDefault();
                   return false;
                 });

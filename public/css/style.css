@@ -7,6 +7,7 @@ html {
 
 body {
     font: lighter 18px/27px 'OpenSans', Arial, sans-serif;
+    color: black;
     background:url(images/bg.gif) repeat;
     height: 100%;
     position:relative;
@@ -20,6 +21,10 @@ input {
     -khtml-border-radius:2px;
     border-radius:2px;
     padding:6px;
+}
+
+body * {
+	outline:0;
 }
 
 #error {
@@ -55,22 +60,20 @@ input {
     }
 
     #nav-logo {
-        position:absolute;
-        left:20px;
-        top:14px;
+        margin-left:20px;
+        margin-top:14px;
         background:url(images/logol.png);
         width:110px;
         height:37px;
     }
 
     #nav-mark {
+		border: none;
         padding:10px;
         margin-left:15px;
         margin-right:15px;
-        margin-top:50px;
         color:#d7d7d7;
         background:#483D8B;
-        font-weight:600;
         font-size:0.9em;
         text-align:center;
         -moz-border-radius:2px;
@@ -84,8 +87,11 @@ input {
             color:#000000;
         }
     
-    #nav-filter {
+    #nav-filter-title {
         margin-top:20px;
+    }
+
+    #nav-filter {
         margin-bottom:30px;
     }
 
@@ -126,7 +132,6 @@ input {
         }
 
     #nav h2 {
-        cursor:pointer;
         color:#494949;
         text-transform:uppercase;
         font-size:0.8em;
@@ -139,11 +144,13 @@ input {
     }
 
         .nav-tags-collapsed {
+            cursor:pointer;
             padding-left: 20px;
             background: url(images/nav-collapsed.png) center left no-repeat;
         }
 
         .nav-tags-expanded {
+            cursor:pointer;
             padding-left: 20px;
             background: url(images/nav-expanded.png) center left no-repeat;
         }
@@ -187,11 +194,13 @@ input {
     }
 
         .nav-sources-collapsed {
+            cursor:pointer;
             padding-left: 20px;
             background: url(images/nav-collapsed.png) center left no-repeat;
         }
 
         .nav-sources-expanded {
+            cursor:pointer;
             padding-left: 20px;
             background: url(images/nav-expanded.png) center left no-repeat;
         }
@@ -239,6 +248,8 @@ input {
     #nav-settings,
     #nav-logout,
     #nav-login {
+        padding: 0;
+        border: none;
         position:absolute;
         top:100%;
         margin-top:-80px;
@@ -327,18 +338,19 @@ input {
         margin-left:35px;
     }
 
-    #search-shownav {
-        display:none;
-    }
-
     #search-button,
     #search-remove,
     #search-calendar {
+        box-sizing: content-box;
+        background: transparent;
+        padding: 0;
+        border: none;
+        position:absolute;
         width:30px;
         height:20px;
-        cursor:pointer;
-        position:absolute;
         top:11px;
+        left:280px;
+        cursor:pointer;
     }
     #nav-search-calendar {
         display:inline-block;
@@ -418,6 +430,35 @@ input {
         cursor:pointer;
     }
 
+/* unread count below the fold */
+
+#floating-unread {
+    display: none;
+    width: 40px;
+    position: fixed;
+    left: 185px;
+    bottom: 5px;
+    text-align: center;
+}
+
+#floating-unread .floating-unread-count {
+    display: inline;
+    min-width: 8px;
+    padding: 0 5px 0 5px;
+    background-color: #E74C3C;
+    border-radius: 30px;
+    font-size: 0.6em;
+    color: white;
+}
+
+#floating-unread .bottom-triangle {
+    position: relative;
+    bottom: 3px;
+    margin: 0 15px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #E74C3C;
+}
 
 /* content */
 
@@ -627,15 +668,25 @@ input {
         background:#eaeaea;
     }
 
-        .entry-smartphone-share li,
-        .entry-toolbar li {
-            display:inline-block;
+        .entry-smartphone-share button,
+        .entry-toolbar button {
+            background-color: transparent;
+            color: black;
+            border: none;
+            padding: 1px 0 0 20px;
             margin-left:10px;
-            padding-left:20px;
+			margin-top:5px;
+            float: left;
             cursor:pointer;
             background-size:16px 16px;
             background-repeat:no-repeat;
             background-position: left center;
+            vertical-align: middle;
+        }
+
+        .entry-smartphone-share button:focus,
+        .entry-toolbar button:focus {
+            outline: 1px dotted #aaa;
         }
 
         .entry-toolbar .entry-starr {
@@ -672,6 +723,11 @@ input {
             display:none;
         }
 
+        .entry-smartphone-share .entry-share,
+        .entry-toolbar .entry-share {
+            padding: 0;
+        }
+
         .entry-toolbar .entry-close {
             display:none;
             width:32px;
@@ -686,7 +742,8 @@ input {
         }
 
     .entry-batchtool,
-    .stream-more {
+    .stream-more,
+    .stream-error {
         height:35px;
         font-size:16px;
         font-weight:bold;
@@ -699,7 +756,8 @@ input {
         margin-top:5px;
         margin-bottom:15px;
     }
-    .stream-more {
+    .stream-more,
+    .stream-error {
         padding-top:10px;
         margin-top:10px;
         margin-bottom:10px;
@@ -715,6 +773,10 @@ input {
         }
 
         .stream-more.loading span {
+            display:none;
+        }
+
+        .stream-error {
             display:none;
         }
 
@@ -773,6 +835,16 @@ input {
         cursor:pointer;
     }
 
+.source-showparams,
+.source-delete,
+.source-save,
+.source-cancel {
+    padding: 0;
+    background: transparent;
+    color:#aaa;
+    border: none;
+}
+
 .source-edit-form {
     display:none;
     margin-left:20px;
@@ -822,6 +894,10 @@ input {
 }
 
 .source-add {
+    background: transparent;
+    border: none;
+    color: black;
+    padding: 0;
     cursor:pointer;
     margin-left:20px;
     float:left;
@@ -945,13 +1021,7 @@ input {
 
 /* public mode */
 
-body.publicmode.notloggedin #nav-mark {
-    height:3px;
-    padding:0;
-    overflow:hidden;
-    cursor:auto;
-}
-
+body.publicmode.notloggedin #nav-mark,
 body.publicmode.notloggedin .entry-batchtool,
 body.publicmode.notloggedin .entry-starr,
 body.publicmode.notloggedin .entry-unread {
@@ -1095,6 +1165,10 @@ body.publicmode.notloggedin .entry-unread {
         margin-left:157px;
     }
 
+    #floating-unread {
+        display: none !important;
+    }
+
     .entry-toolbar {
         margin-left:-7px;
     }
@@ -1208,6 +1282,10 @@ body.publicmode.notloggedin .entry-unread {
             display:none;
         }
 
+        #nav-mark {
+            width:90%;
+        }
+
         #nav-search {
             display:block;
             margin-bottom:80px;
@@ -1306,10 +1384,6 @@ body.publicmode.notloggedin .entry-unread {
             padding: 0;
         }
 
-        . {
-            height:50px;
-        }
-
     .sp-container {
         z-index:100;
     }
@@ -1392,8 +1466,7 @@ body.publicmode.notloggedin .entry-unread {
         height:50px;
     }
 
-        .entry-smartphone-share li {
-            float:left;
+        .entry-smartphone-share button {
             margin-right:10px;
             margin-bottom:5px;
             list-style:none;
@@ -1422,6 +1495,10 @@ body.publicmode.notloggedin .entry-unread {
         width:160px;
     }
 
+	#nav-mark {
+        width:135px;
+	}
+	
     #content {
         margin-left:165px;
         margin-top:0;

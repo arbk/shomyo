@@ -9,6 +9,7 @@ namespace daos\mysql;
  * @copyright  Copyright (c) Tobias Zeising (http://www.aditu.de)
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
+ * @author     arbk (http://aruo.net/)
  */
 class Sources extends Database {
 
@@ -200,9 +201,9 @@ class Sources extends Database {
             FROM '.\F3::get('db_prefix').'sources AS sources
             LEFT OUTER JOIN
                 (SELECT items.source, icon
-                 FROM '.\F3::get('db_prefix').'items,
+                 FROM '.\F3::get('db_prefix').'items AS items,
                       (SELECT source, MAX(id) as maxid
-                       FROM '.\F3::get('db_prefix').'items
+                       FROM '.\F3::get('db_prefix').'items AS items
                        WHERE icon IS NOT NULL AND icon != \'\'
                        GROUP BY items.source) AS icons
                  WHERE items.id=icons.maxid AND items.source=icons.source

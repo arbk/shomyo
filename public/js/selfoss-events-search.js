@@ -12,9 +12,11 @@ selfoss.events.search = function(){
   };
 
   var joinTerm = function(words){
-    if( !words || words.length <= 0 ) return '';
+    if( !words || words.length <= 0 ){ return ''; }
     for( var i = 0; i < words.length; i++ ){
-      if( words[i].indexOf(' ') >= 0 ) words[i] = '"' + words[i] + '"';
+      if( words[i].indexOf(' ') >= 0 ){
+        words[i] = '"' + words[i] + '"';
+      }
     }
     return words.join(' ');
   };
@@ -66,8 +68,12 @@ selfoss.events.search = function(){
     setFilter(selfoss.filter, words);
     selfoss.reloadList();
 
-    if( term == '' ) $('#search-list').hide();
-    else $('#search-list').show();
+    if( term == '' ){
+      $('#search-list').hide();
+    }
+    else{
+      $('#search-list').show();
+    }
   };
 
   var datepickerOptions = {

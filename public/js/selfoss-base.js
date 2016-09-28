@@ -167,6 +167,7 @@ var selfoss = {
             return;
         }
 
+        $('.stream-error').css('display', 'block').hide();
         $('#content').addClass('loading').html("");
 
         selfoss.activeAjaxReq = $.ajax({
@@ -199,25 +200,34 @@ var selfoss = {
                 selfoss.refreshTags(data.tags);
                 
                 // drop loaded sources
+                var currentSource = -1;
                 if(selfoss.sourcesNavLoaded) {
+                    currentSource = $('#nav-sources li').index($('#nav-sources .active'));
                     $('#nav-sources li').remove();
                     selfoss.sourcesNavLoaded = false;
                 }
                 if(selfoss.filter.sourcesNav)
-                selfoss.refreshSources(data.sources);
+                    selfoss.refreshSources(data.sources, currentSource);
 
-                // clean up
-                $('#content').removeClass('loading');
-                selfoss.activeAjaxReq = null;
+                // update the floating unread count
+                selfoss.events.updateUnreadBelowTheFold();
             },
             error: function(jqXHR, textStatus, errorThrown) {
+                if (textStatus == "parsererror")
+                    location.reload();
+                else {
                 if (textStatus == "abort")
                     return;
-                else if (textStatus == "parsererror")
-                    location.reload();
                 else if (errorThrown)
                     selfoss.showError('Load list error: '+
                                       textStatus+' '+errorThrown);
+                    $('.stream-error').show();
+                }
+            },
+            complete: function(jqXHR, textStatus) {
+                // clean up
+                $('#content').removeClass('loading');
+                selfoss.activeAjaxReq = null;
             }
         });
     },
@@ -240,7 +250,9 @@ var selfoss = {
             url: stats_url,
             type: 'GET',
             success: function(data) {
-                if( data.unread>0 && $('.stream-empty').is(':visible') ) {
+                if( data.unread>0 &&
+                    ($('.stream-empty').is(':visible') ||
+                     $('.stream-error').is(':visible')) ) {
                     selfoss.reloadList();
                 } else {
                     selfoss.refreshStats(data.all, data.unread, data.starred);
@@ -298,6 +310,24 @@ var selfoss = {
 
 
     /**
+     * refresh unread below the fold stats.
+     *
+     * @return void
+     * @param new unread stats (might be null when unknown)
+     */
+    refreshUnreadBelowTheFold: function(unread) {
+        var $floatingUnread = $('#floating-unread');
+        if (unread != null && unread <= 0) {
+            $floatingUnread.hide();
+        } else {
+            var $countBelow = $floatingUnread.find('.floating-unread-count');
+            $countBelow.html(unread == null ? '?' : unread);
+            $floatingUnread.show();
+        }
+    },
+
+
+    /**
      * refresh current tags.
      *
      * @return void
@@ -348,13 +378,14 @@ var selfoss = {
      *
      * @return void
      * @param sources the new sourceslist as html
+     * @param currentSource the index of the active source
      */
-    refreshSources: function(sources) {
-        var currentSource = $('#nav-sources li').index($('#nav-sources .active'));
+    refreshSources: function(sources, currentSource) {
+        var currentSourceIndex = currentSource >= 0 ? currentSource : $('#nav-sources li').index($('#nav-sources .active'));
         $('#nav-sources li').remove();
         $('#nav-sources').append(sources);
-        if(currentSource>=0)
-            $('#nav-sources li:eq('+currentSource+')').addClass('active');
+        if(currentSourceIndex>=0)
+            $('#nav-sources li:eq('+currentSourceIndex+')').addClass('active');
         selfoss.events.navigation();
     },
     
