@@ -5,15 +5,22 @@ session_name("WSRVSID");
 
 // callback for just before output
 header_register_callback(function(){
-    header_remove("X-Powered-By");
+  header_remove("X-Powered-By");
 });
 
 require(__DIR__.'/common.php');
 
-// Load custom language
+// language settings
 $lang = $f3->get('language');
-if($lang!='0' && $lang!='')
-    $f3->set('LANGUAGE', $lang);
+if($lang!='' && $lang!='0'){
+  // load custom language
+  $f3->set('LANGUAGE', $lang);
+}
+else{
+  // set default language ('LANGUAGE' is 'Accept-Language')
+  $langs = explode(',', $f3->get('LANGUAGE'));
+  $f3->set('language', $langs[0]);
+}
 
 // init authentication
 $f3->set('auth', new \helpers\Authentication());
