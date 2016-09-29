@@ -67,7 +67,7 @@
         <?PHP echo $content; ?>
 
         <div class="entry-smartphone-share">
-            <button class="entry-newwindow"><a rel="nofollow" href="<?PHP echo $anonlink; ?>" target="_blank"><?PHP echo \F3::get('lang_open_window')?></a></button>
+            <a class="button entry-newwindow" rel="nofollow" href="<?PHP echo $anonlink; ?>" target="_blank"><span class="label"><?PHP echo \F3::get('lang_open_window')?></span></a>
             <button class="entry-next"><?PHP echo \F3::get('lang_next')?></button>
         </div>
     </div>
@@ -76,7 +76,7 @@
     <div class="entry-toolbar">
         <button class="entry-starr <?PHP echo $this->item['starred']==1 ? 'active' : ''; ?>"><?PHP echo $this->item['starred']==1 ? \F3::get('lang_unstar') : \F3::get('lang_star'); ?></button>
         <button class="entry-unread <?PHP echo $this->item['unread']==1 ? 'active' : ''; ?>"><?PHP echo $this->item['unread']==1 ? \F3::get('lang_mark') : \F3::get('lang_unmark'); ?></button>
-        <button class="entry-newwindow"><a rel="nofollow" href="<?PHP echo $anonlink; ?>" target="_blank"><?PHP echo \F3::get('lang_open_window')?></a></button>
+        <a class="button entry-newwindow" rel="nofollow" href="<?PHP echo $anonlink; ?>" target="_blank"><span class="label"><?PHP echo \F3::get('lang_open_window')?></span></a>
         <button class="entry-loadimages"><?PHP echo \F3::get('lang_load_img')?> </button>
         <button class="entry-next" style="display:none;"><?PHP echo \F3::get('lang_next')?></button>
         <button class="entry-close"></button>

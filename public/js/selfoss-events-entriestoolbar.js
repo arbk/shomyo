@@ -44,12 +44,12 @@ selfoss.events.entriesToolbar = function(parent) {
 
     // configure shares
     var shares = selfoss.shares.getAll();
-    if (shares.length > 0)
+    if (shares && 0 < shares.length)
     {
         if (parent.find('.entry-toolbar').has('button.entry-share'+shares[0]).length == 0)
         {
             // add the share toolbar entries
-            parent.find('.entry-smartphone-share button.entry-newwindow').after(selfoss.shares.buildLinks(shares, function(id, name, image) { return '<button class="entry-share entry-share'+id+'" title="'+name+'"><img class="entry-share" title="'+name+'" src="images/'+image+'" height="16" width="16">'+name+'</button>'}));
+            parent.find('.entry-smartphone-share .button.entry-newwindow').after(selfoss.shares.buildLinks(shares, function(id, name, image) { return '<button class="entry-share entry-share'+id+'" title="'+name+'"><img class="entry-share" title="'+name+'" src="images/'+image+'" height="16" width="16">'+name+'</button>'}));
             parent.find('.entry-toolbar button.entry-next').after(selfoss.shares.buildLinks(shares, function(id, name, image) { return '<button class="entry-share entry-share'+id+'"><img title="'+name+'" src="images/'+image+'" height="16" width="16"></button>'}));
             // hookup the share icon click events
             for(var i = 0; i < shares.length; i++){
