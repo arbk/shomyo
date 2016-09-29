@@ -131,7 +131,8 @@ selfoss.shortcuts = {
         
         // 'Ctrl+m': mark all as read
         $(document).bind('keydown', 'ctrl+m', function(e) {
-            $('#nav-mark').click();
+//          $('#nav-mark').click();
+        	selfoss.markVisibleRead();
             e.preventDefault();
             return false;
         });

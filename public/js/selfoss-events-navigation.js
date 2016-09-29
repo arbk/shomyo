@@ -205,11 +205,11 @@ selfoss.events.navigation = function() {
     $('#nav-login').unbind('click').click(function () {
         window.location.href = $('base').attr('href')+"?login=1";
     });
-    
+
     // only loggedin users
     if($('body').hasClass('loggedin')==true) {
-        $('#nav-mark').unbind('click').click(selfoss.markVisibleRead);
-        
+//      $('#nav-mark').unbind('click').click(selfoss.markVisibleRead);
+
         // show sources
         $('#nav-settings').unbind('click').click(function () {
             location.hash = "sources";
@@ -219,8 +219,8 @@ selfoss.events.navigation = function() {
 
             $('#floating-unread').hide();
         });
-        
-        
+
+
         // logout
         $('#nav-logout').unbind('click').click(function () {
             window.location.href = $('base').attr('href')+"?logout=1";
