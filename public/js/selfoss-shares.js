@@ -1,15 +1,17 @@
 selfoss.shares = {
   initialized: false,
-  enabledShares: {},
+  enabledShares: null,
   names: {},
   images: {},
   openInNewWindows: {},
   urlBuilders: {},
 
-  init: function(enabledShares) {
-	this.initialized = true;
+  init: function(configShare) {
+    this.initialized = true;
 
-	if(null!=enabledShares){ this.enabledShares = enabledShares.split(','); }
+    if(!configShare){ return; }
+
+    this.enabledShares = configShare.split(',');
 
     this.register('twtr', 'Twitter', 'share-twtr.png', true, function(url, title) {
       return "https://twitter.com/intent/tweet?source=webclient&text="+encodeURIComponent(title)+" "+encodeURIComponent(url);
@@ -54,11 +56,10 @@ selfoss.shares = {
   },
 
   getAll: function() {
-    var allIds = new Array();
-    if( 0 < this.enabledShares.length ){
-    	allIds = this.enabledShares.concat();
+    if(this.enabledShares && 0 < this.enabledShares.length ){
+      return this.enabledShares.concat();
     }
-    return allIds;
+    return null;
   },
 
   share: function(id, url, title) {
