@@ -54,9 +54,9 @@ selfoss.events.entries = function(e){
       fullscreen.show();
 
       // lazy load images in fullscreen
-      if($('#config').data('load_images_on_mobile')=="1"){
+      if($('#config').data('auto_load_images')=="1"){
         fullscreen.lazyLoadImages();
-        fullscreen.find('.entry-loadimages').hide();
+//      fullscreen.find('.entry-loadimages').hide();
       }
 
       // set events for fullscreen
@@ -117,8 +117,8 @@ selfoss.events.entries = function(e){
         content.find('img').load(selfoss.events.updateUnreadBelowTheFold);
       }
 
-      // load images not on mobile devices
-      if(selfoss.isMobile()==false || $('#config').data('load_images_on_mobile')=="1"){
+      // load images
+      if($('#config').data('auto_load_images')=="1"){
         content.lazyLoadImages();
       }
 

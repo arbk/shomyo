@@ -13,11 +13,14 @@ selfoss.events.entriesToolbar = function(parent) {
     });
 
     // load images
-    parent.find('.entry-loadimages').unbind('click').click(function() {
-        $(this).parents('.entry').lazyLoadImages();
-        $(this).fadeOut();
-        return false;
-    });
+    if($('#config').data('auto_load_images')!="1"){
+        parent.find('.entry-loadimages').unbind('click').click(function() {
+            $(this).parents('.entry').lazyLoadImages();
+            $(this).fadeOut();
+            return false;
+        });
+        parent.find('.entry-loadimages').css('display','inline-block');
+    }
 
     // open in new window
 //  parent.find('.entry-newwindow').unbind('click').click(function(e) {
@@ -36,7 +39,7 @@ selfoss.events.entriesToolbar = function(parent) {
     parent.find('.entry-smartphone-share .entry-next').unbind('click').click(function(e) {
         var $selected = $('.entry.selected, .entry.fullscreen:visible');
         var id = $selected.attr('id').replace('entrr', 'entry');
-        $selected.find('.entry-unread.active').click();
+//      $selected.find('.entry-unread.active').click();
         $selected.find('.entry-title').click();
         $("#" + id).next('.entry').find('.entry-title').click();
         return false;
