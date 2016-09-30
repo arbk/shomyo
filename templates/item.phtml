@@ -1,84 +1,83 @@
 <?PHP
-    $title = $this->item['title'];
-    $author = $this->item['author'];
-    //$content = html_entity_decode($this->item['content']);
-    $content = str_replace('&#34;', '"', $this->item['content']);
-    $sourcetitle = $this->item['sourcetitle'];
-    $this->viewHelper = new \helpers\ViewHelper();
-    if(isset($this->search)) {
-        $sourcetitle = $this->viewHelper->highlight($sourcetitle, $this->search);
-        $title = $this->viewHelper->highlight($title, $this->search);
-        $content = $this->viewHelper->highlight($content, $this->search);
-    }
-    $title = $this->viewHelper->lazyimg($title);
-    $content = $this->viewHelper->lazyimg($content);
-    $date = $this->viewHelper->dateago($this->item['datetime']);
-    $anonlink = \helpers\Anonymizer::anonymize($this->item['link']);
+ $title = $this->item['title'];
+ $author = $this->item['author'];
+ //$content = html_entity_decode($this->item['content']);
+ $content = str_replace('&#34;', '"', $this->item['content']);
+ $sourcetitle = $this->item['sourcetitle'];
+ $this->viewHelper = new \helpers\ViewHelper();
+ if(isset($this->search)) {
+  $sourcetitle = $this->viewHelper->highlight($sourcetitle, $this->search);
+  $title = $this->viewHelper->highlight($title, $this->search);
+  $content = $this->viewHelper->highlight($content, $this->search);
+ }
+ $title = $this->viewHelper->lazyimg($title);
+ $content = $this->viewHelper->lazyimg($content);
+ $date = $this->viewHelper->dateago($this->item['datetime']);
+ $anonlink = \helpers\Anonymizer::anonymize($this->item['link']);
 ?>
 <div id="entry<?PHP echo $this->item['id']; ?>" 
-     class="entry 
-            <?PHP echo $this->item['unread']==1 ? 'unread' : ''; ?>" 
-     role="article">
+  class="entry 
+   <?PHP echo $this->item['unread']==1 ? 'unread' : ''; ?>" role="article">
 
-    <!-- icon -->
-    <a rel="nofollow" href="<?PHP echo $anonlink; ?>" class="entry-icon">
-        <?PHP if(strlen(trim($this->item['icon']))>0 && $this->item['icon']!="0") : ?>
-        <img src="<?PHP echo 'favicons/'.$this->item['icon']; ?>" alt="" >
-        <?PHP endif; ?>
-    </a>
+ <!-- icon -->
+ <a rel="nofollow" href="<?PHP echo $anonlink; ?>" class="entry-icon">
+  <?PHP if(strlen(trim($this->item['icon']))>0 && $this->item['icon']!="0") : ?>
+  <img src="<?PHP echo 'favicons/'.$this->item['icon']; ?>" alt="" >
+  <?PHP endif; ?>
+ </a>
 
-    <!-- title -->
-    <h2 class="entry-title"><?PHP echo $title; ?></h2>
+ <!-- title -->
+ <h2 class="entry-title"><?PHP echo $title; ?></h2>
 
-    <span class="entry-tags">
-        <?PHP foreach($this->item['tags'] as $tag => $color) : ?>
-            <span class="entry-tags-tag" style="color:<?PHP echo $color['foreColor']; ?>;background-color:<?PHP echo $color['backColor']; ?>"><?PHP echo $tag; ?></span>
-        <?PHP endforeach; ?>
-    </span>
+ <span class="entry-tags">
+  <?PHP foreach($this->item['tags'] as $tag => $color) : ?>
+   <span class="entry-tags-tag" style="color:<?PHP echo $color['foreColor']; ?>;background-color:<?PHP echo $color['backColor']; ?>"><?PHP echo $tag; ?></span>
+  <?PHP endforeach; ?>
+ </span>
 
-    <!-- source -->
-    <a rel="nofollow" href="<?PHP echo $anonlink; ?>" class="entry-source entry-source<?PHP echo $this->item['source']; ?>" target="_blank"><?PHP echo $sourcetitle ?></a>
-    <a rel="nofollow" href="<?PHP echo $this->item['link']; ?>" class="entry-link"></a>
+ <!-- source -->
+ <a rel="nofollow" href="<?PHP echo $anonlink; ?>" class="entry-source entry-source<?PHP echo $this->item['source']; ?>" target="_blank"><?PHP echo $sourcetitle ?></a>
+ <a rel="nofollow" href="<?PHP echo $this->item['link']; ?>" class="entry-link"></a>
 
-    <span class="entry-separator">&bull;</span>
+ <span class="entry-separator">&bull;</span>
 
-    <!-- author -->
-    <?PHP if( 0 < strlen($author) ) : ?>
-    <span class="entry-author"><?PHP echo $author; ?></span>
-    <span class="entry-separator">&bull;</span>
-    <?PHP endif; ?>
+ <!-- author -->
+ <?PHP if( 0 < strlen($author) ) : ?>
+ <span class="entry-author"><?PHP echo $author; ?></span>
+ <span class="entry-separator">&bull;</span>
+ <?PHP endif; ?>
 
-    <!-- datetime -->
-    <span class="entry-datetime">
-        <?PHP echo $date; ?>
-    </span>
+ <!-- datetime -->
+ <span class="entry-datetime">
+  <?PHP echo $date; ?>
+ </span>
 
-    <!-- thumbnail -->
-    <?PHP if(isset($this->item['thumbnail']) && strlen(trim($this->item['thumbnail']))>0) : ?>
-    <div class="entry-thumbnail">
-        <a rel="nofollow" href="<?PHP echo $anonlink; ?>" target="_blank">
-            <img src="<?PHP echo 'thumbnails/'.$this->item['thumbnail']; ?>" alt="<?PHP echo require_once('libs/htmLawed.php'); htmLawed(htmlspecialchars_decode($this->item['title']), array("deny_attribute" => "*", "elements" => "-*")); ?>" />
-        </a>
-    </div>
-    <?PHP endif; ?>
+ <!-- thumbnail -->
+ <?PHP if(isset($this->item['thumbnail']) && strlen(trim($this->item['thumbnail']))>0) : ?>
+ <div class="entry-thumbnail">
+  <a rel="nofollow" href="<?PHP echo $anonlink; ?>" target="_blank">
+   <img src="<?PHP echo 'thumbnails/'.$this->item['thumbnail']; ?>" alt="<?PHP echo require_once('libs/htmLawed.php'); htmLawed(htmlspecialchars_decode($this->item['title']), array("deny_attribute" => "*", "elements" => "-*")); ?>" />
+  </a>
+ </div>
+ <?PHP endif; ?>
 
-    <!-- content -->
-    <div class="entry-content <?PHP if(strlen(strip_tags($content))<500) : ?>entry-content-nocolumns<?PHP endif; ?>">
-        <?PHP echo $content; ?>
+ <!-- content -->
+ <div class="entry-content <?PHP if(strlen(strip_tags($content))<500) : ?>entry-content-nocolumns<?PHP endif; ?>">
+  <?PHP echo $content; ?>
 
-        <div class="entry-smartphone-share">
-            <a class="button entry-newwindow" rel="nofollow" href="<?PHP echo $anonlink; ?>" target="_blank"><span class="label"><?PHP echo \F3::get('lang_open_window')?></span></a>
-            <button class="entry-next"><?PHP echo \F3::get('lang_next')?></button>
-        </div>
-    </div>
+  <div class="entry-smartphone-share">
+   <a class="button entry-newwindow" rel="nofollow" href="<?PHP echo $anonlink; ?>" target="_blank"><span class="label"><?PHP echo \F3::get('lang_open_window')?></span></a>
+   <button class="entry-next"><?PHP echo \F3::get('lang_next')?></button>
+  </div>
+ </div>
 
-    <!-- toolbar -->
-    <div class="entry-toolbar">
-        <button class="entry-starr <?PHP echo $this->item['starred']==1 ? 'active' : ''; ?>"><?PHP echo $this->item['starred']==1 ? \F3::get('lang_unstar') : \F3::get('lang_star'); ?></button>
-        <button class="entry-unread <?PHP echo $this->item['unread']==1 ? 'active' : ''; ?>"><?PHP echo $this->item['unread']==1 ? \F3::get('lang_mark') : \F3::get('lang_unmark'); ?></button>
-        <a class="button entry-newwindow" rel="nofollow" href="<?PHP echo $anonlink; ?>" target="_blank"><span class="label"><?PHP echo \F3::get('lang_open_window')?></span></a>
-        <button class="entry-loadimages"><?PHP echo \F3::get('lang_load_img')?> </button>
-        <button class="entry-next" style="display:none;"><?PHP echo \F3::get('lang_next')?></button>
-        <button class="entry-close"></button>
-    </div>
+ <!-- toolbar -->
+ <div class="entry-toolbar">
+  <button class="entry-starr <?PHP echo $this->item['starred']==1 ? 'active' : ''; ?>"><?PHP echo $this->item['starred']==1 ? \F3::get('lang_unstar') : \F3::get('lang_star'); ?></button>
+  <button class="entry-unread <?PHP echo $this->item['unread']==1 ? 'active' : ''; ?>"><?PHP echo $this->item['unread']==1 ? \F3::get('lang_mark') : \F3::get('lang_unmark'); ?></button>
+  <a class="button entry-newwindow" rel="nofollow" href="<?PHP echo $anonlink; ?>" target="_blank"><span class="label"><?PHP echo \F3::get('lang_open_window')?></span></a>
+  <button class="entry-loadimages"><?PHP echo \F3::get('lang_load_img')?> </button>
+  <button class="entry-next" style="display:none;"><?PHP echo \F3::get('lang_next')?></button>
+  <button class="entry-close"></button>
+ </div>
 </div>

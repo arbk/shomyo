@@ -1,70 +1,75 @@
 <!doctype html>
+<html lang="<?PHP echo \F3::get('language'); ?>">
 <head>
-    <base href="<?PHP echo $this->base; ?>" />
 
-    <meta charset="utf-8">
+ <base href="<?PHP echo $this->base; ?>" />
 
-    <meta name="robots" content="noindex" />
+ <meta charset="utf-8">
 
-    <title><?PHP echo trim(\F3::get('html_title')); ?></title>
+ <meta name="robots" content="noindex" />
 
-    <meta name="description" content="shomyo is the web based feed reader and aggregator." />
-    <meta name="author" content="arbk" />
+ <title><?PHP echo trim(\F3::get('html_title')); ?></title>
 
-    <meta name="referrer" content="no-referrer">
+ <meta name="description" content="shomyo is the web based feed reader and aggregator." />
+ <meta name="author" content="arbk" />
 
-    <!--  Mobile viewport optimized: j.mp/bplateviewport -->
-    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1" />
+ <meta name="referrer" content="no-referrer">
 
-    <!--  Add support for fullscreen Webapp on iPhone 5 -->
-    <meta name="viewport" content="initial-scale=1, user-scalable=no, maximum-scale=1" media="(device-height: 568px)" />
+ <!--  Mobile viewport optimized: j.mp/bplateviewport -->
+ <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1" />
 
-    <!-- app 'behaviour' when adding link to iDevice springboard -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+ <!--  Add support for fullscreen Webapp on iPhone 5 -->
+ <meta name="viewport" content="initial-scale=1, user-scalable=no, maximum-scale=1" media="(device-height: 568px)" />
 
-    <!-- icons -->
-    <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
-    <link rel="icon" type="image/png" href="apple-touch-icon.png" />
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+ <!-- Web application behavior -->
+ <meta name="application-name" content="shomyo" />
+ <meta name="apple-mobile-web-app-capable" content="yes" />
+ <meta name="mobile-web-app-capable" content="yes" />
 
-    <!-- Toolbar color from Chrome for Android -->
-    <meta name="theme-color" content="#191718" />
+ <!-- icons -->
+ <link rel="apple-touch-icon-precomposed" href="apple-touch-icon.png" />
+ <link rel="icon" type="image/png" href="apple-touch-icon.png" />
+ <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
 
-    <!-- all css definitions -->
-    <?PHP if(\F3::get('use_system_font')!=true) : ?>
-        <link rel="stylesheet" href="css/fonts.css" />
-    <?PHP endif; ?>
-    <link rel="stylesheet" href="<?PHP echo \helpers\View::getGlobalCssFileName(); ?>" />
+ <!-- Toolbar color from Chrome for Android -->
+ <meta name="theme-color" content="#191718" />
+
+ <!-- all css definitions -->
+ <?PHP if(\F3::get('use_system_font')!=true) : ?>
+  <link rel="stylesheet" href="css/fonts.css" />
+ <?PHP endif; ?>
+ <link rel="stylesheet" href="<?PHP echo \helpers\View::getGlobalCssFileName(); ?>" />
 
 </head>
 <body>
 
-    <?PHP if(!isset($this->password)) : ?>
-    <form action="<?PHP echo $this->base; ?>?login=1" method="post">
-    <ul id="login">
-        <li><h1>shomyo login</h1></li>
-         <li><label for="username"><?PHP echo trim(\F3::get('lang_login_username')); ?>:</label> <input type="text" name="username" id="username"></li>
-         <li><label for="password"><?PHP echo trim(\F3::get('lang_login_password')); ?>:</label> <input type="password" name="password" id="password"></li>
-        <?PHP if(isset($this->error)) : ?>
-        <li class="error"><?PHP echo $this->error; ?></li>
-        <?PHP endif; ?>
-        <li class="button"><label>&nbsp;</label><input type="submit" value="<?PHP echo \F3::get('lang_login'); ?>" /></li>
-    </ul>
-    </form>
+ <?PHP if(!isset($this->password)) : ?>
+ <form action="<?PHP echo $this->base; ?>?login=1" method="post">
+ <ul id="login">
+  <li><h1>shomyo login</h1></li>
+   <li><label for="username"><?PHP echo trim(\F3::get('lang_login_username')); ?>:</label> <input type="text" name="username" id="username"></li>
+   <li><label for="password"><?PHP echo trim(\F3::get('lang_login_password')); ?>:</label> <input type="password" name="password" id="password"></li>
+  <?PHP if(isset($this->error)) : ?>
+  <li class="error"><?PHP echo $this->error; ?></li>
+  <?PHP endif; ?>
+  <li class="button"><label>&nbsp;</label><input type="submit" value="<?PHP echo \F3::get('lang_login'); ?>" /></li>
+ </ul>
+ </form>
 
-    <?PHP else : ?>
-    <form action="<?PHP echo $this->base; ?>password" method="post">
-    <ul id="login">
-        <li><h1>hash generator</h1></li>
-        <li><label for="password">Password:</label> <input type="password" name="password" id="password"></li>
-        <?PHP if(isset($this->hash)) : ?>
-        <li class="error"><label>&nbsp;</label>Generated Password (insert this in config.ini): <input type="text" id="hash" value="<?PHP echo $this->hash; ?>" /></li>
-        <?PHP endif; ?>
-        <li><label>&nbsp;</label><input class="button" type="submit" value="generate password" /></li>
-    </ul>
-    </form>
-    <?PHP endif; ?>
+ <?PHP else : ?>
+ <form action="<?PHP echo $this->base; ?>password" method="post">
+ <ul id="login">
+  <li><h1>hash generator</h1></li>
+  <li><label for="password">Password:</label> <input type="password" name="password" id="password"></li>
+  <?PHP if(isset($this->hash)) : ?>
+  <li class="error"><label>&nbsp;</label>Generated Password (insert this in config.ini): <input type="text" id="hash" value="<?PHP echo $this->hash; ?>" /></li>
+  <?PHP endif; ?>
+  <li><label>&nbsp;</label><input class="button" type="submit" value="generate password" /></li>
+ </ul>
+ </form>
+ <?PHP endif; ?>
 
-    <script src="<?PHP echo \helpers\View::getGlobalJsFileName(); ?>"></script>
+ <script src="<?PHP echo \helpers\View::getGlobalJsFileName(); ?>"></script>
+
 </body>
 </html>
