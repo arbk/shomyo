@@ -111,19 +111,12 @@ selfoss.events.entries = function(e){
         else if( (content.outerHeight() + content.offset().top) > ($(window).scrollTop() + $(window).height()) ){
           parent.get(0).scrollIntoView(false);
         }
-
-        // update the floating unread count after every image load
-        // since they might resize the entry container
-        content.find('img').load(selfoss.events.updateUnreadBelowTheFold);
       }
 
       // load images
       if($('#config').data('auto_load_images')=="1"){
         content.lazyLoadImages();
       }
-
-      // update the floating unread count
-      selfoss.events.updateUnreadBelowTheFold();
     }
   });
 
@@ -144,11 +137,6 @@ selfoss.events.entries = function(e){
        && $('.stream-more').position().top < $(window).height() + $(window).scrollTop() 
        && $('.stream-more').hasClass('loading')==false){
       $('.stream-more').click();
-    }
-
-    if ($('#floating-unread').is(':visible')) {
-      // update the floating unread count
-      selfoss.events.updateUnreadBelowTheFold();
     }
   });
 

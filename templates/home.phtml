@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="<?PHP echo \F3::get('language'); ?>">
 <head>
+
  <base href="<?PHP echo $this->base; ?>" />
 
  <meta charset="utf-8">
@@ -20,14 +21,12 @@
  <!--  Add support for fullscreen Webapp on iPhone 5 -->
  <meta name="viewport" content="initial-scale=1, user-scalable=no, maximum-scale=1" media="(device-height: 568px)" />
 
- <!-- app 'behaviour' when adding link to iDevice springboard -->
+ <!-- Web application behavior -->
+ <meta name="application-name" content="shomyo" />
  <meta name="apple-mobile-web-app-capable" content="yes" />
-
- <!-- app 'behaviour' when adding link to Android Home  -->
  <meta name="mobile-web-app-capable" content="yes" />
 
  <!-- app tile and notification when adding link to Windows 8 start screen -->
- <meta name="application-name" content="shomyo" />
  <meta name="msapplication-TileColor" content="#3d6d69" />
  <meta name="msapplication-square70x70logo" content="<?php echo $this->base; ?>win8-70-icon.png" />
  <meta name="msapplication-square150x150logo" content="<?php echo $this->base; ?>win8-150-icon.png" />
@@ -139,7 +138,7 @@
   <!-- navigation search input just for smartphone version -->
   <div id="nav-search" role="search">
    <input type="search" id="nav-search-term">
-   <div id="nav-search-calendar" /></div>
+   <div id="nav-search-calendar"></div>
    <input type="button" id="nav-search-button" value="<?PHP echo \F3::get('lang_searchbutton')?>">
    <hr>
   </div>
@@ -174,12 +173,6 @@
  <ul id="search-list">
  </ul>
 
- <!-- unread count below the fold -->
- <div id="floating-unread" aria-hidden="true">
-  <span class="floating-unread-count"></span>
-  <div class="bottom-triangle"></div>
- </div>
-
  <!-- content -->
  <div id="content" role="main">
   <?PHP echo $this->content; ?>
@@ -191,5 +184,6 @@
  <div id="fullscreen-entry"></div>
 
  <script src="<?PHP echo \helpers\View::getGlobalJsFileName(); ?>"></script>
+
 </body>
 </html>
