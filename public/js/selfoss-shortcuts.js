@@ -222,10 +222,10 @@ selfoss.shortcuts = {
         // open?
         if(open) {
             var content = current.find('.entry-content');
-            // load images not on mobile devices
-            if(selfoss.isMobile()==false) {
+            // load images
+            if($('#config').data('auto_load_images')=="1") {
                 content.lazyLoadImages();
-                current.next().find('.entry-content').lazyLoadImages();
+//              current.next().find('.entry-content').lazyLoadImages();
             }
             // anonymize
             selfoss.anonymize(content);
