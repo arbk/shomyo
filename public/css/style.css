@@ -490,10 +490,15 @@ span.unread-count.unread {
   display:inline;
   font-weight:normal;
   margin-right:5px;
+}
+
+.entry-title,
+.entry-tags,
+.entry-tags-tag {
   cursor:pointer;
 }
+
 .entry-title {
-  cursor:pointer;
   color:#999999;
   padding-top:7px;
   padding-bottom:7px;
@@ -1174,7 +1179,7 @@ body.publicmode.notloggedin .entry-unread {
   }
 
   .entry.selected {
-    background:#ededed;
+      border:2px groove #ccc;
   }
 
   .source-add { 
