@@ -151,7 +151,7 @@ class ContentLoader {
             }
 
             // sanitize title
-            $title = $this->sanitizeField($item->getTitle());
+            $title = $this->sanitize2Text($item->getTitle());
             if(strlen(trim($title))==0)
                 $title = "[" . \F3::get('lang_no_title') . "]";
 
@@ -160,7 +160,10 @@ class ContentLoader {
 //              continue;
 
             // sanitize author
-            $author = $this->sanitizeField($item->getAuthor());
+            $author = $this->sanitize2Text($item->getAuthor());
+
+            // sanitize link
+            $link = $this->sanitize2Text($item->getLink());
 
             \F3::get('logger')->log('item content sanitized', \DEBUG);
 
@@ -185,7 +188,7 @@ class ContentLoader {
                     'uid'          => $item->getId(),
                     'thumbnail'    => $item->getThumbnail(),
                     'icon'         => $icon!==false ? $icon : "",
-                    'link'         => htmLawed($item->getLink(), array("deny_attribute" => "*", "elements" => "-*")),
+                    'link'         => $link,
                     'author'       => $author
             );
 
@@ -262,15 +265,17 @@ class ContentLoader {
      */
     protected function sanitizeContent($content) {
         return htmLawed(
-            $content,
+            htmlspecialchars_decode($content),
             array(
                 "safe"           => 1,
-                "deny_attribute" => '* -alt -title -src -href -target -width -height, img +width +height',
                 "keep_bad"       => 0,
                 "comment"        => 1,
                 "cdata"          => 1,
-                "elements"       => 'div,p,ul,li,a,img,dl,dt,dd,h1,h2,h3,h4,h5,h6,ol,br,table,tr,td,blockquote,pre,ins,del,th,thead,tbody,b,i,strong,em,tt,sub,sup,s,strike,code'
-            )
+                "anti_link_spam" => array('`.`', ''),
+                "deny_attribute" => '* -alt -title -src -href -target -width -height',
+                "elements"       => 'div, p, ul, li, a, img, dl, dt, dd, h1, h2, h3, h4, h5, h6, ol, br, table, tr, td, blockquote, pre, ins, del, th, thead, tbody, b, i, strong, em, tt, sub, sup, s, strike, code'
+            ),
+            'img=-width, -height'
         );
     }
 
@@ -284,10 +289,24 @@ class ContentLoader {
         return htmLawed(
             htmlspecialchars_decode($value),
             array(
+                "safe"           => 1,
+                "keep_bad"       => 0,
+                "comment"        => 1,
+                "cdata"          => 1,
                 "deny_attribute" => '* -href -title -target',
-                "elements"       => 'a,br,ins,del,b,i,strong,em,tt,sub,sup,s,code'
+                "elements"       => 'a, br, ins, del, b, i, strong, em, tt, sub, sup, s, code'
             )
         );
+    }
+
+    /**
+     * Sanitize to a text field
+     *
+     * @param $value content of the given field
+     * @return mixed|string sanitized content
+     */
+    protected function sanitize2Text($value) {
+      return strip_tags( htmlspecialchars_decode($value) );
     }
 
     /**

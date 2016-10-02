@@ -1,5 +1,5 @@
 <?PHP
- $title = $this->item['title'];
+ $title = $title_text = $this->item['title'];
  $author = $this->item['author'];
  //$content = html_entity_decode($this->item['content']);
  $content = str_replace('&#34;', '"', $this->item['content']);
@@ -10,7 +10,7 @@
   $title = $this->viewHelper->highlight($title, $this->search);
   $content = $this->viewHelper->highlight($content, $this->search);
  }
- $title = $this->viewHelper->lazyimg($title);
+ //$title = $this->viewHelper->lazyimg($title);
  $content = $this->viewHelper->lazyimg($content);
  $date = $this->viewHelper->dateago($this->item['datetime']);
  $anonlink = \helpers\Anonymizer::anonymize($this->item['link']);
@@ -56,7 +56,7 @@
  <?PHP if(isset($this->item['thumbnail']) && strlen(trim($this->item['thumbnail']))>0) : ?>
  <div class="entry-thumbnail">
   <a rel="nofollow" href="<?PHP echo $anonlink; ?>" target="_blank">
-   <img src="<?PHP echo 'thumbnails/'.$this->item['thumbnail']; ?>" alt="<?PHP echo require_once('libs/htmLawed.php'); htmLawed(htmlspecialchars_decode($this->item['title']), array("deny_attribute" => "*", "elements" => "-*")); ?>" />
+   <img src="<?PHP echo 'thumbnails/'.$this->item['thumbnail']; ?>" alt="<?PHP echo $title_text; ?>" />
   </a>
  </div>
  <?PHP endif; ?>
