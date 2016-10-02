@@ -3,7 +3,7 @@
  */
 (function($){
 $.fn.lazyLoadImages = function() {
-    $(this).find('img').each(function(i, self) {
+    $(this).find('img[ref]').each(function(i, self) {
         $(self).attr('src', $(self).attr('ref'));
     });
 }

@@ -13,9 +13,9 @@ selfoss.events.entriesToolbar = function(parent) {
     });
 
     // load images
-    if($('#config').data('auto_load_images')!="1"){
+    if($('#config').data('auto_load_images')!="1" && parent.closest('.entry').find('img[ref]').length){
         parent.find('.entry-loadimages').unbind('click').click(function() {
-            $(this).parents('.entry').lazyLoadImages();
+            $(this).closest('.entry').lazyLoadImages();
             $(this).fadeOut();
             return false;
         });
@@ -24,7 +24,7 @@ selfoss.events.entriesToolbar = function(parent) {
 
     // open in new window
 //  parent.find('.entry-newwindow').unbind('click').click(function(e) {
-//      window.open($(this).parents(".entry").children(".entry-source").attr("href"));
+//      window.open($(this).closest(".entry").children(".entry-source").attr("href"));
 //      e.preventDefault();
 //      return false;
 //  });
@@ -58,7 +58,7 @@ selfoss.events.entriesToolbar = function(parent) {
             for(var i = 0; i < shares.length; i++){
               (function(share){
                 parent.find('.entry-share' + share).unbind('click').click(function(e) {
-                  var entry = $(this).parents(".entry");
+                  var entry = $(this).closest(".entry");
                         selfoss.shares.share(share, entry.children(".entry-link").eq(0).attr("href"), entry.children(".entry-title").html());
                   e.preventDefault();
                   return false;
@@ -72,7 +72,7 @@ selfoss.events.entriesToolbar = function(parent) {
     if($('body').hasClass('loggedin')==true) {
         // starr/unstarr
         parent.find('.entry-starr').unbind('click').click(function() {
-            var parent = $(this).parents('.entry');
+            var parent = $(this).closest('.entry');
             var id = parent.attr('id').substr(5);
             var starr = $(this).hasClass('active')==false;
             var button = $("#entry"+id+" .entry-starr, #entrr"+id+" .entry-starr");
@@ -125,7 +125,7 @@ selfoss.events.entriesToolbar = function(parent) {
 
         // read/unread
         parent.find('.entry-unread').unbind('click').click(function() {
-            var id = $(this).parents('.entry').attr('id').substr(5);
+            var id = $(this).closest('.entry').attr('id').substr(5);
             var unread = $(this).hasClass('active')==true;
             var button = $("#entry"+id+" .entry-unread, #entrr"+id+" .entry-unread");
             var parent = $("#entry"+id+", #entrr"+id);
