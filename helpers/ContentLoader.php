@@ -264,6 +264,29 @@ class ContentLoader {
      * @return mixed|string sanitized content
      */
     protected function sanitizeContent($content) {
+        if( !function_exists('\helpers\editContentTag') ){
+            // http://www.bioinformatics.org/phplabware/internal_utilities/htmLawed/htmLawed_README.htm#s3.4.9
+            function editContentTag($elm, $attrs = 0){
+                // return end tag -- if second argument is not received, it means a closing tag is being handled
+                if( is_numeric($attrs) ){ return "</$elm>"; }
+
+                // remove invisible image or remove width and height attribute of visible image
+                if( 'img' === $elm ){
+                    if( isset($attrs['width']) && isset($attrs['height']) 
+                        && 1 >= intval($attrs['width']) && 1 >= intval($attrs['height']) ){ return ''; }
+                    else{
+                        if( isset($attrs['width']) ){ unset($attrs['width']); }
+                        if( isset($attrs['height']) ){ unset($attrs['height']); }
+                    }
+                }
+
+                // return tag
+                static $empEs = array('area'=>1, 'br'=>1, 'col'=>1, 'embed'=>1, 'hr'=>1, 'img'=>1, 'input'=>1, 'isindex'=>1, 'param'=>1); // empty element
+                $aStr = '';
+                foreach($attrs as $k=>$v){ $aStr .= " {$k}=\"{$v}\""; }
+                return "<{$elm}{$aStr}".(isset($empEs[$elm])?' /':'').'>';
+            }
+        }
         return htmLawed(
             htmlspecialchars_decode($content),
             array(
@@ -272,10 +295,10 @@ class ContentLoader {
                 "comment"        => 1,
                 "cdata"          => 1,
                 "anti_link_spam" => array('`.`', ''),
+                "hook_tag"       => '\helpers\editContentTag',
                 "deny_attribute" => '* -alt -title -src -href -target -width -height',
                 "elements"       => 'div, p, ul, li, a, img, dl, dt, dd, h1, h2, h3, h4, h5, h6, ol, br, table, tr, td, blockquote, pre, ins, del, th, thead, tbody, b, i, strong, em, tt, sub, sup, s, strike, code'
-            ),
-            'img=-width, -height'
+            )
         );
     }
 
