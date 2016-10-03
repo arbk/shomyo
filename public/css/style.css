@@ -1465,9 +1465,8 @@ body.publicmode.notloggedin .entry-unread {
   .entry-smartphone-share button,
   .entry-smartphone-share .button {
     margin-right:10px;
-    margin-top:5px;
+    margin-top:10px;
     margin-bottom:5px;
-    list-style:none;
     display:inline-block;
   }
 
