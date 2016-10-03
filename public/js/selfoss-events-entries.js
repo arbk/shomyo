@@ -121,9 +121,9 @@ selfoss.events.entries = function(e){
   });
 
   // no source click
-  if(selfoss.isSmartphone()){
-    $('.entry-source, .entry-icon').unbind('click').click(function(e) {e.preventDefault(); return false;});
-  }
+//  if(selfoss.isSmartphone()){
+//    $('.entry-source, .entry-icon').unbind('click').click(function(e) {e.preventDefault(); return false;});
+//  }
 
   // scroll load more
   $(window).unbind('scroll').scroll(function(){

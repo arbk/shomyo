@@ -94,14 +94,14 @@ selfoss.shortcuts = {
             e.preventDefault();
             $('.entry-content, .entry-toolbar').hide();
         });
-        
+
         // 'v': open target
         $(document).bind('keydown', 'v', function(e) {
-            window.open($('.entry.selected .entry-source').attr('href'));
+            $('.entry.selected .entry-newwindow:eq(0)').click();
             e.preventDefault();
             return false;
         });
-        
+
         // 'Shift + v': open target and mark read
         $(document).bind('keydown', 'Shift+v', function(e) {
             e.preventDefault();
@@ -113,8 +113,8 @@ selfoss.shortcuts = {
                 $('.entry.selected .entry-unread').click();
             }
             
-            // open item in new window
-            $('.entry.selected .entry-source').click();
+            // open target
+            $('.entry.selected .entry-newwindow:eq(0)').click();
         });
         
         // 'r': Reload the current view
@@ -179,7 +179,7 @@ selfoss.shortcuts = {
     nextprev: function(direction, open) {
         if(typeof direction == "undefined" || (direction!="next" && direction!="prev"))
             direction = "next";
-       
+
         // helper functions
 //      var scroll = function(value) {
 //          // scroll down (negative value) and up (positive value)
@@ -187,7 +187,7 @@ selfoss.shortcuts = {
 //      }; 
         // select current        
         var old = $('.entry.selected');
-        
+
         // select next/prev and save it to "current"
         if(direction=="next") {
             if(old.length==0) {
@@ -195,7 +195,6 @@ selfoss.shortcuts = {
             } else {
                 current = old.next().length==0 ? old : old.next();
             }
-            
         } else {
             if(old.length==0) {
                 return;
@@ -209,42 +208,52 @@ selfoss.shortcuts = {
         old.removeClass('selected');
         old.find('.entry-content').hide();
         old.find('.entry-toolbar').hide();
-        
-        if(current.length==0)
-            return;
+
+        if(current.length==0){ return; }
+
+        // mark as read
+        if(current.hasClass('entry-batchtool')){
+    	    current = ("next"==direction && 0<current.next().length)?current.next():current.prev();
+        }
 
         current.addClass('selected');
-        
+
         // load more
-        if(current.hasClass('stream-more'))
+        if(current.hasClass('stream-more')){
             current.click().removeClass('selected').prev().addClass('selected');
-        
+        }
+
         // open?
         if(open) {
             var content = current.find('.entry-content');
-            // load images
-            if($('#config').data('auto_load_images')=="1") {
-                content.lazyLoadImages();
-//              current.next().find('.entry-content').lazyLoadImages();
-            }
-            // anonymize
-            selfoss.anonymize(content);
-            content.show();
-            current.find('.entry-toolbar').show();
-            selfoss.events.entriesToolbar(current);
-            // automark as read
-            if($('#config').data('auto_mark_as_read')=="1" && current.hasClass('unread'))
-                current.find('.entry-unread').click();
+            if( 0 < content.length){
+                // load images
+                if($('#config').data('auto_load_images')=="1") {
+                    content.lazyLoadImages();
+//                  current.next().find('.entry-content').lazyLoadImages();
+                }
 
-            // setup fancyBox image viewer
-            selfoss.setupFancyBox(content, content.parent().attr('id').substr(5));
+                // anonymize
+                selfoss.anonymize(content);
+                content.show();
+                current.find('.entry-toolbar').show();
+                selfoss.events.entriesToolbar(current);
+
+                // automark as read
+                if($('#config').data('auto_mark_as_read')=="1" && current.hasClass('unread')){
+                    current.find('.entry-unread').click();
+                }
+
+                // setup fancyBox image viewer
+                selfoss.setupFancyBox(content, content.parent().attr('id').substr(5));
+            }
         }
-        
+
         // scroll to element
         selfoss.shortcuts.autoscroll(current);
 
-        // focus the icon for better keyboard navigation
-        current.find('.entry-icon').focus();
+        // focus the title for better keyboard navigation
+        current.find('.entry-title').focus();
     },
     
     
