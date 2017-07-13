@@ -93,7 +93,7 @@ class Image {
             $data = \helpers\WebClient::request($url);
         }
         catch ( \exception $e ) {
-            \F3::get('logger')->log("failed to retrieve image $url", \ERROR);
+            \F3::get('logger')->log("failed to retrieve image $url", \WARNING);
             \F3::get('logger')->log("response: " . $e->getMessage(), \DEBUG);
             return false;
         }
