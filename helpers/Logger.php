@@ -17,7 +17,7 @@ define("NONE", 0);
  * @copyright  Copyright (c) Tobias Zeising (http://www.aditu.de)
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
- * @author     arbk (http://aruo.net/)
+ * @author     arbk (https://aruo.net/)
  */
 class Logger {
 

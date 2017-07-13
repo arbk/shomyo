@@ -10,7 +10,7 @@ namespace controllers;
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Michael Moore <stuporglue@gmail.com>
  * @author     Sean Rand <asanernd@gmail.com>
- * @author     arbk (http://aruo.net/)
+ * @author     arbk (https://aruo.net/)
  */
 
 class Opml extends BaseController {
@@ -114,7 +114,7 @@ class Opml extends BaseController {
     private function processGroup($xml, $tags = Array()) {
         $errors = Array();
 
-        $xml->registerXPathNamespace('shomyo', 'http://aruo.net/');
+        $xml->registerXPathNamespace('shomyo', 'https://aruo.net/');
 
         // tags are the words of the outline parent
         $title = (string)$xml->attributes(null)->title;
@@ -277,7 +277,7 @@ class Opml extends BaseController {
 
         $this->writer->startElement('opml');
         $this->writer->writeAttribute('version', '2.0');
-        $this->writer->writeAttribute('xmlns:shomyo', 'http://aruo.net/');
+        $this->writer->writeAttribute('xmlns:shomyo', 'https://aruo.net/');
 
         // shomyo version, XML format version and creation date
         $this->writer->startElementNS('shomyo', 'meta', null);

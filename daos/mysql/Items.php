@@ -10,7 +10,7 @@ namespace daos\mysql;
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     Harald Lapp <harald.lapp@gmail.com>
- * @author     arbk (http://aruo.net/)
+ * @author     arbk (https://aruo.net/)
  */
 class Items extends Database {
 

@@ -4,7 +4,7 @@
  * @package    public_js
  * @copyright  Copyright (c) Tobias Zeising (http://www.aditu.de)
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
- * @author     arbk (http://aruo.net/)
+ * @author     arbk (https://aruo.net/)
  */
 var selfoss = {
 
@@ -28,12 +28,12 @@ var selfoss = {
      * instance of the currently running XHR that is used to reload the items list
      */
     activeAjaxReq: null,
-    
+
     /**
      * last stats update
      */
     lastStatsUpdate: Date.now(),
-    
+
     /**
      * the html title configured
      */
@@ -49,13 +49,13 @@ var selfoss = {
                 $('#username').focus();
                 return;
             }
-        
+
             // set items per page
             selfoss.filter.items = parseInt($('#config').data('items_perpage'), 10);
-            
+
             // initialize type by homepage config param
             selfoss.filter.type = $('#nav-filter li.active').attr('id').replace('nav-filter-', '');
-            
+
             // read the html title configured
             selfoss.htmlTitle = $('#config').data('html_title')
 
@@ -64,7 +64,7 @@ var selfoss = {
 
             // init events
             selfoss.events.init();
-            
+
             // init shortcut handler
             selfoss.shortcuts.init();
 
@@ -75,8 +75,8 @@ var selfoss = {
             }
         });
     },
-    
-    
+
+
     /**
      * returns an array of name value pairs of all form elements in given element
      *
@@ -85,7 +85,7 @@ var selfoss = {
      */
     getValues: function(element) {
         var values = {};
-        
+
         $(element).find(':input').each(function (i, el) {
             // get only input elements with name
             if($.trim($(el).attr('name')).length!=0) {
@@ -94,11 +94,11 @@ var selfoss = {
                     values[$(el).attr('name')] = $(el).attr('checked') ? 1 : 0;
             }
         });
-        
+
         return values;
     },
-    
-    
+
+
     /**
      * insert error messages in form
      *
@@ -112,8 +112,8 @@ var selfoss = {
             form.find("[name='"+key+"']").addClass('error').parent('li').append('<span class="error">'+val+'</span>');
         });
     },
-    
-    
+
+
     /**
      * indicates whether a mobile device is host
      *
@@ -123,12 +123,12 @@ var selfoss = {
         // first check useragent
         if((/iPhone|iPod|iPad|Android|BlackBerry/).test(navigator.userAgent))
             return true;
-        
+
         // otherwise check resolution
         return selfoss.isTablet() || selfoss.isSmartphone();
     },
-    
-    
+
+
     /**
      * indicates whether a tablet is the device or not
      *
@@ -140,7 +140,7 @@ var selfoss = {
         return false;
     },
 
-    
+
     /**
      * indicates whether a tablet is the device or not
      *
@@ -151,8 +151,8 @@ var selfoss = {
             return true;
         return false;
     },
-    
-    
+
+
     /**
      * refresh current items.
      *
@@ -177,7 +177,7 @@ var selfoss = {
             data: selfoss.filter,
             success: function(data) {
                 selfoss.refreshStats(data.all, data.unread, data.starred);
-                
+
                 $('#content').html(data.entries);
                 $(document).scrollTop(0);
                 selfoss.events.entries();
@@ -195,10 +195,10 @@ var selfoss = {
                     $('#nav-mobile-filter').html( $('#nav-filter-newest').html() );
                     break;
                 }
-                
+
                 // update tags
                 selfoss.refreshTags(data.tags);
-                
+
                 // drop loaded sources
                 var currentSource = -1;
                 if(selfoss.sourcesNavLoaded) {
@@ -228,8 +228,8 @@ var selfoss = {
             }
         });
     },
-    
-    
+
+
     /**
      * refresh current stats.
      *
@@ -265,7 +265,7 @@ var selfoss = {
             }
         });
     },
-    
+
 
     /**
      * refresh stats.
@@ -284,7 +284,7 @@ var selfoss = {
         selfoss.refreshUnread(unread);
     },
 
-    
+
     /**
      * refresh unread stats.
      *
@@ -314,7 +314,7 @@ var selfoss = {
     reloadTags: function() {
         $('#nav-tags').addClass('loading');
         $('#nav-tags li:not(:first)').remove();
-        
+
         $.ajax({
             url: $('base').attr('href')+'tagslist',
             type: 'GET',
@@ -331,8 +331,8 @@ var selfoss = {
             }
         });
     },
-    
-    
+
+
     /**
      * refresh taglist.
      *
@@ -348,8 +348,8 @@ var selfoss = {
             $('#nav-tags li:eq('+currentTag+')').addClass('active');
         selfoss.events.navigation();
     },
-    
-    
+
+
     sourcesNavLoaded: false,
 
     /**
@@ -367,8 +367,8 @@ var selfoss = {
             $('#nav-sources li:eq('+currentSourceIndex+')').addClass('active');
         selfoss.events.navigation();
     },
-    
-    
+
+
     /**
      * anonymize links
      *
@@ -386,8 +386,8 @@ var selfoss = {
             });
         }
     },
-    
-    
+
+
     /**
      * show error
      *
@@ -437,13 +437,13 @@ var selfoss = {
             var id = $(item).attr('id').substr(5);
             if( ('mark'===path && $(item).hasClass('unread'))
                 || ('unstarr'===path && $(item).find('.entry-starr').hasClass('active')) ){
-              ids.push( id ); 
+              ids.push( id );
             }
             if( undefined !== itemId && id === String(itemId) ){ return false; }
         });
 
         if(0 === ids.length){ return; }
-        
+
         // show loading
         var content = $('#content');
         var articleList = content.html();

@@ -5,9 +5,9 @@ namespace controllers;
  * Controller for development tools
  *
  * @package    controllers
- * @copyright  Copyright (c) arbk (http://aruo.net/)
+ * @copyright  Copyright (c) arbk (https://aruo.net/)
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
- * @author     arbk (http://aruo.net/)
+ * @author     arbk (https://aruo.net/)
  */
 class Develop extends BaseController {
 
