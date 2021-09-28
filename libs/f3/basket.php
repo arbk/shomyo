@@ -2,7 +2,7 @@
 
 /*
 
-	Copyright (c) 2009-2015 F3::Factory/Bong Cosca, All rights reserved.
+	Copyright (c) 2009-2019 F3::Factory/Bong Cosca, All rights reserved.
 
 	This file is part of the Fat-Free Framework (http://fatfreeframework.com).
 
@@ -34,7 +34,7 @@ class Basket extends Magic {
 		//! Current item identifier
 		$id,
 		//! Current item contents
-		$item=array();
+		$item=[];
 
 	/**
 	*	Return TRUE if field is defined
@@ -86,11 +86,12 @@ class Basket extends Magic {
 	*	@param $val mixed
 	**/
 	function find($key=NULL,$val=NULL) {
-		$out=array();
+		$out=[];
 		if (isset($_SESSION[$this->key])) {
 			foreach ($_SESSION[$this->key] as $id=>$item)
 				if (!isset($key) ||
-					array_key_exists($key,$item) && $item[$key]==$val) {
+					array_key_exists($key,$item) && $item[$key]==$val ||
+					$key=='_id' && $id==$val) {
 					$obj=clone($this);
 					$obj->id=$id;
 					$obj->item=$item;
@@ -122,7 +123,7 @@ class Basket extends Magic {
 			return $this->item=$found[0]->item;
 		}
 		$this->reset();
-		return array();
+		return [];
 	}
 
 	/**
@@ -175,7 +176,7 @@ class Basket extends Magic {
 	**/
 	function reset() {
 		$this->id=NULL;
-		$this->item=array();
+		$this->item=[];
 	}
 
 	/**
@@ -193,9 +194,9 @@ class Basket extends Magic {
 	**/
 	function copyfrom($var) {
 		if (is_string($var))
-			$var=\Base::instance()->get($var);
+			$var=\Base::instance()->$var;
 		foreach ($var as $key=>$val)
-			$this->item[$key]=$val;
+			$this->set($key,$val);
 	}
 
 	/**
@@ -219,7 +220,7 @@ class Basket extends Magic {
 			unset($_SESSION[$this->key]);
 			return $out;
 		}
-		return array();
+		return [];
 	}
 
 	/**
@@ -229,7 +230,8 @@ class Basket extends Magic {
 	**/
 	function __construct($key='basket') {
 		$this->key=$key;
-		@session_start();
+		if (session_status()!=PHP_SESSION_ACTIVE)
+			session_start();
 		Base::instance()->sync('SESSION');
 		$this->reset();
 	}

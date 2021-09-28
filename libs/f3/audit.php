@@ -2,7 +2,7 @@
 
 /*
 
-	Copyright (c) 2009-2015 F3::Factory/Bong Cosca, All rights reserved.
+	Copyright (c) 2009-2019 F3::Factory/Bong Cosca, All rights reserved.
 
 	This file is part of the Fat-Free Framework (http://fatfreeframework.com).
 
@@ -47,7 +47,7 @@ class Audit extends Prefab {
 	*	@param $mx boolean
 	**/
 	function email($str,$mx=TRUE) {
-		$hosts=array();
+		$hosts=[];
 		return is_string(filter_var($str,FILTER_VALIDATE_EMAIL)) &&
 			(!$mx || getmxrr(substr($str,strrpos($str,'@')+1),$hosts));
 	}
@@ -108,7 +108,7 @@ class Audit extends Prefab {
 	**/
 	function isdesktop($agent=NULL) {
 		if (!isset($agent))
-			$agent=Base::instance()->get('AGENT');
+			$agent=Base::instance()->AGENT;
 		return (bool)preg_match('/('.self::UA_Desktop.')/i',$agent) &&
 			!$this->ismobile($agent);
 	}
@@ -120,7 +120,7 @@ class Audit extends Prefab {
 	**/
 	function ismobile($agent=NULL) {
 		if (!isset($agent))
-			$agent=Base::instance()->get('AGENT');
+			$agent=Base::instance()->AGENT;
 		return (bool)preg_match('/('.self::UA_Mobile.')/i',$agent);
 	}
 
@@ -131,7 +131,7 @@ class Audit extends Prefab {
 	**/
 	function isbot($agent=NULL) {
 		if (!isset($agent))
-			$agent=Base::instance()->get('AGENT');
+			$agent=Base::instance()->AGENT;
 		return (bool)preg_match('/('.self::UA_Bot.')/i',$agent);
 	}
 
@@ -145,7 +145,7 @@ class Audit extends Prefab {
 			return FALSE;
 		$id=strrev($id);
 		$sum=0;
-		for ($i=0,$l=strlen($id);$i<$l;$i++)
+		for ($i=0,$l=strlen($id);$i<$l;++$i)
 			$sum+=$id[$i]+$i%2*(($id[$i]>4)*-4+$id[$i]%5);
 		return !($sum%10);
 	}
@@ -166,7 +166,8 @@ class Audit extends Prefab {
 				return 'Discover';
 			if (preg_match('/^(?:2131|1800|35\d{3})\d{11}$/',$id))
 				return 'JCB';
-			if (preg_match('/^5[1-5][0-9]{14}$/',$id))
+			if (preg_match('/^5[1-5][0-9]{14}$|'.
+				'^(222[1-9]|2[3-6]\d{2}|27[0-1]\d|2720)\d{12}$/',$id))
 				return 'MasterCard';
 			if (preg_match('/^4[0-9]{12}(?:[0-9]{3})?$/',$id))
 				return 'Visa';

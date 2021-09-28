@@ -2,7 +2,7 @@
 
 /*
 
-	Copyright (c) 2009-2015 F3::Factory/Bong Cosca, All rights reserved.
+	Copyright (c) 2009-2019 F3::Factory/Bong Cosca, All rights reserved.
 
 	This file is part of the Fat-Free Framework (http://fatfreeframework.com).
 
@@ -32,9 +32,11 @@ class Test {
 
 	protected
 		//! Test results
-		$data=array(),
+		$data=[],
 		//! Success indicator
-		$passed=TRUE;
+		$passed=TRUE,
+		//! Reporting level
+		$level;
 
 	/**
 	*	Return test results
@@ -61,7 +63,7 @@ class Test {
 	function expect($cond,$text=NULL) {
 		$out=(bool)$cond;
 		if ($this->level==$out || $this->level==self::FLAG_Both) {
-			$data=array('status'=>$out,'text'=>$text,'source'=>NULL);
+			$data=['status'=>$out,'text'=>$text,'source'=>NULL];
 			foreach (debug_backtrace() as $frame)
 				if (isset($frame['file'])) {
 					$data['source']=Base::instance()->
