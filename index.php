@@ -8,7 +8,7 @@ header_register_callback(function(){
   header_remove("X-Powered-By");
 });
 
-require(__DIR__.'/common.php');
+require __DIR__ . '/common.php';
 
 // language settings
 $lang = $f3->get('language');
@@ -27,9 +27,11 @@ $f3->set('auth', new \helpers\Authentication());
 
 // define js files
 $js=array(
-  'public/js/jquery-2.1.4.min.js',
+  'public/js/jquery-3.6.0.min.js',
+  'public/js/jquery-migrate-3.3.2.min.js',
   'public/js/jquery-ui.min.js',
   'public/js/jquery.mCustomScrollbar.min.js',
+  'public/js/jquery.fancybox.pack.js',
   'public/js/jquery.mousewheel.min.js',
   'public/js/lazy-image-loader.js',
   'public/js/spectrum.js',
@@ -43,7 +45,6 @@ $js=array(
   'public/js/selfoss-events-entriestoolbar.js',
   'public/js/selfoss-events-sources.js',
   'public/js/selfoss-shortcuts.js',
-  'public/js/jquery.fancybox.pack.js'
 );
 if(file_exists("user.js"))
     $js[] = "user.js";

@@ -67,11 +67,10 @@ class ContentLoader {
             return;
 
         @set_time_limit(5000);
-        @error_reporting(E_ERROR);
+//      @error_reporting(E_ERROR);
 
         // logging
-        \F3::get('logger')->log('---', \DEBUG);
-        \F3::get('logger')->log('start fetching source "'. $source['title'] . ' (id: '.$source['id'].') ', \DEBUG);
+        \F3::get('logger')->log('start fetching source: '. $source['title'] . ' (id: '.$source['id'].') ', \DEBUG);
 
         // get spout
         $spoutLoader = new \helpers\SpoutLoader();
@@ -80,16 +79,16 @@ class ContentLoader {
             \F3::get('logger')->log('unknown spout: ' . $source['spout'], \ERROR);
             return;
         }
-        \F3::get('logger')->log('spout successfully loaded: ' . $source['spout'], \DEBUG);
+        \F3::get('logger')->log('spout successfully loaded: ' . $source['spout'], \TRACE);
 
         // receive content
-        \F3::get('logger')->log('fetch content', \DEBUG);
+        \F3::get('logger')->log('fetch content', \TRACE);
         try {
             $spout->load(
                 json_decode(html_entity_decode($source['params']), true)
             );
         } catch(\exception $e) {
-            \F3::get('logger')->log('error loading feed content for ' . $source['title'] . ': ' . $e->getMessage(), \ERROR);
+            \F3::get('logger')->log('error loading feed content for "' . $source['title'] . '" : ' . $e->getMessage(), \ERROR);
             $this->sourceDao->error($source['id'], date('Y-m-d H:i:s') . 'error loading feed content: ' . $e->getMessage());
             return;
         }
@@ -100,7 +99,7 @@ class ContentLoader {
         \F3::get('logger')->log('minimum date: ' . $minDate->format('Y-m-d H:i:s'), \DEBUG);
 
         // insert new items in database
-        \F3::get('logger')->log('start item fetching', \DEBUG);
+        \F3::get('logger')->log('start item fetching', \TRACE);
 
         $itemsInFeed = array();
         foreach ($spout as $item) {
@@ -112,21 +111,22 @@ class ContentLoader {
         $efkeys = (array)(\F3::get('exclusion_filter'));
         if( is_string($source['filter']) && !empty($source['filter']) ){
             $srckeys = explode(',', $source['filter']);
-            foreach( $srckeys as $key ){ $efkeys[] = $key; }
+            foreach( $srckeys as $key ){ $efkeys[] = trim($key); }
         }
-        \F3::get('logger')->log('exclusion filter keys: '.print_r($efkeys,true), \DEBUG);
+        \F3::get('logger')->log('exclusion filter keys: '.print_r($efkeys,true), \TRACE);
 
         $lasticon = false;
         foreach ($spout as $item) {
             // item already in database?
             if (isset($itemsFound[$item->getId()])) {
+                \F3::get('logger')->log('item already exists in db: '.$item->getTitle(), \TRACE);
                 continue;
             }
 
             // test date: continue with next if item too old
             $itemDate = new \DateTime($item->getDate());
             if($itemDate < $minDate) {
-                \F3::get('logger')->log('item "' . $item->getTitle() . '" (' . $item->getDate() . ') older than '.\F3::get('items_lifetime').' days', \DEBUG);
+                \F3::get('logger')->log('item is too old: "' . $item->getTitle() . '" (' . $item->getDate() . ') older than '.\F3::get('items_lifetime').' days', \INFO);
                 continue;
             }
 
@@ -136,7 +136,7 @@ class ContentLoader {
                 $itemDate = $now;
 
             // insert new item
-            \F3::get('logger')->log('start insertion of new item "'.$item->getTitle().'"', \DEBUG);
+            \F3::get('logger')->log('start insertion of new item: '.$item->getTitle(), \TRACE);
 
             $content = "";
             try {
@@ -147,7 +147,7 @@ class ContentLoader {
                 $content = $this->sanitizeContent($content);
             } catch(\exception $e) {
                 $content = 'Error: Content not fetched. Reason: ' . $e->getMessage();
-                \F3::get('logger')->log('Can not fetch "'.$item->getTitle().'" : ' . $e->getMessage(), \ERROR);
+                \F3::get('logger')->log('can not fetch "'.$item->getTitle().'" : ' . $e->getMessage(), \ERROR);
             }
 
             // sanitize title
@@ -165,7 +165,7 @@ class ContentLoader {
             // sanitize link
             $link = $this->sanitize2Text($item->getLink());
 
-            \F3::get('logger')->log('item content sanitized', \DEBUG);
+            \F3::get('logger')->log('item content sanitized', \TRACE);
 
             // exclusion filter
             if( $this->exfilter($efkeys, array($title, $author)) ){
@@ -173,12 +173,12 @@ class ContentLoader {
                 continue;
             }
 
-            try {
-                $icon = $item->getIcon();
-            } catch(\exception $e) {
-                \F3::get('logger')->log('icon: error ' . $e->getMessage(), \DEBUG);
-                return;
-            }
+//          try {
+//              $icon = $item->getIcon();
+//          } catch(\exception $e) {
+//              \F3::get('logger')->log('can not get icon "'.$item->getTitle().'" : ' . $e->getMessage(), \ERROR);
+//              return;
+//          }
 
             $newItem = array(
                     'title'        => $title,
@@ -186,8 +186,8 @@ class ContentLoader {
                     'source'       => $source['id'],
                     'datetime'     => $itemDate->format('Y-m-d H:i:s'),
                     'uid'          => $item->getId(),
-                    'thumbnail'    => $item->getThumbnail(),
-                    'icon'         => $icon!==false ? $icon : "",
+                    'thumbnail'    => '', //$item->getThumbnail(),
+                    'icon'         => '', //$icon!==false ? $icon : "",
                     'link'         => $link,
                     'author'       => $author
             );
@@ -200,16 +200,15 @@ class ContentLoader {
 
             // insert new item
             $this->itemsDao->add($newItem);
-            \F3::get('logger')->log('item inserted', \DEBUG);
+            \F3::get('logger')->log('item inserted', \TRACE);
 
-            \F3::get('logger')->log('Memory usage: '.memory_get_usage(), \DEBUG);
-            \F3::get('logger')->log('Memory peak usage: '.memory_get_peak_usage(), \DEBUG);
+            \F3::get('logger')->log('Memory usage: '.memory_get_usage().', Memory peak usage: '.memory_get_peak_usage(), \DEBUG);
 
             $lastEntry = max($lastEntry, $itemDate->getTimestamp());
         }
 
         // destroy feed object (prevent memory issues)
-        \F3::get('logger')->log('destroy spout object', \DEBUG);
+        \F3::get('logger')->log('destroy spout object', \TRACE);
         $spout->destroy();
 
         // remove previous errors and set last update timestamp
@@ -388,7 +387,7 @@ class ContentLoader {
                     \F3::get('logger')->log('icon generated: '.$icon, \DEBUG);
                 } else {
                     $newItem['icon'] = '';
-                    \F3::get('logger')->log('icon generation error: '.$icon, \ERROR);
+                    \F3::get('logger')->log('icon generation error: '.$icon, \WARNING);
                 }
             }
         }
@@ -403,19 +402,19 @@ class ContentLoader {
      */
     public function cleanup() {
         // cleanup orphaned and old items
-        \F3::get('logger')->log('cleanup orphaned and old items', \DEBUG);
+        \F3::get('logger')->log('cleanup orphaned and old items', \TRACE);
         $this->itemsDao->cleanup(\F3::get('items_lifetime'));
-        \F3::get('logger')->log('cleanup orphaned and old items finished', \DEBUG);
+        \F3::get('logger')->log('cleanup orphaned and old items finished', \TRACE);
 
         // delete orphaned thumbnails
-        \F3::get('logger')->log('delete orphaned thumbnails', \DEBUG);
+        \F3::get('logger')->log('delete orphaned thumbnails', \TRACE);
         $this->cleanupFiles('thumbnails');
-        \F3::get('logger')->log('delete orphaned thumbnails finished', \DEBUG);
+        \F3::get('logger')->log('delete orphaned thumbnails finished', \TRACE);
 
         // delete orphaned icons
-        \F3::get('logger')->log('delete orphaned icons', \DEBUG);
+        \F3::get('logger')->log('delete orphaned icons', \TRACE);
         $this->cleanupFiles('icons');
-        \F3::get('logger')->log('delete orphaned icons finished', \DEBUG);
+        \F3::get('logger')->log('delete orphaned icons finished', \TRACE);
     }
 
 
@@ -426,10 +425,10 @@ class ContentLoader {
      */
     public function optimize() {
       // optimize database
-      \F3::get('logger')->log('optimize database', \DEBUG);
+      \F3::get('logger')->log('optimize database', \TRACE);
       $database = new \daos\Database();
       $database->optimize();
-      \F3::get('logger')->log('optimize database finished', \DEBUG);
+      \F3::get('logger')->log('optimize database finished', \TRACE);
     }
 
 

@@ -70,7 +70,7 @@ class Opml extends BaseController {
             $this->sourcesDao = new \daos\Sources();
             $this->tagsDao = new \daos\Tags();
 
-            \F3::get('logger')->log('start OPML import ', \DEBUG);
+            \F3::get('logger')->log('start OPML import ', \TRACE);
 
             $subs = simplexml_load_file($opml['tmp_name']);
             $errors = $this->processGroup($subs->body);
@@ -78,7 +78,7 @@ class Opml extends BaseController {
             // cleanup tags
             $this->tagsDao->cleanup($this->sourcesDao->getAllTags());
 
-            \F3::get('logger')->log('finished OPML import ', \DEBUG);
+            \F3::get('logger')->log('finished OPML import ', \TRACE);
 
             // show errors
             if (count($errors) > 0) {
@@ -252,7 +252,7 @@ class Opml extends BaseController {
         $this->writer->writeAttributeNS('shomyo', 'params', null, html_entity_decode($source['params']));
 
         $this->writer->endElement();  // outline
-        \F3::get('logger')->log("done exporting source ".$source['title'], \DEBUG);
+        \F3::get('logger')->log('done exporting source: '.$source['title'], \TRACE);
     }
 
 
@@ -267,7 +267,7 @@ class Opml extends BaseController {
         $this->sourcesDao = new \daos\Sources();
         $this->tagsDao = new \daos\Tags();
 
-        \F3::get('logger')->log('start OPML export', \DEBUG);
+        \F3::get('logger')->log('start OPML export', \TRACE);
         $this->writer = new \XMLWriter();
         $this->writer->openMemory();
         $this->writer->setIndent(1);
@@ -285,13 +285,13 @@ class Opml extends BaseController {
         $this->writer->writeAttribute('version', '1.0');
         $this->writer->writeAttribute('createdOn', date('r'));
         $this->writer->endElement();  // meta
-        \F3::get('logger')->log('OPML export: finished writing meta', \DEBUG);
+        \F3::get('logger')->log('OPML export: finished writing meta', \TRACE);
 
         $this->writer->startElement('head');
         $user = \F3::get('username');
         $this->writer->writeElement('title', ($user?$user.'\'s':'My') . ' subscriptions in shomyo');
         $this->writer->endElement();  // head
-        \F3::get('logger')->log('OPML export: finished writing head', \DEBUG);
+        \F3::get('logger')->log('OPML export: finished writing head', \TRACE);
 
         $this->writer->startElement('body');
 
@@ -309,13 +309,13 @@ class Opml extends BaseController {
         // create associative array with tag names as keys, colors as values
         $tagColors = array();
         foreach ($this->tagsDao->get() as $key => $tag) {
-            \F3::get('logger')->log("OPML export: tag ".$tag['tag']." has color ".$tag['color'], \DEBUG);
+            \F3::get('logger')->log('OPML export: tag '.$tag['tag'].' has color '.$tag['color'], \DEBUG);
             $tagColors[$tag['tag']] = $tag['color'];
         }
 
         // generate outline elements for all sources
         foreach ($sources['tagged'] as $tag => $children) {
-            \F3::get('logger')->log("OPML export: exporting tag $tag sources", \DEBUG);
+            \F3::get('logger')->log('OPML export: exporting tag sources: '.$tag, \DEBUG);
             $this->writer->startElement('outline');
             $this->writer->writeAttribute('title', $tag);
             $this->writer->writeAttribute('text', $tag);
@@ -329,7 +329,7 @@ class Opml extends BaseController {
             $this->writer->endElement();  // outline
         }
 
-        \F3::get('logger')->log("OPML export: exporting untagged sources", \DEBUG);
+        \F3::get('logger')->log('OPML export: exporting untagged sources', \TRACE);
         foreach ($sources['untagged'] as $key => $source) {
             $this->writeSource($source);
         }
@@ -337,7 +337,7 @@ class Opml extends BaseController {
         $this->writer->endElement();  // body
 
         $this->writer->endDocument();
-        \F3::get('logger')->log('finished OPML export', \DEBUG);
+        \F3::get('logger')->log('finished OPML export', \TRACE);
 
         // save content as file and suggest file name
         header('Content-Disposition: attachment; filename="shomyo-subscriptions.xml"');

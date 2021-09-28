@@ -44,16 +44,16 @@ class Authentication {
         }
         session_set_cookie_params($cookie_expire, $cookie_path, $cookie_domain,
                                   $cookie_secure, $cookie_httponly);
-        \F3::get('logger')->log("set cookie on $cookie_domain$cookie_path expiring in $cookie_expire seconds", \DEBUG);
+        \F3::get('logger')->log('set cookie on '.$cookie_domain.$cookie_path.' expiring in '.$cookie_expire.' seconds', \DEBUG);
 
-//        session_name();
+//      session_name();
         if(session_id()==""){
             $save_path = "/tmp/shomyo";
             if(!file_exists($save_path)){ mkdir($save_path, 0705); }
             session_save_path($save_path);
             ini_set('session.gc_maxlifetime', $cookie_expire);
             session_start();
-            \F3::get('logger')->log("start session. [".session_name().":".session_id().", save_path:".session_save_path().", gc_maxlifetime:".ini_get('session.gc_maxlifetime')."]", \DEBUG);
+            \F3::get('logger')->log('start session. ['.session_name().':'.session_id().', save_path:'.session_save_path().', gc_maxlifetime:'.ini_get('session.gc_maxlifetime').']', \DEBUG);
         }
 
         if(isset($_SESSION['loggedin']) && $_SESSION['loggedin']===true){
@@ -105,7 +105,10 @@ class Authentication {
      */
     public function login($username, $password) {
         if($this->enabled()) {
-            if( \F3::get('login_invalidate')==1 ){ return false; }
+            if( \F3::get('login_invalidate')==1 ){
+                \F3::get('logger')->log('login: failed to log in with login-invalidate settings: '.$username, \WARNING);
+                return false;
+            }
 
             if(
                 $username == \F3::get('username') &&  hash("sha512", \F3::get('salt') . $password) == \F3::get('password')
@@ -113,10 +116,10 @@ class Authentication {
                 session_regenerate_id(true);
                 $this->loggedin = true;
                 $_SESSION['loggedin'] = true;
-                \F3::get('logger')->log('logged in with supplied username and password', \DEBUG);
+                \F3::get('logger')->log('login: logged in with supplied username and password: '.$username, \TRACE);
                 return true;
             } else {
-                \F3::get('logger')->log('failed to log in with supplied username and password', \DEBUG);
+                \F3::get('logger')->log('login: failed to log in with supplied username and password: '.$username, \WARNING);
                 return false;
             }
         }
@@ -156,6 +159,6 @@ class Authentication {
         @session_start();
         $_SESSION = array();
         session_destroy();
-        \F3::get('logger')->log('logged out and destroyed session', \DEBUG);
+        \F3::get('logger')->log('logout: logged out and destroyed session', \TRACE);
     }
 }

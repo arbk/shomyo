@@ -248,22 +248,35 @@ class feed extends \spouts\spout {
      * @return string icon url
      */
     public function getIcon() {
-        if(isset($this->faviconUrl))
+        if(isset($this->faviconUrl)){
             return $this->faviconUrl;
+        }
         
         $this->faviconUrl = false;
         $imageHelper = $this->getImageHelper();
+
         $htmlUrl = $this->getHtmlUrl();
         if($htmlUrl && $imageHelper->fetchFavicon($htmlUrl, true)){
             $this->faviconUrl = $imageHelper->getFaviconUrl();
             \F3::get('logger')->log('icon: using feed homepage favicon: ' . $this->faviconUrl, \DEBUG);
-        }else{
+        }
+        
+        if(false===$this->faviconUrl){
             $feedLogoUrl = $this->feed->get_image_url();
             if( $feedLogoUrl && $imageHelper->fetchFavicon($feedLogoUrl) ){
                 $this->faviconUrl = $imageHelper->getFaviconUrl();
                 \F3::get('logger')->log('icon: using feed logo: ' . $this->faviconUrl, \DEBUG);
-           }
+            }
         }
+        
+        if(false===$this->faviconUrl){
+            $linkUrl = $this->getLink();
+            if($linkUrl && $imageHelper->fetchFavicon($linkUrl, true)){
+                $this->faviconUrl = $imageHelper->getFaviconUrl();
+                \F3::get('logger')->log('icon: using feed link page favicon: ' . $this->faviconUrl, \DEBUG);
+            }
+        }
+        
         return $this->faviconUrl;
     }
     

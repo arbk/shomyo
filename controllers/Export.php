@@ -21,7 +21,7 @@ class Export extends BaseController {
      * @return void
      */
     public function export() {
-        \F3::get('logger')->log('start item export', \DEBUG);
+        \F3::get('logger')->log('start item export', \TRACE);
 
         $this->needsLoggedIn();
 
@@ -42,6 +42,6 @@ class Export extends BaseController {
         $this->view->options = $options;
         echo $this->view->render($tmpl);
 
-        \F3::get('logger')->log('finished item export', \DEBUG);
+        \F3::get('logger')->log('finished item export', \TRACE);
     }
 }

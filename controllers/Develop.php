@@ -17,12 +17,12 @@ class Develop extends BaseController {
      * @return void
      */
     public function info() {
-        \F3::get('logger')->log('start view env info', \DEBUG);
+        \F3::get('logger')->log('start view env info', \TRACE);
 
         $this->needsLoggedIn();
 
         phpinfo();
 
-        \F3::get('logger')->log('finished view env info', \DEBUG);
+        \F3::get('logger')->log('finished view env info', \TRACE);
     }
 }
