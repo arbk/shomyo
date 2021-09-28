@@ -1,7 +1,6 @@
 <?php
 	/**
- * @author Gasper Kozak
- * @copyright 2007-2011
+##DOC-SIGNATURE##
 
     This file is part of WideImage.
 		
@@ -21,47 +20,53 @@
 
     * @package Internal/Operations
   **/
+
+namespace WideImage\Operation;
+
+use WideImage\Exception\GDFunctionResultException;
+
+/**
+ * ApplyFilter operation class
+ * 
+ * @package Internal/Operations
+ */
+class ApplyFilter
+{
+	/**
+	 * A list of filters that only accept one arguments for imagefilter()
+	 *
+	 * @var array
+	 */
+	protected static $one_arg_filters = array(IMG_FILTER_SMOOTH, IMG_FILTER_CONTRAST, IMG_FILTER_BRIGHTNESS);
 	
 	/**
-	 * ApplyFilter operation class
-	 * 
-	 * @package Internal/Operations
+	 * Executes imagefilter
+	 *
+	 * @param \WideImage\Image $image
+	 * @param int $filter 
+	 * @param numeric $arg1
+	 * @param numeric $arg2
+	 * @param numeric $arg3
+	 * @return \WideImage\TrueColorImage
 	 */
-	class WideImage_Operation_ApplyFilter
+	public function execute($image, $filter, $arg1 = null, $arg2 = null, $arg3 = null, $arg4 = null)
 	{
-		/**
-		 * A list of filters that only accept one arguments for imagefilter()
-		 *
-		 * @var array
-		 */
-		static protected $one_arg_filters = array(IMG_FILTER_SMOOTH, IMG_FILTER_CONTRAST, IMG_FILTER_BRIGHTNESS);
+		$new = $image->asTrueColor();
 		
-		/**
-		 * Executes imagefilter
-		 *
-		 * @param WideImage_Image $image
-		 * @param int $filter 
-		 * @param numeric $arg1
-		 * @param numeric $arg2
-		 * @param numeric $arg3
-		 * @return WideImage_TrueColorImage
-		 */
-		function execute($image, $filter, $arg1 = null, $arg2 = null, $arg3 = null, $arg4 = null)
-		{
-			$new = $image->asTrueColor();
-			
-			if (in_array($filter, self::$one_arg_filters))
-				$res = imagefilter($new->getHandle(), $filter, $arg1);
-			elseif (defined('IMG_FILTER_PIXELATE') && $filter == IMG_FILTER_PIXELATE)
-				$res = imagefilter($new->getHandle(), $filter, $arg1, $arg2);
-			elseif ($filter == IMG_FILTER_COLORIZE)
-				$res = imagefilter($new->getHandle(), $filter, $arg1, $arg2, $arg3, $arg4);
-			else
-				$res = imagefilter($new->getHandle(), $filter);
-			
-			if (!$res)
-				throw new WideImage_GDFunctionResultException("imagefilter() returned false");
-			
-			return $new;
+		if (in_array($filter, static::$one_arg_filters)) {
+			$res = imagefilter($new->getHandle(), $filter, $arg1);
+		} elseif (defined('IMG_FILTER_PIXELATE') && $filter == IMG_FILTER_PIXELATE) {
+			$res = imagefilter($new->getHandle(), $filter, $arg1, $arg2);
+		} elseif ($filter == IMG_FILTER_COLORIZE) {
+			$res = imagefilter($new->getHandle(), $filter, $arg1, $arg2, $arg3, $arg4);
+		} else {
+			$res = imagefilter($new->getHandle(), $filter);
 		}
+		
+		if (!$res) {
+			throw new GDFunctionResultException("imagefilter() returned false");
+		}
+		
+		return $new;
 	}
+}

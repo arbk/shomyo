@@ -1,7 +1,6 @@
 <?php
 	/**
- * @author Gasper Kozak
- * @copyright 2007-2011
+##DOC-SIGNATURE##
 
     This file is part of WideImage.
 		
@@ -21,31 +20,34 @@
 
     * @package Internal/Mappers
   **/
-	
-	include_once WideImage::path() . '/vendor/de77/BMP.php';
-	
-	/**
-	 * Mapper support for BMP
-	 * 
-	 * @package Internal/Mappers
-	 */
-	class WideImage_Mapper_BMP
+
+namespace WideImage\Mapper;
+
+use WideImage\vendor\de77;
+
+/**
+ * Mapper support for BMP
+ * 
+ * @package Internal/Mappers
+ */
+class BMP
+{
+	public function load($uri)
 	{
-		function load($uri)
-		{
-			return WideImage_vendor_de77_BMP::imagecreatefrombmp($uri);
-		}
-		
-		function loadFromString($data)
-		{
-			return WideImage_vendor_de77_BMP::imagecreatefromstring($data);
-		}
-		
-		function save($handle, $uri = null)
-		{
-			if ($uri == null)
-				return WideImage_vendor_de77_BMP::imagebmp($handle);
-			else
-				return WideImage_vendor_de77_BMP::imagebmp($handle, $uri);
-		}
+		return de77\BMP::imagecreatefrombmp($uri);
 	}
+	
+	public function loadFromString($data)
+	{
+		return de77\BMP::imagecreatefromstring($data);
+	}
+	
+	public function save($handle, $uri = null)
+	{
+		if ($uri == null) {
+			return de77\BMP::imagebmp($handle);
+		}
+		
+		return de77\BMP::imagebmp($handle, $uri);
+	}
+}

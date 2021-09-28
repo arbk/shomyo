@@ -1,7 +1,6 @@
 <?php
 	/**
- * @author Gasper Kozak
- * @copyright 2007-2011
+##DOC-SIGNATURE##
 
     This file is part of WideImage.
 		
@@ -21,28 +20,31 @@
 
     * @package Internal/Mappers
   **/
-	
-	include_once WideImage::path() . '/vendor/de77/TGA.php';
-	
-	/**
-	 * Mapper support for TGA
-	 * 
-	 * @package Internal/Mappers
-	 */
-	class WideImage_Mapper_TGA
+
+namespace WideImage\Mapper;
+
+use WideImage\vendor\de77;
+use WideImage\Exception\Exception;
+
+/**
+ * Mapper support for TGA
+ * 
+ * @package Internal/Mappers
+ */
+class TGA
+{
+	public function load($uri)
 	{
-		function load($uri)
-		{
-			return WideImage_vendor_de77_TGA::imagecreatefromtga($uri);
-		}
-		
-		function loadFromString($data)
-		{
-			return WideImage_vendor_de77_TGA::imagecreatefromstring($data);
-		}
-		
-		function save($handle, $uri = null)
-		{
-			throw new WideImage_Exception("Saving to TGA isn't supported.");
-		}
+		return de77\TGA::imagecreatefromtga($uri);
 	}
+	
+	public function loadFromString($data)
+	{
+		return de77\TGA::imagecreatefromstring($data);
+	}
+	
+	public function save($handle, $uri = null)
+	{
+		throw new Exception("Saving to TGA isn't supported.");
+	}
+}

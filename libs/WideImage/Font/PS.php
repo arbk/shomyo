@@ -1,7 +1,6 @@
 <?php
 	/**
- * @author Gasper Kozak
- * @copyright 2007-2011
+##DOC-SIGNATURE##
 
     This file is part of WideImage.
 		
@@ -21,40 +20,45 @@
 
     * @package WideImage
   **/
+
+namespace WideImage\Font;
+
+/**
+ * PS font support class
+ * 
+ * @package WideImage
+ */
+class PS
+{
+	public $size;
+	public $color;
+	public $handle;
 	
-	/**
-	 * PS font support class
-	 * 
-	 * @package WideImage
-	 */
-	class WideImage_Font_PS
+	public function __construct($file, $size, $color, $bgcolor = null)
 	{
-		public $size;
-		public $color;
-		public $handle;
+		$this->handle = imagepsloadfont($file);
+		$this->size   = $size;
+		$this->color  = $color;
 		
-		function __construct($file, $size, $color, $bgcolor = null)
-		{
-			$this->handle = imagepsloadfont($file);
-			$this->size = $size;
+		if ($bgcolor === null) {
+			$this->bgcolor = $color;
+		} else {
 			$this->color = $color;
-			if ($bgcolor === null)
-				$this->bgcolor = $color;
-			else
-				$this->color = $color;
-		}
-		
-		function writeText($image, $x, $y, $text, $angle = 0)
-		{
-			if ($image->isTrueColor())
-				$image->alphaBlending(true);
-			
-			imagepstext($image->getHandle(), $text, $this->handle, $this->size, $this->color, $this->bgcolor, $x, $y, 0, 0, $angle, 4);
-		}
-		
-		function __destruct()
-		{
-			imagepsfreefont($this->handle);
-			$this->handle = null;
 		}
 	}
+	
+	public function writeText($image, $x, $y, $text, $angle = 0)
+	{
+		if ($image->isTrueColor()) {
+			$image->alphaBlending(true);
+		}
+		
+		imagepstext($image->getHandle(), $text, $this->handle, $this->size, $this->color, $this->bgcolor, $x, $y, 0, 0, $angle, 4);
+	}
+	
+	public function __destruct()
+	{
+		imagepsfreefont($this->handle);
+		$this->handle = null;
+	}
+}

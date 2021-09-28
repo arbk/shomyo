@@ -1,7 +1,6 @@
 <?php
 	/**
- * @author Gasper Kozak
- * @copyright 2007-2011
+##DOC-SIGNATURE##
 
     This file is part of WideImage.
 		
@@ -21,21 +20,23 @@
 
     * @package Internal/Mappers
   **/
-	
-	/**
-	 * Mapper class for GD2 files
-	 * 
-	 * @package Internal/Mappers
-	 */
-	class WideImage_Mapper_GD2
+
+namespace WideImage\Mapper;
+
+/**
+ * Mapper class for GD2 files
+ * 
+ * @package Internal/Mappers
+ */
+class GD2
+{
+	public function load($uri)
 	{
-		function load($uri)
-		{
-			return @imagecreatefromgd2($uri);
-		}
-		
-		function save($handle, $uri = null, $chunk_size = null, $type = null)
-		{
-			return imagegd2($handle, $uri, $chunk_size, $type);
-		}
+		return @imagecreatefromgd2($uri);
 	}
+	
+	public function save($handle, $uri = null, $chunk_size = null, $type = null)
+	{
+		return imagegd2($handle, $uri, $chunk_size, $type);
+	}
+}

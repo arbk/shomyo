@@ -1,7 +1,6 @@
 <?php
 	/**
- * @author Gasper Kozak
- * @copyright 2007-2011
+##DOC-SIGNATURE##
 
     This file is part of WideImage.
 		
@@ -21,116 +20,131 @@
     
     * @package WideImage
   **/
+
+namespace WideImage;
+
+use WideImage\Exception\InvalidImageDimensionException;
+use WideImage\Exception\GDFunctionResultException;
+
+/**
+ * @package WideImage
+ */
+class PaletteImage extends Image
+{
+	/**
+	 * Create a palette image
+	 *
+	 * @param int $width
+	 * @param int $height
+	 * @return \WideImage\PaletteImage
+	 */
+	public static function create($width, $height)
+	{
+		if ($width * $height <= 0 || $width < 0) {
+			throw new InvalidImageDimensionException("Can't create an image with dimensions [$width, $height].");
+		}
+		
+		return new PaletteImage(imagecreate($width, $height));
+	}
+	
+	public function doCreate($width, $height)
+	{
+		return static::create($width, $height);
+	}
 	
 	/**
-	 * @package WideImage
+	 * (non-PHPdoc)
+	 * @see \WideImage\Image#isTrueColor()
 	 */
-	class WideImage_PaletteImage extends WideImage_Image
+	public function isTrueColor()
 	{
-		/**
-		 * Create a palette image
-		 *
-		 * @param int $width
-		 * @param int $height
-		 * @return WideImage_PaletteImage
-		 */
-		static function create($width, $height)
-		{
-			if ($width * $height <= 0 || $width < 0)
-				throw new WideImage_InvalidImageDimensionException("Can't create an image with dimensions [$width, $height].");
-			
-			return new WideImage_PaletteImage(imagecreate($width, $height));
-		}
-		
-		function doCreate($width, $height)
-		{
-			return self::create($width, $height);
-		}
-		
-		/**
-		 * (non-PHPdoc)
-		 * @see WideImage_Image#isTrueColor()
-		 */
-		function isTrueColor()
-		{
-			return false;
-		}
-		
-		/**
-		 * (non-PHPdoc)
-		 * @see WideImage_Image#asPalette($nColors, $dither, $matchPalette)
-		 */
-		function asPalette($nColors = 255, $dither = null, $matchPalette = true)
-		{
-			return $this->copy();
-		}
-		
-		/**
-		 * Returns a copy of the image
-		 * 
-		 * @param $trueColor True if the new image should be truecolor
-		 * @return WideImage_Image
-		 */
-		protected function copyAsNew($trueColor = false)
-		{
-			$width = $this->getWidth();
-			$height = $this->getHeight();
-			
-			if ($trueColor)
-				$new = WideImage_TrueColorImage::create($width, $height);
-			else
-				$new = WideImage_PaletteImage::create($width, $height);
-			
-			// copy transparency of source to target
-			if ($this->isTransparent())
-			{
-				$rgb = $this->getTransparentColorRGB();
-				if (is_array($rgb))
-				{
-					$tci = $new->allocateColor($rgb['red'], $rgb['green'], $rgb['blue']);
-					$new->fill(0, 0, $tci);
-					$new->setTransparentColor($tci);
-				}
-			}
-			
-			imageCopy($new->getHandle(), $this->handle, 0, 0, 0, 0, $width, $height);
-			return $new;
-		}
-		
-		/**
-		 * (non-PHPdoc)
-		 * @see WideImage_Image#asTrueColor()
-		 */
-		function asTrueColor()
-		{
-			$width = $this->getWidth();
-			$height = $this->getHeight();
-			$new = WideImage::createTrueColorImage($width, $height);
-			if ($this->isTransparent())
-				$new->copyTransparencyFrom($this);
-			if (!imageCopy($new->getHandle(), $this->handle, 0, 0, 0, 0, $width, $height))
-				throw new WideImage_GDFunctionResultException("imagecopy() returned false");
-			return $new;
-		}
-		
-		/**
-		 * (non-PHPdoc)
-		 * @see WideImage_Image#getChannels()
-		 */
-		function getChannels()
-		{
-			$args = func_get_args();
-			if (count($args) == 1 && is_array($args[0]))
-				$args = $args[0];
-			return WideImage_OperationFactory::get('CopyChannelsPalette')->execute($this, $args);
-		}
-		
-		/**
-		 * (non-PHPdoc)
-		 * @see WideImage_Image#copyNoAlpha()
-		 */
-		function copyNoAlpha()
-		{
-			return WideImage_Image::loadFromString($this->asString('png'));
-		}
+		return false;
 	}
+	
+	/**
+	 * (non-PHPdoc)
+	 * @see \WideImage\Image#asPalette($nColors, $dither, $matchPalette)
+	 */
+	public function asPalette($nColors = 255, $dither = null, $matchPalette = true)
+	{
+		return $this->copy();
+	}
+	
+	/**
+	 * Returns a copy of the image
+	 * 
+	 * @param $trueColor True if the new image should be truecolor
+	 * @return \WideImage\Image
+	 */
+	protected function copyAsNew($trueColor = false)
+	{
+		$width = $this->getWidth();
+		$height = $this->getHeight();
+		
+		if ($trueColor) {
+			$new = TrueColorImage::create($width, $height);
+		} else {
+			$new = PaletteImage::create($width, $height);
+		}
+		
+		// copy transparency of source to target
+		if ($this->isTransparent()) {
+			$rgb = $this->getTransparentColorRGB();
+			
+			if (is_array($rgb)) {
+				$tci = $new->allocateColor($rgb['red'], $rgb['green'], $rgb['blue']);
+				$new->fill(0, 0, $tci);
+				$new->setTransparentColor($tci);
+			}
+		}
+		
+		imageCopy($new->getHandle(), $this->handle, 0, 0, 0, 0, $width, $height);
+		
+		return $new;
+	}
+	
+	/**
+	 * (non-PHPdoc)
+	 * @see \WideImage\Image#asTrueColor()
+	 */
+	public function asTrueColor()
+	{
+		$width  = $this->getWidth();
+		$height = $this->getHeight();
+		$new    = WideImage::createTrueColorImage($width, $height);
+		
+		if ($this->isTransparent()) {
+			$new->copyTransparencyFrom($this);
+		}
+		
+		if (!imageCopy($new->getHandle(), $this->handle, 0, 0, 0, 0, $width, $height)) {
+			throw new GDFunctionResultException("imagecopy() returned false");
+		}
+		
+		return $new;
+	}
+	
+	/**
+	 * (non-PHPdoc)
+	 * @see \WideImage\Image#getChannels()
+	 */
+	public function getChannels()
+	{
+		$args = func_get_args();
+		
+		if (count($args) == 1 && is_array($args[0])) {
+			$args = $args[0];
+		}
+		
+		return OperationFactory::get('CopyChannelsPalette')->execute($this, $args);
+	}
+	
+	/**
+	 * (non-PHPdoc)
+	 * @see \WideImage\Image#copyNoAlpha()
+	 */
+	public function copyNoAlpha()
+	{
+		return WideImage::loadFromString($this->asString('png'));
+	}
+}

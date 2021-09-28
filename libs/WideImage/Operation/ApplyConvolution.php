@@ -1,7 +1,6 @@
 <?php
 	/**
- * @author Gasper Kozak
- * @copyright 2007-2011
+##DOC-SIGNATURE##
 
     This file is part of WideImage.
 		
@@ -21,28 +20,35 @@
 
     * @package Internal/Operations
   **/
-	
+
+namespace WideImage\Operation;
+
+use WideImage\Exception\GDFunctionResultException;
+
+/**
+ * ApplyConvolution operation class
+ * 
+ * @package Internal/Operations
+ */
+class ApplyConvolution
+{
 	/**
-	 * ApplyConvolution operation class
-	 * 
-	 * @package Internal/Operations
+	 * Executes imageconvolution() filter
+	 *
+	 * @param \WideImage\Image $image
+	 * @param array $matrix
+	 * @param numeric $div
+	 * @param numeric $offset
+	 * @return \WideImage\Image
 	 */
-	class WideImage_Operation_ApplyConvolution
+	public function execute($image, $matrix, $div, $offset)
 	{
-		/**
-		 * Executes imageconvolution() filter
-		 *
-		 * @param WideImage_Image $image
-		 * @param array $matrix
-		 * @param numeric $div
-		 * @param numeric $offset
-		 * @return WideImage_Image
-		 */
-		function execute($image, $matrix, $div, $offset)
-		{
-			$new = $image->asTrueColor();
-			if (!imageconvolution($new->getHandle(), $matrix, $div, $offset))
-				throw new WideImage_GDFunctionResultException("imageconvolution() returned false");
-			return $new;
+		$new = $image->asTrueColor();
+		
+		if (!imageconvolution($new->getHandle(), $matrix, $div, $offset)) {
+			throw new GDFunctionResultException("imageconvolution() returned false");
 		}
+		
+		return $new;
 	}
+}

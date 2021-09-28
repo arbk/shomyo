@@ -1,7 +1,6 @@
 <?php
 	/**
- * @author Gasper Kozak
- * @copyright 2007-2011
+##DOC-SIGNATURE##
 
     This file is part of WideImage.
 		
@@ -21,21 +20,23 @@
 
     * @package Internal/Mappers
   **/
-	
-	/**
-	 * Mapper class for JPEG files
-	 * 
-	 * @package Internal/Mappers
-	 */
-	class WideImage_Mapper_JPEG
+
+namespace WideImage\Mapper;
+
+/**
+ * Mapper class for JPEG files
+ * 
+ * @package Internal/Mappers
+ */
+class JPEG
+{
+	public function load($uri)
 	{
-		function load($uri)
-		{
-			return @imagecreatefromjpeg($uri);
-		}
-		
-		function save($handle, $uri = null, $quality = 100)
-		{
-			return imagejpeg($handle, $uri, $quality);
-		}
+		return @imagecreatefromjpeg($uri);
 	}
+	
+	public function save($handle, $uri = null, $quality = 100)
+	{
+		return imagejpeg($handle, $uri, $quality);
+	}
+}

@@ -1,7 +1,6 @@
 <?php
 	/**
- * @author Gasper Kozak
- * @copyright 2007-2011
+##DOC-SIGNATURE##
 
     This file is part of WideImage.
 		
@@ -21,34 +20,41 @@
 
     * @package Internal/Operations
   **/
-	
+
+namespace WideImage\Operation;
+
+use WideImage\Exception\GDFunctionResultException;
+
+/**
+ * Flip operation class
+ * 
+ * @package Internal/Operations
+ */
+class Flip
+{
 	/**
-	 * Flip operation class
-	 * 
-	 * @package Internal/Operations
+	 * Returns a flipped image
+	 *
+	 * @param \WideImage\Image $image
+	 * @return \WideImage\Image
 	 */
-	class WideImage_Operation_Flip
+	public function execute($image)
 	{
-		/**
-		 * Returns a flipped image
-		 *
-		 * @param WideImage_Image $image
-		 * @return WideImage_Image
-		 */
-		function execute($image)
-		{
-			$new = $image->copy();
-			
-			$width = $image->getWidth();
-			$height = $image->getHeight();
-			
-			if ($new->isTransparent())
-				imagefilledrectangle($new->getHandle(), 0, 0, $width, $height, $new->getTransparentColor());
-			
-			for ($y = 0; $y < $height; $y++)
-				if (!imagecopy($new->getHandle(), $image->getHandle(), 0, $y, 0, $height - $y - 1, $width, 1))
-					throw new WideImage_GDFunctionResultException("imagecopy() returned false");
-			
-			return $new;
+		$new = $image->copy();
+		
+		$width  = $image->getWidth();
+		$height = $image->getHeight();
+		
+		if ($new->isTransparent()) {
+			imagefilledrectangle($new->getHandle(), 0, 0, $width, $height, $new->getTransparentColor());
 		}
+		
+		for ($y = 0; $y < $height; $y++) {
+			if (!imagecopy($new->getHandle(), $image->getHandle(), 0, $y, 0, $height - $y - 1, $width, 1)) {
+				throw new GDFunctionResultException("imagecopy() returned false");
+			}
+		}
+		
+		return $new;
 	}
+}

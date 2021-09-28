@@ -1,7 +1,6 @@
 <?php
 	/**
- * @author Gasper Kozak
- * @copyright 2007-2011
+##DOC-SIGNATURE##
 
     This file is part of WideImage.
 		
@@ -21,24 +20,27 @@
 
     * @package Internal/Mappers
   **/
-	
-	/**
-	 * Mapper class for GD files
-	 * 
-	 * @package Internal/Mappers
-	 */
-	class WideImage_Mapper_GD
+
+namespace WideImage\Mapper;
+
+/**
+ * Mapper class for GD files
+ * 
+ * @package Internal/Mappers
+ */
+class GD
+{
+	public function load($uri)
 	{
-		function load($uri)
-		{
-			return @imagecreatefromgd($uri);
+		return @imagecreatefromgd($uri);
+	}
+	
+	public function save($handle, $uri = null)
+	{
+		if ($uri == null) {
+			return imagegd($handle);
 		}
 		
-		function save($handle, $uri = null)
-		{
-			if ($uri == null)
-				return imagegd($handle);
-			else
-				return imagegd($handle, $uri);
-		}
+		return imagegd($handle, $uri);
 	}
+}

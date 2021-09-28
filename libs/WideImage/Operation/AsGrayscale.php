@@ -1,7 +1,6 @@
 <?php
 	/**
- * @author Gasper Kozak
- * @copyright 2007-2011
+##DOC-SIGNATURE##
 
     This file is part of WideImage.
 		
@@ -21,29 +20,36 @@
 
     * @package Internal/Operations
   **/
-	
+
+namespace WideImage\Operation;
+
+use WideImage\Exception\GDFunctionResultException;
+
+/**
+ * AsGrayscale operation class
+ * 
+ * @package Internal/Operations
+ */
+class AsGrayscale
+{
 	/**
-	 * AsGrayscale operation class
-	 * 
-	 * @package Internal/Operations
+	 * Returns a greyscale copy of an image
+	 *
+	 * @param \WideImage\Image $image
+	 * @return \WideImage\Image
 	 */
-	class WideImage_Operation_AsGrayscale
+	public function execute($image)
 	{
-		/**
-		 * Returns a greyscale copy of an image
-		 *
-		 * @param WideImage_Image $image
-		 * @return WideImage_Image
-		 */
-		function execute($image)
-		{
-			$new = $image->asTrueColor();
-			if (!imagefilter($new->getHandle(), IMG_FILTER_GRAYSCALE))
-				throw new WideImage_GDFunctionResultException("imagefilter() returned false");
-			
-			if (!$image->isTrueColor())
-				$new = $new->asPalette();
-			
-			return $new;
+		$new = $image->asTrueColor();
+		
+		if (!imagefilter($new->getHandle(), IMG_FILTER_GRAYSCALE)) {
+			throw new GDFunctionResultException("imagefilter() returned false");
 		}
+		
+		if (!$image->isTrueColor()) {
+			$new = $new->asPalette();
+		}
+		
+		return $new;
 	}
+}
