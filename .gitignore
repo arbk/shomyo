@@ -18,3 +18,6 @@ config.ini
 node_modules
 _wiki
 .env
+vendor/
+.php_cs.cache
+.vscode

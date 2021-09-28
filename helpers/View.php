@@ -14,6 +14,11 @@ namespace helpers;
 class View {
 
     /**
+     * encoding
+     */
+    const ENCODING = 'UTF-8';
+
+    /**
      * current base url
      * @var string
      */
@@ -202,29 +207,76 @@ class View {
     }
 
 
+
     /**
-     * echo.
+     * convert kana string.
      */
-    public static function e($str, $output = true){
-      if( $output ){
-        echo $str;
-      }
-      return $str;
+    public static function ckana($str, $option = 'KV'){
+        return mb_convert_kana($str, $option, self::ENCODING);
     }
 
     /**
-     * echo text for html.
+     * convert kana string with option 'KVs'.
+     */
+    public static function ckana_s($str){
+        return self::ckana($str, 'KVs');
+    }
+
+    /**
+     * convert kana string with option 'KVa'.
+     */
+    public static function ckana_a($str){
+        return self::ckana($str, 'KVa');
+    }
+
+    /**
+     * convert kana string with option 'KVas'.
+     */
+    public static function ckana_as($str){
+        return self::ckana($str, 'KVas');
+    }
+
+
+
+    /**
+     * echo text.
+     */
+    private static function e($str, $output = true){
+        if( $output ){
+            echo $str;
+        }
+        return $str;
+    }
+
+    /**
+     * echo text for html string.
      */
     public static function eh($str, $output = true){
-      return self::e(htmlspecialchars($str, ENT_QUOTES|ENT_HTML5, 'UTF-8'), $output);
+        return self::e(
+            htmlspecialchars($str, ENT_QUOTES|ENT_HTML5, self::ENCODING),
+            $output);
     }
 
     /**
-     * echo text (remove tag string).
+     * echo text with html string removed.
      */
     public static function et($str, $output = true){
-      return self::e(
-          self::eh(strip_tags(html_entity_decode($str, ENT_QUOTES|ENT_HTML5, 'UTF-8')), false),
-          $output);
+        return self::e(
+            self::eh(strip_tags(html_entity_decode($str, ENT_QUOTES|ENT_HTML5, self::ENCODING)), false),
+            $output);
+    }
+
+    /**
+     * echo lead sentence text with html string removed.
+     */
+    public static function el($str, $output = true, $width = 143, $trimmarker = '...'){
+        return self::e(
+            mb_strimwidth(
+                trim(str_replace(
+                    array('　', '   ', '  ', "\r\n", "\r", "\n"),
+                    array( ' ',   ' ',  ' ',     '',   '',   ''),
+                    self::et($str, false))),
+                0, $width, $trimmarker, self::ENCODING),
+            $output);
     }
 }
