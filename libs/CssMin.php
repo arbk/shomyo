@@ -27,10 +27,10 @@
  * @package		CssMin
  * @link		http://code.google.com/p/cssmin/
  * @author		Joe Scylla <joe.scylla@gmail.com>
- * @author     arbk (https://aruo.net/)
+ * @author    arbk (https://aruo.net/)
  * @copyright	2008 - 2011 Joe Scylla <joe.scylla@gmail.com>
  * @license		http://opensource.org/licenses/mit-license.php MIT License
- * @version		3.0.1.1
+ * @version		3.0.1.2
  */
 /**
  * Abstract definition of a CSS token class.
@@ -2156,9 +2156,10 @@ class CssMinifier
  * @package		CssMin
  * @link		http://code.google.com/p/cssmin/
  * @author		Joe Scylla <joe.scylla@gmail.com>
+ * @author    arbk (https://aruo.net/)
  * @copyright	2008 - 2011 Joe Scylla <joe.scylla@gmail.com>
  * @license		http://opensource.org/licenses/mit-license.php MIT License
- * @version		3.0.1
+ * @version		3.0.1.2
  */
 class CssMin
 	{
@@ -2220,7 +2221,7 @@ class CssMin
 		{
 		// Create the class index for autoloading or including
 		$paths = array(dirname(__FILE__));
-		while (list($i, $path) = each($paths))
+		foreach ($paths as $path)
 			{
 			$subDirectorys = glob($path . "*", GLOB_MARK | GLOB_ONLYDIR | GLOB_NOSORT);
 			if (is_array($subDirectorys))
