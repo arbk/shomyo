@@ -341,7 +341,7 @@ var selfoss = {
      */
     refreshTags: function(tags) {
         var currentTag = $('#nav-tags li').index($('#nav-tags .active'));
-        $('.color').spectrum('destroy');
+//      $('.color').spectrum('destroy');
         $('#nav-tags li:not(:first)').remove();
         $('#nav-tags').append(tags);
         if(currentTag>=0)

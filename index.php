@@ -34,7 +34,7 @@ $js=array(
   'public/js/jquery.fancybox.pack.js',
   'public/js/jquery.mousewheel.min.js',
   'public/js/lazy-image-loader.js',
-  'public/js/spectrum.js',
+//'public/js/spectrum.js',
   'public/js/jquery.hotkeys.js',
   'public/js/selfoss-base.js',
   'public/js/selfoss-shares.js',
@@ -55,7 +55,7 @@ $css = array(
   'public/css/jquery-ui.min.css',
   'public/css/jquery.mCustomScrollbar.css',
   'public/css/jquery.fancybox.css',
-  'public/css/spectrum.css',
+//'public/css/spectrum.css',
   'public/css/reset.css',
   'public/css/style.css'
 );
@@ -106,7 +106,7 @@ $f3->route('DELETE /source/@id',        'controllers\Sources->remove');      // 
 $f3->route('POST   /source/delete/@id', 'controllers\Sources->remove');      // json
 $f3->route('GET    /sources/spouts',    'controllers\Sources->spouts');      // json
 
-$f3->route('POST /tags/color', 'controllers\Tags->color'); // json
+//$f3->route('POST /tags/color', 'controllers\Tags->color'); // json
 
 $f3->route('GET  /opml',       'controllers\Opml->show');   // html
 $f3->route('POST /opml',       'controllers\Opml->add');    // html
