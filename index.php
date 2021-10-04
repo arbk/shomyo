@@ -34,7 +34,6 @@ $js=array(
   'public/js/jquery.fancybox.pack.js',
   'public/js/jquery.mousewheel.min.js',
   'public/js/lazy-image-loader.js',
-//'public/js/spectrum.js',
   'public/js/jquery.hotkeys.js',
   'public/js/selfoss-base.js',
   'public/js/selfoss-shares.js',
@@ -55,7 +54,6 @@ $css = array(
   'public/css/jquery-ui.min.css',
   'public/css/jquery.mCustomScrollbar.css',
   'public/css/jquery.fancybox.css',
-//'public/css/spectrum.css',
   'public/css/reset.css',
   'public/css/style.css'
 );
