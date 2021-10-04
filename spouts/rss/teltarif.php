@@ -1,4 +1,4 @@
-<?PHP 
+<?PHP
 
 namespace spouts\rss;
 
@@ -13,7 +13,8 @@ namespace spouts\rss;
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     Daniel Seither <post@tiwoc.de>
  */
-class teltarif extends feed {
+class teltarif extends feed
+{
 
 
     /**
@@ -22,16 +23,16 @@ class teltarif extends feed {
      * @var string
      */
     public $name = 'News: Teltarif';
-    
-    
+
+
     /**
      * description of this source type
      *
      * @var string
      */
     public $description = 'This feed fetches Telarif news with full content (not only the header as content)';
-    
-    
+
+
     /**
      * config params
      * array of arrays with name, type, default value, required, validation type
@@ -42,7 +43,7 @@ class teltarif extends feed {
      * When type is "select", a new entry "values" must be supplied, holding
      * key/value pairs of internal names (key) and displayed labels (value).
      * See /spouts/rss/heise for an example.
-     * 
+     *
      * e.g.
      * array(
      *   "id" => array(
@@ -80,10 +81,12 @@ class teltarif extends feed {
     /**
      * ctor
      */
-    public function __construct() {
+    public function __construct()
+    {
         // include htmLawed
-        if(!function_exists('htmLawed'))
+        if (!function_exists('htmLawed')) {
             require('libs/htmLawed.php');
+        }
     }
 
 
@@ -93,8 +96,9 @@ class teltarif extends feed {
      * @return void
      * @param string $url
      */
-    public function load($params) {
-        parent::load(array( 'url' => $this->getXmlUrl() ) );
+    public function load($params)
+    {
+        parent::load(array( 'url' => $this->getXmlUrl() ));
     }
 
 
@@ -104,7 +108,8 @@ class teltarif extends feed {
      * @return string url as xml
      * @param mixed $params params for the source
      */
-    public function getXmlUrl($params = NULL) {
+    public function getXmlUrl($params = null)
+    {
          return $this->feedUrl;
     }
 
@@ -114,33 +119,33 @@ class teltarif extends feed {
      *
      * @return string content
      */
-    public function getContent() {
-        
+    public function getContent()
+    {
+
         $start_marker = "<!-- Artikel -->";
         $end_marker = "<!-- NOPRINT Start -->";
-        
-        if($this->items!==false && $this->valid()) {
+
+        if ($this->items!==false && $this->valid()) {
             $originalContent = @file_get_contents($this->getLink());
-            if($originalContent) {
-                
+            if ($originalContent) {
                 $originalContent = mb_convert_encoding($originalContent, 'UTF-8', 'ISO-8859-1');
-                
+
                 // cut the article from the page
-                $text_start_pos = strpos ($originalContent, $start_marker);
-                $text_end_pos= strrpos ($originalContent, $end_marker);
-                
+                $text_start_pos = strpos($originalContent, $start_marker);
+                $text_end_pos= strrpos($originalContent, $end_marker);
+
                 if (($text_start_pos != false) && ($text_end_pos != false)) {
-                    $content = substr ($originalContent, 
-                                       $text_start_pos + strlen ($start_marker), 
-                                       $text_end_pos - $text_start_pos - strlen ($start_marker));
+                    $content = substr(
+                        $originalContent,
+                        $text_start_pos + strlen($start_marker),
+                        $text_end_pos - $text_start_pos - strlen($start_marker)
+                    );
 
                     // remove most html coding and return result
                     return htmLawed($content, $this->htmLawedConfig);
                 }
-            }       
+            }
         }
         return parent::getContent();
     }
-    
 }
-

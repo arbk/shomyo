@@ -1,11 +1,11 @@
 <?PHP
 
 namespace daos\pgsql;
-    
+
 /**
  * Base class for database access -- postgresql
  *
- * Note that before use you'll want to create the database itself. See 
+ * Note that before use you'll want to create the database itself. See
  * http://www.postgresql.org/docs/8.4/static/manage-ag-createdb.html for full information.
  * In a nutshell (from the command line), as the administrative user (postgres),
  * execute "createdb -O USER DBNAME" where USER is the user you will be connecting as
@@ -18,22 +18,24 @@ namespace daos\pgsql;
  * @author      Michael Jackson <michael.o.jackson@gmail.com>
  * @author      Tobias Zeising <tobias.zeising@aditu.de>
  */
-class Database {
+class Database
+{
 
     /**
      * indicates whether database connection was initialized
      *
      * @var bool
      */
-    static private $initialized = false;
+    private static $initialized = false;
 
-    
+
     /**
      * establish connection and create undefined tables
      *
      * @return  void
      */
-    public function __construct() {
+    public function __construct()
+    {
         if (self::$initialized === false && \F3::get('db_type')=="pgsql") {
             \F3::get('logger')->log('Establish database connection', \TRACE);
             \F3::set('db', new \DB\SQL(
@@ -41,15 +43,17 @@ class Database {
                 \F3::get('db_username'),
                 \F3::get('db_password')
             ));
-            
+
             // create tables if necessary
             $result = @\F3::get('db')->exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'");
             $tables = array();
-            foreach($result as $table)
-                foreach($table as $key=>$value)
+            foreach ($result as $table) {
+                foreach ($table as $key => $value) {
                     $tables[] = $value;
-            
-            if(!in_array('items', $tables)) {
+                }
+            }
+
+            if (!in_array('items', $tables)) {
                 \F3::get('db')->exec('
                     CREATE TABLE items (
                         id          SERIAL PRIMARY KEY,
@@ -87,9 +91,9 @@ class Database {
                     update_updatetime_procedure();
                 ');
             }
-            
+
             $isNewestSourcesTable = false;
-            if(!in_array('sources', $tables)) {
+            if (!in_array('sources', $tables)) {
                 \F3::get('db')->exec('
                     CREATE TABLE sources (
                         id          SERIAL PRIMARY KEY,
@@ -105,37 +109,36 @@ class Database {
                 ');
                 $isNewestSourcesTable = true;
             }
-                 
+
             // version 1
-            if(!in_array('version', $tables)) {
+            if (!in_array('version', $tables)) {
                 \F3::get('db')->exec('
                     CREATE TABLE version (
                         version INTEGER
                     );
                 ');
-                
+
                 \F3::get('db')->exec('
                     INSERT INTO version (version) VALUES (8);
                 ');
-                
+
                 \F3::get('db')->exec('
                     CREATE TABLE tags (
                         tag         TEXT NOT NULL,
                         color       TEXT NOT NULL
                     );
                 ');
-                
-                if($isNewestSourcesTable===false) {
+
+                if ($isNewestSourcesTable===false) {
                     \F3::get('db')->exec('
                         ALTER TABLE sources ADD COLUMN tags TEXT;
                     ');
                 }
-            }
-            else{
+            } else {
                 $version = @\F3::get('db')->exec('SELECT version FROM version ORDER BY version DESC LIMIT 1');
                 $version = $version[0]['version'];
 
-                if(strnatcmp($version, "3") < 0){
+                if (strnatcmp($version, "3") < 0) {
                     \F3::get('db')->exec('
                         ALTER TABLE sources ADD lastupdate INT;
                     ');
@@ -143,7 +146,7 @@ class Database {
                         INSERT INTO version (version) VALUES (3);
                     ');
                 }
-                if(strnatcmp($version, "4") < 0){
+                if (strnatcmp($version, "4") < 0) {
                     \F3::get('db')->exec('
                         ALTER TABLE items ADD updatetime TIMESTAMP WITH TIME ZONE;
                     ');
@@ -168,7 +171,7 @@ class Database {
                         INSERT INTO version (version) VALUES (4);
                     ');
                 }
-                if(strnatcmp($version, "5") < 0){
+                if (strnatcmp($version, "5") < 0) {
                     \F3::get('db')->exec('
                         ALTER TABLE items ADD author TEXT;
                     ');
@@ -176,7 +179,7 @@ class Database {
                         INSERT INTO version (version) VALUES (5);
                     ');
                 }
-                if(strnatcmp($version, "6") < 0){
+                if (strnatcmp($version, "6") < 0) {
                     \F3::get('db')->exec(array(
                         'ALTER TABLE sources ADD filter TEXT;',
                         'INSERT INTO version (version) VALUES (6);'
@@ -185,28 +188,28 @@ class Database {
                 // Jump straight from v6 to v8 due to bug in previous version of the code
                 // in /daos/sqlite/Database.php which
                 // set the database version to "7" for initial installs.
-                if(strnatcmp($version, "8") < 0){
-                	\F3::get('db')->exec(array(
-                			'ALTER TABLE sources ADD lastentry INT;',
-                			'INSERT INTO version (version) VALUES (8);'
-                	));
+                if (strnatcmp($version, "8") < 0) {
+                    \F3::get('db')->exec(array(
+                            'ALTER TABLE sources ADD lastentry INT;',
+                            'INSERT INTO version (version) VALUES (8);'
+                    ));
                 }
-				if(strnatcmp($version, "9") < 0) {
-					\F3::get('db')->exec('
+                if (strnatcmp($version, "9") < 0) {
+                    \F3::get('db')->exec('
                         ALTER TABLE items ADD shared BOOLEAN;
                     ');
-					\F3::get('db')->exec('
+                    \F3::get('db')->exec('
                         INSERT INTO version (version) VALUES (9);
                     ');
-				}
+                }
             }
-            
+
             // just initialize once
             self::$initialized = true;
         }
     }
-    
-    
+
+
     /**
      * optimize database by the database's own optimize statement
      *
@@ -218,7 +221,8 @@ class Database {
      *
      * @return  void
      */
-    public function optimize() {
+    public function optimize()
+    {
         \F3::get('db')->exec("VACUUM ANALYZE");
     }
 }

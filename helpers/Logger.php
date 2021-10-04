@@ -19,7 +19,8 @@ define("NONE", 0);
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     arbk (https://aruo.net/)
  */
-class Logger {
+class Logger
+{
 
     /**
      * target file
@@ -56,8 +57,9 @@ class Logger {
      * @param string $target logfile
      * @param int $severity log level
      */
-    public function __construct($target, $severity = ERROR) {
-        if(is_string($severity)) {
+    public function __construct($target, $severity = ERROR)
+    {
+        if (is_string($severity)) {
             $text2severity = array_flip(array_map("strtoupper", $this->severityText));
             $severity = $text2severity[strtoupper($severity)];
         }
@@ -74,9 +76,11 @@ class Logger {
      * @param string $message
      * @param int $severity
      */
-    public function log($message, $severity) {
-        if($severity > $this->severityLimit)
+    public function log($message, $severity)
+    {
+        if ($severity > $this->severityLimit) {
             return;
+        }
 
         $msg = date("m-d-y") . " " .
                date("G:i:s") . " " .
@@ -84,8 +88,9 @@ class Logger {
                $message . "\n";
 
         $fileHandle = fopen($this->target, "at+");
-        if($fileHandle===false)
+        if ($fileHandle===false) {
             return;
+        }
 
         fwrite($fileHandle, $msg);
         fclose($fileHandle);

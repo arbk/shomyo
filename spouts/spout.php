@@ -1,6 +1,6 @@
-<?PHP 
+<?PHP
 
-namespace spouts; 
+namespace spouts;
 
 /**
  * This abstract class defines the interface of a spout (source or plugin)
@@ -12,24 +12,25 @@ namespace spouts;
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  */
-abstract class spout implements \Iterator {
-    
+abstract class spout implements \Iterator
+{
+
     /**
      * name of source
      *
      * @var string
      */
     public $name = '';
-    
-    
+
+
     /**
      * description of this source type
      *
      * @var string
      */
     public $description = '';
-    
-    
+
+
     /**
      * config params
      * array of arrays with name, type, default value, required, validation type
@@ -40,7 +41,7 @@ abstract class spout implements \Iterator {
      * When type is "select", a new entry "values" must be supplied, holding
      * key/value pairs of internal names (key) and displayed labels (value).
      * See /spouts/rss/heise for an example.
-     * 
+     *
      * e.g.
      * array(
      *   "id" => array(
@@ -73,7 +74,8 @@ abstract class spout implements \Iterator {
      * @return string url as xml
      * @param mixed $params params for the source
      */
-    public function getXmlUrl($params) {
+    public function getXmlUrl($params)
+    {
         return false;
     }
 
@@ -84,94 +86,98 @@ abstract class spout implements \Iterator {
      * @return string url as html
      */
     abstract public function getHtmlUrl();
-    
-    
+
+
     /**
      * returns an unique id for this item
      *
      * @return string id as hash
      */
     abstract public function getId();
-    
-    
+
+
     /**
      * returns the current title as string
      *
      * @return string title
      */
     abstract public function getTitle();
-    
-    
+
+
     /**
      * returns the content of this item
      *
      * @return string content
      */
-    public function getContent() {
+    public function getContent()
+    {
         return "";
     }
-    
-    
+
+
     /**
      * returns the thumbnail of this item
      *
      * @return string thumbnail url
      */
-    public function getThumbnail() {
+    public function getThumbnail()
+    {
         return "";
     }
-    
-    
+
+
     /**
      * returns the icon of this item
      *
      * @return string icon as url
      */
     abstract public function getIcon();
-    
-    
+
+
     /**
      * returns the link of this item
      *
      * @return string link
      */
     abstract public function getLink();
-    
-    
+
+
     /**
      * returns the date of this item
      *
      * @return string date
      */
     abstract public function getDate();
-    
+
 
     /**
      * returns the author of this item
      * @return string author
      */
-    public function getAuthor() {
+    public function getAuthor()
+    {
         return null;
     }
 
-    
+
     /**
      * destroy the plugin (prevent memory issues)
      *
      * @return void
      */
-    public function destroy() {
-        
+    public function destroy()
+    {
     }
-    
-    
+
+
     /**
      * returns an instance of image helper
      * for fetching favicons
      *
      * @return \helpers\Image
      */
-    public function getImageHelper() {
+    public function getImageHelper()
+    {
         return new \helpers\Image();
     }
 }

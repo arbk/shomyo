@@ -13,7 +13,8 @@ namespace controllers;
  * @author     arbk (https://aruo.net/)
  */
 
-class Opml extends BaseController {
+class Opml extends BaseController
+{
 
     /**
      * Passed to opml.phtml
@@ -39,7 +40,8 @@ class Opml extends BaseController {
      * html
      *
      */
-    public function show() {
+    public function show()
+    {
         $this->needsLoggedIn();
 
         $this->view = new \helpers\View();
@@ -55,7 +57,8 @@ class Opml extends BaseController {
      *
      * @note Borrows from controllers/Sources.php:write
      */
-    public function add() {
+    public function add()
+    {
         $this->needsLoggedIn();
 
         try {
@@ -111,8 +114,9 @@ class Opml extends BaseController {
      * @note We use non-rss outline's text as tags
      * @note Reads outline elements from both the default and shomyo namespace
      */
-    private function processGroup($xml, $tags = Array()) {
-        $errors = Array();
+    private function processGroup($xml, $tags = array())
+    {
+        $errors = array();
 
         $xml->registerXPathNamespace('shomyo', 'https://aruo.net/');
 
@@ -123,10 +127,11 @@ class Opml extends BaseController {
             // for new tags, try to import tag color, otherwise use random color
             if (!$this->tagsDao->hasTag($title)) {
                 $tagColor = (string)$xml->attributes('shomyo', true)->color;
-                if ($tagColor != null)
+                if ($tagColor != null) {
                     $this->tagsDao->saveTagColor($title, $tagColor);
-                else
+                } else {
                     $this->tagsDao->autocolorTag($title);
+                }
             }
         }
 
@@ -154,7 +159,8 @@ class Opml extends BaseController {
      * @param $xml xml feed entry for item
      * @param $tags of the entry
      */
-    private function addSubscription($xml, $tags) {
+    private function addSubscription($xml, $tags)
+    {
         // OPML Required attributes: text, xmlUrl, type
         // Optional attributes: title, htmlUrl, language, title, version
         // shomyo namespaced attributes: spout, params
@@ -181,7 +187,7 @@ class Opml extends BaseController {
             }
             $spout = (string)$nsattrs->spout;
             $data = json_decode(html_entity_decode((string)$nsattrs->params), true);
-        } else if (in_array((string)$attrs->type, array('rss', 'atom'))) {
+        } elseif (in_array((string)$attrs->type, array('rss', 'atom'))) {
             $spout = 'spouts\rss\feed';
         } else {
             \F3::get('logger')->log('OPML import: failed to import      "' . $title . '"', \WARNING);
@@ -194,8 +200,9 @@ class Opml extends BaseController {
         $validation = @$this->sourcesDao->validate($title, $spout, $data);
         if ($validation !== true) {
             \F3::get('logger')->log('OPML import: failed to import      "' . $title . '"', \WARNING);
-            foreach ($validation as $id => $param)
+            foreach ($validation as $id => $param) {
                 \F3::get('logger')->log('                                     ' . $id . ': ' . $param, \DEBUG);
+            }
             return $title;
         }
 
@@ -209,11 +216,11 @@ class Opml extends BaseController {
         } elseif ($id = $this->sourcesDao->checkIfExists($title, $spout, $data)) {
             $tags = array_unique(array_merge($this->sourcesDao->getTags($id), $tags));
             $this->sourcesDao->edit($id, $title, implode(',', $tags), '', $spout, $data);
-            $this->imported[$hash] = Array('id' => $id, 'tags' => $tags);
+            $this->imported[$hash] = array('id' => $id, 'tags' => $tags);
             \F3::get('logger')->log('  OPML import: updated tags for  "' . $title . '"', \DEBUG);
         } else {
             $id = $this->sourcesDao->add($title, implode(',', $tags), '', $spout, $data);
-            $this->imported[$hash] = Array('id' => $id, 'tags' => $tags);
+            $this->imported[$hash] = array('id' => $id, 'tags' => $tags);
             \F3::get('logger')->log('  OPML import: successfully imported "' . $title . '"', \DEBUG);
         }
 
@@ -228,16 +235,18 @@ class Opml extends BaseController {
      * @param $source source
      * @note Uses the shomyo namespace to store information about spouts
      */
-    private function writeSource($source) {
+    private function writeSource($source)
+    {
         // retrieve the feed url of the source
         $params = json_decode(html_entity_decode($source['params']), true);
         $feedUrl = $source['spout_obj']->getXmlUrl($params);
 
         // if the spout doesn't return a feed url, the source isn't an RSS feed
-        if ($feedUrl !== false)
+        if ($feedUrl !== false) {
             $this->writer->startElement('outline');
-        else
+        } else {
             $this->writer->startElementNS('shomyo', 'outline', null);
+        }
 
         $this->writer->writeAttribute('title', $source['title']);
         $this->writer->writeAttribute('text', $source['title']);
@@ -261,7 +270,8 @@ class Opml extends BaseController {
      *
      * @note Uses the shomyo namespace to store shomyo-specific information
      */
-    public function export() {
+    public function export()
+    {
         $this->needsLoggedIn();
 
         $this->sourcesDao = new \daos\Sources();
@@ -299,8 +309,9 @@ class Opml extends BaseController {
         $sources = array('tagged'=>array(), 'untagged'=>array());
         foreach ($this->sourcesDao->get() as $source) {
             if ($source['tags']) {
-                foreach (explode(',', $source['tags']) as $tag)
+                foreach (explode(',', $source['tags']) as $tag) {
                     $sources['tagged'][$tag][] = $source;
+                }
             } else {
                 $sources['untagged'][] = $source;
             }

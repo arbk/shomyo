@@ -11,7 +11,8 @@ namespace controllers;
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     arbk (https://aruo.net/)
  */
-class Index extends BaseController {
+class Index extends BaseController
+{
 
     /**
      * home site
@@ -19,7 +20,8 @@ class Index extends BaseController {
      *
      * @return void
      */
-    public function home() {
+    public function home()
+    {
         // check login
         $this->authentication();
 
@@ -27,27 +29,29 @@ class Index extends BaseController {
         $options = array();
 
         // use ajax given params?
-        if(count($_GET)>0)
+        if (count($_GET)>0) {
             $options = $_GET;
+        }
 
         // type
-        if( !isset($options['type']) ){
+        if (!isset($options['type'])) {
             $options['type'] = \F3::get('homepage');
         }
-        if( !in_array($options['type'], array('unread','newest','starred'), true) ){
+        if (!in_array($options['type'], array('unread','newest','starred'), true)) {
             $options['type'] = 'unread';
         }
-        if( $options['type']==='unread' && \F3::get('auth')->isLoggedin()!==true ){
+        if ($options['type']==='unread' && \F3::get('auth')->isLoggedin()!==true) {
             $options['type'] = 'newest';
         }
         $this->view->homepage = $options['type'];
 
         // get search param
-        if(isset($options['search']) && strlen($options['search'])>0)
+        if (isset($options['search']) && strlen($options['search'])>0) {
             $this->view->search = $options['search'];
+        }
 
         // get date param
-        if(isset($options['date']) && strlen($options['date'])>0){
+        if (isset($options['date']) && strlen($options['date'])>0) {
             $this->view->date = $options['date'];
         }
 
@@ -67,31 +71,30 @@ class Index extends BaseController {
         $this->view->statsStarred = $stats['starred'];
 
         if ($tagsDao->hasTag("#")) {
-		foreach ($tags as $tag) {
-			if (strcmp($tag["tag"], "#") !== 0) {
-				continue;
-			}
-			$this->view->statsUnread -= $tag["unread"];
-		}
-	}
+            foreach ($tags as $tag) {
+                if (strcmp($tag["tag"], "#") !== 0) {
+                    continue;
+                }
+                $this->view->statsUnread -= $tag["unread"];
+            }
+        }
 
         // prepare tags display list
         $tagsController = new \controllers\Tags();
         $this->view->tags = $tagsController->renderTags($tags);
 
-        if(isset($options['sourcesNav']) && $options['sourcesNav'] == 'true' ) {
+        if (isset($options['sourcesNav']) && $options['sourcesNav'] == 'true') {
           // prepare sources display list
-          $sourcesDao = new \daos\Sources();
-          $sources = $sourcesDao->getWithUnread();
-          $sourcesController = new \controllers\Sources();
-          $this->view->sources = $sourcesController->renderSources($sources);
-        }
-        else{
-          $this->view->sources = '';
+            $sourcesDao = new \daos\Sources();
+            $sources = $sourcesDao->getWithUnread();
+            $sourcesController = new \controllers\Sources();
+            $this->view->sources = $sourcesController->renderSources($sources);
+        } else {
+            $this->view->sources = '';
         }
 
         // ajax call = only send entries and statistics not full template
-        if(isset($options['ajax'])) {
+        if (isset($options['ajax'])) {
             $this->view->jsonSuccess(array(
                 "entries"  => $this->view->content,
                 "all"      => $this->view->statsAll,
@@ -116,13 +119,15 @@ class Index extends BaseController {
      *
      * @return void
      */
-    public function password() {
+    public function password()
+    {
         $this->loginInvalid();
 
         $this->view = new \helpers\View();
         $this->view->password = true;
-        if(isset($_POST['password']))
+        if (isset($_POST['password'])) {
             $this->view->hash = hash("sha512", \F3::get('salt') . $_POST['password']);
+        }
         echo $this->view->render('templates/login.phtml');
     }
 
@@ -133,36 +138,38 @@ class Index extends BaseController {
      *
      * @return void
      */
-    private function authentication() {
+    private function authentication()
+    {
         // logout
-        if(isset($_GET['logout'])) {
+        if (isset($_GET['logout'])) {
             \F3::get('auth')->logout();
             \F3::reroute($this->view->base);
         }
 
         // login
-        if(
-            isset($_GET['login']) || (\F3::get('auth')->isLoggedin()!==true && \F3::get('public')!=1)
+        if (isset($_GET['login']) || (\F3::get('auth')->isLoggedin()!==true && \F3::get('public')!=1)
            ) {
              $this->loginInvalid();
 
             // authenticate?
-            if(count($_POST)>0) {
-                if(!isset($_POST['username']))
+            if (count($_POST)>0) {
+                if (!isset($_POST['username'])) {
                     $this->view->error = 'no username given';
-                else if(!isset($_POST['password']))
+                } elseif (!isset($_POST['password'])) {
                     $this->view->error = 'no password given';
-                else {
-                    if(\F3::get('auth')->login($_POST['username'], $_POST['password'])===false)
+                } else {
+                    if (\F3::get('auth')->login($_POST['username'], $_POST['password'])===false) {
                         $this->view->error = 'invalid username/password';
+                    }
                 }
             }
 
             // show login
-            if(count($_POST)==0 || isset($this->view->error))
+            if (count($_POST)==0 || isset($this->view->error)) {
                 die($this->view->render('templates/login.phtml'));
-            else
+            } else {
                 \F3::reroute($this->view->base);
+            }
         }
     }
 
@@ -173,17 +180,19 @@ class Index extends BaseController {
      *
      * @return void
      */
-    public function login() {
+    public function login()
+    {
         $this->loginInvalid();
 
         $view = new \helpers\View();
         $username = isset($_REQUEST["username"]) ? $_REQUEST["username"] : '';
         $password = isset($_REQUEST["password"]) ? $_REQUEST["password"] : '';
 
-        if(\F3::get('auth')->login($username,$password)==true)
+        if (\F3::get('auth')->login($username, $password)==true) {
             $view->jsonSuccess(array(
                 'success' => true
             ));
+        }
 
         $view->jsonSuccess(array(
             'success' => false
@@ -197,7 +206,8 @@ class Index extends BaseController {
      *
      * @return void
      */
-    public function logout() {
+    public function logout()
+    {
         $view = new \helpers\View();
         \F3::get('auth')->logout();
         $view->jsonSuccess(array(
@@ -212,13 +222,15 @@ class Index extends BaseController {
      *
      * @return void
      */
-    public function update() {
+    public function update()
+    {
         // only allow access for localhost and loggedin users
         if (\F3::get('allow_public_update_access')!=1
                 && $_SERVER['REMOTE_ADDR'] !== $_SERVER['SERVER_ADDR']
                 && $_SERVER['REMOTE_ADDR'] !== "127.0.0.1"
-                && \F3::get('auth')->isLoggedin() != 1)
+                && \F3::get('auth')->isLoggedin() != 1) {
             die("unallowed access");
+        }
 
         // update feeds
         $loader = new \helpers\ContentLoader();
@@ -234,13 +246,15 @@ class Index extends BaseController {
      *
      * @return void
      */
-    public function optimize() {
+    public function optimize()
+    {
       // only allow access for localhost and loggedin users
-      if (\F3::get('allow_public_update_access')!=1
+        if (\F3::get('allow_public_update_access')!=1
           && $_SERVER['REMOTE_ADDR'] !== $_SERVER['SERVER_ADDR']
           && $_SERVER['REMOTE_ADDR'] !== "127.0.0.1"
-          && \F3::get('auth')->isLoggedin() != 1)
+          && \F3::get('auth')->isLoggedin() != 1) {
             die("unallowed access");
+        }
 
           // optimize feed data
           $loader = new \helpers\ContentLoader();
@@ -254,14 +268,16 @@ class Index extends BaseController {
     * get the unread number of items for a windows 8 badge
     * notification.
     */
-    public function badge() {
+    public function badge()
+    {
         // load stats
         $itemsDao = new \daos\Items();
         $this->view->statsUnread = $itemsDao->numberOfUnread();
         echo $this->view->render('templates/badge.phtml');
     }
 
-    public function win8Notifications() {
+    public function win8Notifications()
+    {
         echo $this->view->render('templates/win8-notifications.phtml');
     }
 
@@ -271,21 +287,22 @@ class Index extends BaseController {
      *
      * @return html with items
      */
-    private function loadItems($options, $tags) {
+    private function loadItems($options, $tags)
+    {
         $tagColors = $this->convertTagsToAssocArray($tags);
 
         $itemDao = new \daos\Items();
         $itemsHtml = "";
         $lastItemId = "";
-        foreach($itemDao->get($options) as $item) {
-
+        foreach ($itemDao->get($options) as $item) {
             // parse tags and assign tag colors
-            $itemsTags = explode(",",$item['tags']);
+            $itemsTags = explode(",", $item['tags']);
             $item['tags'] = array();
-            foreach($itemsTags as $tag) {
+            foreach ($itemsTags as $tag) {
                 $tag = trim($tag);
-                if(strlen($tag)>0 && isset($tagColors[$tag]))
+                if (strlen($tag)>0 && isset($tagColors[$tag])) {
                     $item['tags'][$tag] = $tagColors[$tag];
+                }
             }
 
             $this->view->item = $item;
@@ -293,18 +310,18 @@ class Index extends BaseController {
             $lastItemId = $item['id'];
         }
 
-        if(strlen($itemsHtml)==0) {
+        if (strlen($itemsHtml)==0) {
             $itemsHtml = '<div class="stream-empty">'. \F3::get('lang_no_entries').'</div>';
         } else {
-            if(\F3::get('auth')->isLoggedin()===true){
+            if (\F3::get('auth')->isLoggedin()===true) {
                 $itemsHtml .= '<div class="entry-batchtool"><div id="entry-markread'.$lastItemId.'" data-itemid="'.$lastItemId.'" class="entry-markread">'.\F3::get('lang_markread').'</div>';
-                if('starred'===$options['type']){
-                  $itemsHtml .= '<div id="entry-unstarr'.$lastItemId.'" data-itemid="'.$lastItemId.'" class="entry-unstarr">'.\F3::get('lang_unstar').'</div>';
+                if ('starred'===$options['type']) {
+                    $itemsHtml .= '<div id="entry-unstarr'.$lastItemId.'" data-itemid="'.$lastItemId.'" class="entry-unstarr">'.\F3::get('lang_unstar').'</div>';
                 }
                 $itemsHtml .= '</div>';
             }
 
-            if($itemDao->hasMore()) {
+            if ($itemDao->hasMore()) {
                 $itemsHtml .= '<div class="stream-more"><span>'. \F3::get('lang_more').'</span></div>';
             }
         }
@@ -319,9 +336,10 @@ class Index extends BaseController {
      * @return tag color array
      * @param array $tags
      */
-    private function convertTagsToAssocArray($tags) {
+    private function convertTagsToAssocArray($tags)
+    {
         $assocTags = array();
-        foreach($tags as $tag) {
+        foreach ($tags as $tag) {
             $assocTags[$tag['tag']]['backColor'] = $tag['color'];
             $assocTags[$tag['tag']]['foreColor'] = \helpers\Color::colorByBrightness($tag['color']);
         }

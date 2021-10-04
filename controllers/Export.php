@@ -9,7 +9,8 @@ namespace controllers;
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     arbk (https://aruo.net/)
  */
-class Export extends BaseController {
+class Export extends BaseController
+{
 
     /**
      * item export
@@ -20,20 +21,26 @@ class Export extends BaseController {
      *
      * @return void
      */
-    public function export() {
+    public function export()
+    {
         \F3::get('logger')->log('start item export', \TRACE);
 
         $this->needsLoggedIn();
 
         $options = array();
-        if(count($_GET)>0){ $options = $_GET; }
+        if (count($_GET)>0) {
+            $options = $_GET;
+        }
 
         $tmpl = 'data/export/default.tpl.php';
-        if( isset($options['tmpl']) && strlen($options['tmpl'])>0 ){
+        if (isset($options['tmpl']) && strlen($options['tmpl'])>0) {
             $custom = 'data/export/custom/'.$options['tmpl'].'.tpl.php';
-            if( 1===preg_match('/^[a-zA-Z0-9_\-]+$/', $options['tmpl'])
-                && file_exists($custom) ){ $tmpl = $custom; }
-            else{ \F3::error(404); }
+            if (1===preg_match('/^[a-zA-Z0-9_\-]+$/', $options['tmpl'])
+                && file_exists($custom)) {
+                $tmpl = $custom;
+            } else {
+                \F3::error(404);
+            }
         }
         \F3::get('logger')->log('tmpl: "'.$tmpl.'"', \DEBUG);
 

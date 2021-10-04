@@ -11,4 +11,7 @@ namespace daos\pgsql;
  * @author      Michael Jackson <michael.o.jackson@gmail.com>
  * @author      Tobias Zeising <tobias.zeising@aditu.de>
  */
-class Tags extends \daos\mysql\Tags { }
+class Tags extends \daos\mysql\Tags
+{
+
+}

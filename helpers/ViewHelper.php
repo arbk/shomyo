@@ -11,7 +11,8 @@ namespace helpers;
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     arbk (https://aruo.net/)
  */
-class ViewHelper {
+class ViewHelper
+{
 
     /** encloses all searchWords with <span class=found>$word</span>
       * for later highlitning with CSS
@@ -20,15 +21,19 @@ class ViewHelper {
         * @param string $content which contains words
         * @param array|string $searchWords words for highlighting
       */
-    public function highlight($content, $searchWords) {
-        if(strlen(trim($searchWords))==0)
+    public function highlight($content, $searchWords)
+    {
+        if (strlen(trim($searchWords))==0) {
             return $content;
+        }
 
-        if(!is_array($searchWords))
+        if (!is_array($searchWords)) {
             $searchWords = \helpers\Search::splitTerms($searchWords);
+        }
 
-        foreach($searchWords as $word)
-            $content = preg_replace('/(?!<[^<>])('.$word.')(?![^<>]*>)/i','<span class=found>$0</span>',$content);
+        foreach ($searchWords as $word) {
+            $content = preg_replace('/(?!<[^<>])('.$word.')(?![^<>]*>)/i', '<span class=found>$0</span>', $content);
+        }
 
         return $content;
     }
@@ -41,8 +46,9 @@ class ViewHelper {
      * @return string with replaced img tags
      * @param string $content which contains img tags
      */
-    public function lazyimg($content) {
-        return preg_replace("/<img([^<]+)src=(['\"])([^\"']*)(['\"])([^<]*)>/i","<img$1ref='$3'$5>",$content);
+    public function lazyimg($content)
+    {
+        return preg_replace("/<img([^<]+)src=(['\"])([^\"']*)(['\"])([^<]*)>/i", "<img$1ref='$3'$5>", $content);
     }
 
 
@@ -52,7 +58,8 @@ class ViewHelper {
      * @return string with replaced formateddate
      * @param
      */
-    public function dateago($datestr) {
+    public function dateago($datestr)
+    {
         $date = new \DateTime($datestr);
         $now = new \DateTime();
         $ageInSeconds = $now->getTimestamp() - $date->getTimestamp();
@@ -60,12 +67,15 @@ class ViewHelper {
         $ageInHours = $ageInMinutes / 60;
         $ageInDays = $ageInHours / 24;
 
-        if($ageInMinutes<1)
-            return \F3::get('lang_seconds',round($ageInSeconds, 0));
-        if($ageInHours<1)
-            return \F3::get('lang_minutes',round($ageInMinutes, 0));
-        if($ageInDays<1)
-            return \F3::get('lang_hours',round($ageInHours, 0));
+        if ($ageInMinutes<1) {
+            return \F3::get('lang_seconds', round($ageInSeconds, 0));
+        }
+        if ($ageInHours<1) {
+            return \F3::get('lang_minutes', round($ageInMinutes, 0));
+        }
+        if ($ageInDays<1) {
+            return \F3::get('lang_hours', round($ageInHours, 0));
+        }
 
         return $datestr;
 //      return \F3::get('lang_timestamp', $date->getTimestamp());  //  <- The date is garbled.

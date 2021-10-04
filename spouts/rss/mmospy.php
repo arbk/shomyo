@@ -1,4 +1,4 @@
-<?PHP 
+<?PHP
 
 namespace spouts\rss;
 
@@ -11,7 +11,8 @@ namespace spouts\rss;
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  */
-class mmospy extends feed {
+class mmospy extends feed
+{
 
 
     /**
@@ -20,16 +21,16 @@ class mmospy extends feed {
      * @var string
      */
     public $name = 'News: MMOspy';
-    
-    
+
+
     /**
      * description of this source type
      *
      * @var string
      */
     public $description = 'This feed fetches the mmospy news with full content (not only the header as content)';
-    
-    
+
+
     /**
      * config params
      * array of arrays with name, type, default value, required, validation type
@@ -40,7 +41,7 @@ class mmospy extends feed {
      * When type is "select", a new entry "values" must be supplied, holding
      * key/value pairs of internal names (key) and displayed labels (value).
      * See /spouts/rss/heise for an example.
-     * 
+     *
      * e.g.
      * array(
      *   "id" => array(
@@ -70,8 +71,9 @@ class mmospy extends feed {
      * @return void
      * @param string $url
      */
-    public function load($params) {
-        parent::load(array( 'url' => $this->getXmlUrl() ) );
+    public function load($params)
+    {
+        parent::load(array( 'url' => $this->getXmlUrl() ));
     }
 
 
@@ -81,7 +83,8 @@ class mmospy extends feed {
      * @return string url as xml
      * @param mixed $params params for the source
      */
-    public function getXmlUrl($params = null) {
+    public function getXmlUrl($params = null)
+    {
         return $this->feedUrl;
     }
 
@@ -91,20 +94,23 @@ class mmospy extends feed {
      *
      * @return string content
      */
-    public function getContent() {
-        if($this->items!==false && $this->valid()) {
+    public function getContent()
+    {
+        if ($this->items!==false && $this->valid()) {
             $originalContent = file_get_contents($this->getLink());
             preg_match_all('|<div class="content">(.*?)</div>|ims', $originalContent, $matches, PREG_PATTERN_ORDER);
-            if(is_array($matches) && is_array($matches[0]) && isset($matches[0][0])) {
+            if (is_array($matches) && is_array($matches[0]) && isset($matches[0][0])) {
                 $content = utf8_encode($matches[0][0]);
-                
-                $content = preg_replace_callback(',<a([^>]+)href="([^>"\s]+)",i', function($matches) {
-                                            return "<a\1href=\"" . \spouts\rss\mmospy::absolute("\2", "http://www.mmo-spy.de") . "\"";},
+
+                $content = preg_replace_callback(',<a([^>]+)href="([^>"\s]+)",i', function ($matches) {
+                                            return "<a\1href=\"" . \spouts\rss\mmospy::absolute("\2", "http://www.mmo-spy.de") . "\"";
+                },
                                             $content);
-                $content = preg_replace_callback(',<img([^>]+)src="([^>"\s]+)",i', function($matches) {
-                                        return "<img\1src=\"" . \spouts\rss\mmospy::absolute("\2", "http://www.mmo-spy.de") . "\"";},
+                $content = preg_replace_callback(',<img([^>]+)src="([^>"\s]+)",i', function ($matches) {
+                                        return "<img\1src=\"" . \spouts\rss\mmospy::absolute("\2", "http://www.mmo-spy.de") . "\"";
+                },
                                         $content);
-            
+
                 return $content;
             }
         }
@@ -118,9 +124,11 @@ class mmospy extends feed {
      * @return string $relative url
      * @return string $absolute url
      */
-    public static function absolute($relative, $absolute) {
-        if (preg_match(',^(https?://|ftp://|mailto:|news:),i', $relative))
+    public static function absolute($relative, $absolute)
+    {
+        if (preg_match(',^(https?://|ftp://|mailto:|news:),i', $relative)) {
             return $relative;
+        }
         return $absolute . $relative;
     }
 }

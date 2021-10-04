@@ -42,10 +42,10 @@ var selfoss = {
     /**
      * initialize application
      */
-    init: function() {
-        jQuery(document).ready(function() {
+    init: function () {
+        jQuery(document).ready(function () {
             // reduced init on login
-            if($('#login').length>0) {
+            if ($('#login').length > 0) {
                 $('#username').focus();
                 return;
             }
@@ -69,9 +69,9 @@ var selfoss = {
             selfoss.shortcuts.init();
 
             // auto reload settings
-            if( $('#config').data('auto_reload')=="1" ){
+            if ($('#config').data('auto_reload') == "1") {
                 // setup periodic stats reloader
-                window.setInterval(selfoss.reloadStats, 60*1000);
+                window.setInterval(selfoss.reloadStats, 60 * 1000);
             }
         });
     },
@@ -83,14 +83,14 @@ var selfoss = {
      * @return void
      * @param element containing the form elements
      */
-    getValues: function(element) {
+    getValues: function (element) {
         var values = {};
 
         $(element).find(':input').each(function (i, el) {
             // get only input elements with name
-            if($.trim($(el).attr('name')).length!=0) {
+            if ($.trim($(el).attr('name')).length != 0) {
                 values[$(el).attr('name')] = $(el).val();
-                if($(el).attr('type')=='checkbox')
+                if ($(el).attr('type') == 'checkbox')
                     values[$(el).attr('name')] = $(el).attr('checked') ? 1 : 0;
             }
         });
@@ -106,10 +106,10 @@ var selfoss = {
      * @param form target where input fields in
      * @param errors an array with all error messages
      */
-    showErrors: function(form, errors) {
+    showErrors: function (form, errors) {
         $(form).find('span.error').remove();
-        $.each(errors, function(key, val) {
-            form.find("[name='"+key+"']").addClass('error').parent('li').append('<span class="error">'+val+'</span>');
+        $.each(errors, function (key, val) {
+            form.find("[name='" + key + "']").addClass('error').parent('li').append('<span class="error">' + val + '</span>');
         });
     },
 
@@ -119,9 +119,9 @@ var selfoss = {
      *
      * @return true if device resolution smaller equals 1024
      */
-    isMobile: function() {
+    isMobile: function () {
         // first check useragent
-        if((/iPhone|iPod|iPad|Android|BlackBerry/).test(navigator.userAgent))
+        if ((/iPhone|iPod|iPad|Android|BlackBerry/).test(navigator.userAgent))
             return true;
 
         // otherwise check resolution
@@ -134,8 +134,8 @@ var selfoss = {
      *
      * @return true if device resolution smaller equals 1024
      */
-    isTablet: function() {
-        if($(window).width()<=1024)
+    isTablet: function () {
+        if ($(window).width() <= 1024)
             return true;
         return false;
     },
@@ -146,8 +146,8 @@ var selfoss = {
      *
      * @return true if device resolution smaller equals 1024
      */
-    isSmartphone: function() {
-        if($(window).width()<=640)
+    isSmartphone: function () {
+        if ($(window).width() <= 640)
             return true;
         return false;
     },
@@ -158,7 +158,7 @@ var selfoss = {
      *
      * @return void
      */
-    reloadList: function() {
+    reloadList: function () {
         if (selfoss.activeAjaxReq !== null)
             selfoss.activeAjaxReq.abort();
 
@@ -175,7 +175,7 @@ var selfoss = {
             type: 'GET',
             dataType: 'json',
             data: selfoss.filter,
-            success: function(data) {
+            success: function (data) {
                 selfoss.refreshStats(data.all, data.unread, data.starred);
 
                 $('#content').html(data.entries);
@@ -184,16 +184,16 @@ var selfoss = {
                 selfoss.events.search();
 
                 // update mobile filter view
-                switch ( selfoss.filter.type ){
-                  case 'unread':
-                    $('#nav-mobile-filter').html( $('#nav-filter-unread').html() );
-                    break;
-                  case 'starred':
-                    $('#nav-mobile-filter').html( $('#nav-filter-starred').html() );
-                    break;
-                  default:
-                    $('#nav-mobile-filter').html( $('#nav-filter-newest').html() );
-                    break;
+                switch (selfoss.filter.type) {
+                    case 'unread':
+                        $('#nav-mobile-filter').html($('#nav-filter-unread').html());
+                        break;
+                    case 'starred':
+                        $('#nav-mobile-filter').html($('#nav-filter-starred').html());
+                        break;
+                    default:
+                        $('#nav-mobile-filter').html($('#nav-filter-newest').html());
+                        break;
                 }
 
                 // update tags
@@ -201,27 +201,27 @@ var selfoss = {
 
                 // drop loaded sources
                 var currentSource = -1;
-                if(selfoss.sourcesNavLoaded) {
+                if (selfoss.sourcesNavLoaded) {
                     currentSource = $('#nav-sources li').index($('#nav-sources .active'));
                     $('#nav-sources li').remove();
                     selfoss.sourcesNavLoaded = false;
                 }
-                if(selfoss.filter.sourcesNav)
+                if (selfoss.filter.sourcesNav)
                     selfoss.refreshSources(data.sources, currentSource);
             },
-            error: function(jqXHR, textStatus, errorThrown) {
+            error: function (jqXHR, textStatus, errorThrown) {
                 if (textStatus == "parsererror")
                     location.reload();
                 else {
-                if (textStatus == "abort")
-                    return;
-                else if (errorThrown)
-                    selfoss.showError('Load list error: '+
-                                      textStatus+' '+errorThrown);
+                    if (textStatus == "abort")
+                        return;
+                    else if (errorThrown)
+                        selfoss.showError('Load list error: ' +
+                            textStatus + ' ' + errorThrown);
                     $('.stream-error').show();
                 }
             },
-            complete: function(jqXHR, textStatus) {
+            complete: function (jqXHR, textStatus) {
                 // clean up
                 $('#content').removeClass('loading');
                 selfoss.activeAjaxReq = null;
@@ -235,33 +235,33 @@ var selfoss = {
      *
      * @return void
      */
-    reloadStats: function() {
-        if( Date.now() - selfoss.lastStatsUpdate < 5*60*1000 )
+    reloadStats: function () {
+        if (Date.now() - selfoss.lastStatsUpdate < 5 * 60 * 1000)
             return;
 
-        var stats_url = $('base').attr('href')+'stats?tags=true';
-        if( selfoss.filter.sourcesNav )
+        var stats_url = $('base').attr('href') + 'stats?tags=true';
+        if (selfoss.filter.sourcesNav)
             stats_url = stats_url + '&sources=true';
 
         $.ajax({
             url: stats_url,
             type: 'GET',
-            success: function(data) {
-                if( data.unread>0 &&
+            success: function (data) {
+                if (data.unread > 0 &&
                     ($('.stream-empty').is(':visible') ||
-                     $('.stream-error').is(':visible')) ) {
+                        $('.stream-error').is(':visible'))) {
                     selfoss.reloadList();
                 } else {
                     selfoss.refreshStats(data.all, data.unread, data.starred);
                     selfoss.refreshTags(data.tagshtml);
 
-                    if( 'sourceshtml' in data )
+                    if ('sourceshtml' in data)
                         selfoss.refreshSources(data.sourceshtml);
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown) {
-                selfoss.showError('Could not refresh stats: '+
-                                  textStatus+' '+errorThrown);
+            error: function (jqXHR, textStatus, errorThrown) {
+                selfoss.showError('Could not refresh stats: ' +
+                    textStatus + ' ' + errorThrown);
             }
         });
     },
@@ -275,7 +275,7 @@ var selfoss = {
      * @param new unread stats
      * @param new starred stats
      */
-    refreshStats: function(all, unread, starred) {
+    refreshStats: function (all, unread, starred) {
         selfoss.lastStatsUpdate = Date.now();
 
         $('.nav-filter-newest span').html(all);
@@ -291,17 +291,17 @@ var selfoss = {
      * @return void
      * @param new unread stats
      */
-    refreshUnread: function(unread) {
+    refreshUnread: function (unread) {
         $('span.unread-count').html(unread);
 
         // make unread itemcount red and show the unread count in the document
         // title
-        if(unread>0) {
+        if (unread > 0) {
             $('span.unread-count').addClass('unread');
-//          $(document).attr('title', selfoss.htmlTitle+' ('+unread+')');
+            //          $(document).attr('title', selfoss.htmlTitle+' ('+unread+')');
         } else {
             $('span.unread-count').removeClass('unread');
-//          $(document).attr('title', selfoss.htmlTitle);
+            //          $(document).attr('title', selfoss.htmlTitle);
         }
     },
 
@@ -311,22 +311,22 @@ var selfoss = {
      *
      * @return void
      */
-    reloadTags: function() {
+    reloadTags: function () {
         $('#nav-tags').addClass('loading');
         $('#nav-tags li:not(:first)').remove();
 
         $.ajax({
-            url: $('base').attr('href')+'tagslist',
+            url: $('base').attr('href') + 'tagslist',
             type: 'GET',
-            success: function(data) {
+            success: function (data) {
                 $('#nav-tags').append(data);
                 selfoss.events.navigation();
             },
-            error: function(jqXHR, textStatus, errorThrown) {
-                selfoss.showError('Load tags error: '+
-                                  textStatus+' '+errorThrown);
+            error: function (jqXHR, textStatus, errorThrown) {
+                selfoss.showError('Load tags error: ' +
+                    textStatus + ' ' + errorThrown);
             },
-            complete: function(jqXHR, textStatus) {
+            complete: function (jqXHR, textStatus) {
                 $('#nav-tags').removeClass('loading');
             }
         });
@@ -339,13 +339,13 @@ var selfoss = {
      * @return void
      * @param tags the new taglist as html
      */
-    refreshTags: function(tags) {
+    refreshTags: function (tags) {
         var currentTag = $('#nav-tags li').index($('#nav-tags .active'));
-//      $('.color').spectrum('destroy');
+        //      $('.color').spectrum('destroy');
         $('#nav-tags li:not(:first)').remove();
         $('#nav-tags').append(tags);
-        if(currentTag>=0)
-            $('#nav-tags li:eq('+currentTag+')').addClass('active');
+        if (currentTag >= 0)
+            $('#nav-tags li:eq(' + currentTag + ')').addClass('active');
         selfoss.events.navigation();
     },
 
@@ -359,12 +359,12 @@ var selfoss = {
      * @param sources the new sourceslist as html
      * @param currentSource the index of the active source
      */
-    refreshSources: function(sources, currentSource) {
+    refreshSources: function (sources, currentSource) {
         var currentSourceIndex = currentSource >= 0 ? currentSource : $('#nav-sources li').index($('#nav-sources .active'));
         $('#nav-sources li').remove();
         $('#nav-sources').append(sources);
-        if(currentSourceIndex>=0)
-            $('#nav-sources li:eq('+currentSourceIndex+')').addClass('active');
+        if (currentSourceIndex >= 0)
+            $('#nav-sources li:eq(' + currentSourceIndex + ')').addClass('active');
         selfoss.events.navigation();
     },
 
@@ -375,12 +375,12 @@ var selfoss = {
      * @return void
      * @param parent element
      */
-    anonymize: function(parent) {
+    anonymize: function (parent) {
         var anonymizer = $('#config').data('anonymizer');
-        if(anonymizer.length>0) {
-            parent.find('a').each(function(i,link) {
+        if (anonymizer.length > 0) {
+            parent.find('a').each(function (i, link) {
                 link = $(link);
-                if(typeof link.attr('href') != "undefined" && link.attr('href').indexOf(anonymizer)!=0) {
+                if (typeof link.attr('href') != "undefined" && link.attr('href').indexOf(anonymizer) != 0) {
                     link.attr('href', anonymizer + link.attr('href'));
                 }
             });
@@ -394,17 +394,17 @@ var selfoss = {
      * @return void
      * @param message string
      */
-    showError: function(message) {
-        if(typeof(message) == 'undefined') {
+    showError: function (message) {
+        if (typeof (message) == 'undefined') {
             var message = "Oops! Something went wrong";
         }
         var error = $('#error');
         error.html(message);
         error.show();
-        window.setTimeout(function() {
+        window.setTimeout(function () {
             error.click();
         }, 10000);
-        error.unbind('click').click(function() {
+        error.unbind('click').click(function () {
             error.fadeOut();
         });
     },
@@ -414,11 +414,11 @@ var selfoss = {
      * @param content element
      * @param int
      */
-    setupFancyBox: function(content, id) {
+    setupFancyBox: function (content, id) {
         // Close existing fancyBoxes
         $.fancybox.close();
         var images = $(content).find('a[href$=".jpg"],a[href$=".jpeg"],a[href$=".png"],a[href$=".gif"]');
-        $(images).attr('rel', 'gallery-'+id).unbind('click');
+        $(images).attr('rel', 'gallery-' + id).unbind('click');
         $(images).fancybox({
             helpers: {
                 overlay: {
@@ -433,16 +433,16 @@ var selfoss = {
      */
     changeVisibleItemsFlag: function (path, itemId) {
         var ids = new Array();
-        $('.entry').each(function(index, item) {
+        $('.entry').each(function (index, item) {
             var id = $(item).attr('id').substr(5);
-            if( ('mark'===path && $(item).hasClass('unread'))
-                || ('unstarr'===path && $(item).find('.entry-starr').hasClass('active')) ){
-              ids.push( id );
+            if (('mark' === path && $(item).hasClass('unread'))
+                || ('unstarr' === path && $(item).find('.entry-starr').hasClass('active'))) {
+                ids.push(id);
             }
-            if( undefined !== itemId && id === String(itemId) ){ return false; }
+            if (undefined !== itemId && id === String(itemId)) { return false; }
         });
 
-        if(0 === ids.length){ return; }
+        if (0 === ids.length) { return; }
 
         // show loading
         var content = $('#content');
@@ -456,9 +456,9 @@ var selfoss = {
             data: {
                 ids: ids
             },
-            success: function(response) {
+            success: function (response) {
                 // hide nav on smartphone if visible
-                if(selfoss.isSmartphone() && $('#nav').is(':visible')==true)
+                if (selfoss.isSmartphone() && $('#nav').is(':visible') == true)
                     $('#nav-mobile-settings').click();
 
                 // close opened entry
@@ -468,12 +468,12 @@ var selfoss = {
                 selfoss.filter.offset = 0;
                 selfoss.reloadList();
             },
-            error: function(jqXHR, textStatus, errorThrown) {
+            error: function (jqXHR, textStatus, errorThrown) {
                 content.html(articleList);
                 $('#content').removeClass('loading');
                 selfoss.events.entries();
-                selfoss.showError('Can not mark all visible item: '+
-                                    textStatus+' '+errorThrown);
+                selfoss.showError('Can not mark all visible item: ' +
+                    textStatus + ' ' + errorThrown);
             }
         });
     },

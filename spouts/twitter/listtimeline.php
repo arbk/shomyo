@@ -12,11 +12,13 @@ namespace spouts\twitter;
  * @author     Nicola Malizia <unnikked@gmail.com>
  */
 
-class listtimeline extends \spouts\twitter\usertimeline {
+class listtimeline extends \spouts\twitter\usertimeline
+{
 
 
-    public function __construct() {
-    
+    public function __construct()
+    {
+
         $this->name = 'Twitter - List timeline';
         $this->description = 'The timeline of a given list';
         $this->params = array(
@@ -57,23 +59,27 @@ class listtimeline extends \spouts\twitter\usertimeline {
      * @return void
      * @param mixed $params the params of this source
      */
-    public function load($params) {
+    public function load($params)
+    {
         $twitter = new \TwitterOAuth($params['consumer_key'], $params['consumer_secret']);
-        $timeline = $twitter->get('lists/statuses', 
-                            array('slug' => $params['slug'], 
-                                  'owner_screen_name' => $params['owner_screen_name'], 
-                                  'include_rts' => 1, 
-                                  'count' => 50));
-        
-        if(isset($timeline->error))
+        $timeline = $twitter->get(
+            'lists/statuses',
+            array('slug' => $params['slug'],
+                                  'owner_screen_name' => $params['owner_screen_name'],
+                                  'include_rts' => 1,
+            'count' => 50)
+        );
+
+        if (isset($timeline->error)) {
             throw new \exception($timeline->error);
-        
-        if(!is_array($timeline))
+        }
+
+        if (!is_array($timeline)) {
             throw new \exception('invalid twitter response');
-        
+        }
+
         $this->items = $timeline;
-        
+
         $this->htmlUrl = 'http://twitter.com/' . urlencode($params['owner_screen_name']);
     }
-
 }

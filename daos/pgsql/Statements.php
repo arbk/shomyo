@@ -10,7 +10,8 @@ namespace daos\pgsql;
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Alexandre Rossi <alexandre.rossi@gmail.com>
  */
-class Statements extends \daos\mysql\Statements {
+class Statements extends \daos\mysql\Statements
+{
 
    /**
     * wrap insert statement to return id
@@ -19,7 +20,8 @@ class Statements extends \daos\mysql\Statements {
     * @param sql params
     * @return id after insert
     */
-    public static function insert($query, $params) {
+    public static function insert($query, $params)
+    {
         $res = \F3::get('db')->exec("$query RETURNING id", $params);
         return $res[0]['id'];
     }
@@ -32,11 +34,13 @@ class Statements extends \daos\mysql\Statements {
     * @param order
     * @return full statement
     */
-    public static function nullFirst($column, $order) {
-        if( $order == 'DESC' )
+    public static function nullFirst($column, $order)
+    {
+        if ($order == 'DESC') {
             $nulls = 'LAST';
-        else if( $order == 'ASC' )
+        } elseif ($order == 'ASC') {
             $nulls = 'FIRST';
+        }
         return "$column $order NULLS $nulls";
     }
 
@@ -47,7 +51,8 @@ class Statements extends \daos\mysql\Statements {
     * @param boolean column to concat
     * @return full statement
     */
-    public static function sumBool($column) {
+    public static function sumBool($column)
+    {
         return "SUM($column::int)";
     }
 
@@ -58,7 +63,8 @@ class Statements extends \daos\mysql\Statements {
     * @param column to check for truth
     * @return full statement
     */
-    public static function isTrue($column) {
+    public static function isTrue($column)
+    {
         return "$column=true";
     }
 
@@ -69,7 +75,8 @@ class Statements extends \daos\mysql\Statements {
     * @param column to check for false
     * @return full statement
     */
-    public static function isFalse($column) {
+    public static function isFalse($column)
+    {
         return "$column=false";
     }
 
@@ -81,7 +88,8 @@ class Statements extends \daos\mysql\Statements {
     * @param value to search in CSV column
     * @return full statement
     */
-    public static function csvRowMatches($column, $value) {
+    public static function csvRowMatches($column, $value)
+    {
         return "$value=ANY(string_to_array($column, ','))";
     }
 }

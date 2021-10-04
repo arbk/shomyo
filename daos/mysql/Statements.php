@@ -10,7 +10,8 @@ namespace daos\mysql;
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Alexandre Rossi <alexandre.rossi@gmail.com>
  */
-class Statements{
+class Statements
+{
 
    /**
     * wrap insert statement to return id
@@ -19,7 +20,8 @@ class Statements{
     * @param sql params
     * @return id after insert
     */
-    public static function insert($query, $params) {
+    public static function insert($query, $params)
+    {
         \F3::get('db')->exec($query, $params);
         $res = \F3::get('db')->exec('SELECT LAST_INSERT_ID() as lastid');
         return $res[0]['lastid'];
@@ -33,7 +35,8 @@ class Statements{
     * @param order
     * @return full statement
     */
-    public static function nullFirst($column, $order) {
+    public static function nullFirst($column, $order)
+    {
         return "$column $order";
     }
 
@@ -44,7 +47,8 @@ class Statements{
     * @param boolean column to concat
     * @return full statement
     */
-    public static function sumBool($column) {
+    public static function sumBool($column)
+    {
         return "SUM($column)";
     }
 
@@ -55,7 +59,8 @@ class Statements{
     * @param column to check for truth
     * @return full statement
     */
-    public static function isTrue($column) {
+    public static function isTrue($column)
+    {
         return "$column=1";
     }
 
@@ -66,7 +71,8 @@ class Statements{
     * @param column to check for false
     * @return full statement
     */
-    public static function isFalse($column) {
+    public static function isFalse($column)
+    {
         return "$column=0";
     }
 
@@ -78,9 +84,11 @@ class Statements{
     * @param value to search in CSV column
     * @return full statement
     */
-    public static function csvRowMatches($column, $value) {
-        if( $value[0] == ':' )
+    public static function csvRowMatches($column, $value)
+    {
+        if ($value[0] == ':') {
             $value = "_utf8 $value";
+        }
 
         return "CONCAT(',', $column, ',') LIKE CONCAT('%,', $value, ',%') COLLATE utf8_bin";
     }

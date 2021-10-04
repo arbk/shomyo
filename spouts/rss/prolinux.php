@@ -14,7 +14,8 @@ namespace spouts\rss;
  * @author     Daniel Seither <post@tiwoc.de>
  * @author     Sebastian Gibb <mail@sebastiangibb.de>
  */
-class prolinux extends feed {
+class prolinux extends feed
+{
 
 
     /**
@@ -110,8 +111,9 @@ class prolinux extends feed {
      * @return void
      * @param string $url
      */
-    public function load($params) {
-        parent::load(array( 'url' => $this->getXmlUrl($params)) );
+    public function load($params)
+    {
+        parent::load(array( 'url' => $this->getXmlUrl($params)));
     }
 
 
@@ -121,7 +123,8 @@ class prolinux extends feed {
      * @return string url as xml
      * @param mixed $params params for the source
      */
-    public function getXmlUrl($params) {
+    public function getXmlUrl($params)
+    {
         return $this->feedUrls[$params['section']];
     }
 
@@ -131,18 +134,21 @@ class prolinux extends feed {
      *
      * @return string content
      */
-    public function getContent() {
-        if($this->items!==false && $this->valid()) {
+    public function getContent()
+    {
+        if ($this->items!==false && $this->valid()) {
             $originalContent = file_get_contents($this->getLink());
-            foreach($this->textDivs as $div) {
+            foreach ($this->textDivs as $div) {
                 $content = $this->getTag($div[1], $div[2], $originalContent, $div[0], $div[3]);
-                if(is_array($content) && count($content)>=1) {
+                if (is_array($content) && count($content)>=1) {
                     $content = $content[0];
-                    $content = preg_replace_callback(',<a([^>]+)href="([^>"\s]+)",i', function($matches) {
-                                            return "<a\1href=\"" . \spouts\rss\prolinux::absolute("\2", "http://www.pro-linux.de") . "\"";},
+                    $content = preg_replace_callback(',<a([^>]+)href="([^>"\s]+)",i', function ($matches) {
+                                            return "<a\1href=\"" . \spouts\rss\prolinux::absolute("\2", "http://www.pro-linux.de") . "\"";
+                    },
                                             $content);
-                    $content = preg_replace_callback(',<img([^>]+)src="([^>"\s]+)",i', function($matches) {
-                                            return "<img\1src=\"" . \spouts\rss\prolinux::absolute("\2", "http://www.pro-linux.de") . "\"";},
+                    $content = preg_replace_callback(',<img([^>]+)src="([^>"\s]+)",i', function ($matches) {
+                                            return "<img\1src=\"" . \spouts\rss\prolinux::absolute("\2", "http://www.pro-linux.de") . "\"";
+                    },
                                             $content);
                     return $content;
                 }
@@ -162,16 +168,19 @@ class prolinux extends feed {
      * @return string $xml data string
      * @return string $tag optional tag
      */
-    private function getTag($attr, $value, $xml, $tag=null, $end=null) {
-        if(is_null($tag))
+    private function getTag($attr, $value, $xml, $tag = null, $end = null)
+    {
+        if (is_null($tag)) {
             $tag = '\w+';
-        else
+        } else {
             $tag = preg_quote($tag);
+        }
 
-        if(is_null($end))
+        if (is_null($end)) {
             $end = '</\1>';
-        else
+        } else {
             $end = preg_quote($end);
+        }
 
         $attr = preg_quote($attr);
         $value = preg_quote($value);
@@ -188,9 +197,11 @@ class prolinux extends feed {
      * @return string $relative url
      * @return string $absolute url
      */
-    public static function absolute($relative, $absolute) {
-        if (preg_match(',^(https?://|ftp://|mailto:|news:),i', $relative))
+    public static function absolute($relative, $absolute)
+    {
+        if (preg_match(',^(https?://|ftp://|mailto:|news:),i', $relative)) {
             return $relative;
+        }
         return $absolute . $relative;
     }
 }

@@ -1,4 +1,4 @@
-<?PHP 
+<?PHP
 
 namespace spouts\tumblr;
 
@@ -11,7 +11,8 @@ namespace spouts\tumblr;
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  */
-class user extends \spouts\rss\images {
+class user extends \spouts\rss\images
+{
 
     /**
      * name of source
@@ -19,23 +20,23 @@ class user extends \spouts\rss\images {
      * @var string
      */
     public $name = 'tumblr User';
-    
-    
+
+
     /**
      * description of this source type
      *
      * @var string
      */
     public $description = 'entries of a tumblr user';
-    
-    
+
+
     /**
      * config params
      * array of arrays with name, type, default value, required, validation type
      *
      * - Values for type: text, password, checkbox
      * - Values for validation: alpha, email, numeric, int, alnum, notempty
-     * 
+     *
      * e.g.
      * array(
      *   "id" => array(
@@ -59,8 +60,8 @@ class user extends \spouts\rss\images {
             "validation" => array("notempty")
         )
     );
-    
-    
+
+
     /**
      * loads content for given source
      * I supress all Warnings of SimplePie for ensuring
@@ -69,7 +70,8 @@ class user extends \spouts\rss\images {
      * @return void
      * @param mixed $params the params of this source
      */
-    public function load($params) {
+    public function load($params)
+    {
         parent::load(array( "url" => $this->getXmlUrl($params)));
     }
 
@@ -80,7 +82,8 @@ class user extends \spouts\rss\images {
      * @return string url as xml
      * @param mixed $params params for the source
      */
-    public function getXmlUrl($params) {
+    public function getXmlUrl($params)
+    {
         return "http://" . urlencode($params['username']) . ".tumblr.com/rss";
     }
 }

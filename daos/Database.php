@@ -1,7 +1,7 @@
 <?PHP
 
 namespace daos;
-    
+
 /**
  * Base class for database access
  *
@@ -11,33 +11,36 @@ namespace daos;
  * @author     Harald Lapp <harald.lapp@gmail.com>
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  */
-class Database {
+class Database
+{
     /**
      * Instance of backend specific database access class
      *
      * @var     object
      */
     private $backend = null;
-    
-    
+
+
     /**
      * establish connection and
      * create undefined tables
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         $class = 'daos\\' . \F3::get('db_type') . '\\Database';
         $this->backend = new $class();
     }
-    
-    
+
+
     /**
      * optimize database by database own optimize statement
      *
      * @return  void
      */
-    public function optimize() {
+    public function optimize()
+    {
         $this->backend->optimize();
     }
 }

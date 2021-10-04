@@ -1,4 +1,4 @@
-<?PHP 
+<?PHP
 
 namespace spouts\rss;
 
@@ -12,7 +12,8 @@ namespace spouts\rss;
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     Daniel Seither <post@tiwoc.de>
  */
-class readability extends feed {
+class readability extends feed
+{
 
 
     /**
@@ -21,16 +22,16 @@ class readability extends feed {
      * @var string
      */
     public $name = 'RSS Feed (with readability)';
-    
-    
+
+
     /**
      * description of this source type
      *
      * @var string
      */
     public $description = 'This feed cleaning the content with readability.com';
-    
-    
+
+
     /**
      * config params
      * array of arrays with name, type, default value, required, validation type
@@ -41,7 +42,7 @@ class readability extends feed {
      * When type is "select", a new entry "values" must be supplied, holding
      * key/value pairs of internal names (key) and displayed labels (value).
      * See /spouts/rss/heise for an example.
-     * 
+     *
      * e.g.
      * array(
      *   "id" => array(
@@ -73,7 +74,7 @@ class readability extends feed {
         )
     );
 
-    
+
     /**
      * the readability api key
      *
@@ -88,39 +89,45 @@ class readability extends feed {
      * @return void
      * @param string $url
      */
-    public function load($params) {
+    public function load($params)
+    {
         $this->apiKey = $params['api'];
-        if(strlen(trim($this->apiKey))==0)
+        if (strlen(trim($this->apiKey))==0) {
             $this->apiKey = \F3::get('readability');
-        
-        parent::load(array( 'url' => $params['url']) );
+        }
+
+        parent::load(array( 'url' => $params['url']));
     }
-    
-    
+
+
     /**
      * returns the content of this item
      *
      * @return string content
      */
-    public function getContent() {
+    public function getContent()
+    {
         $contentFromReadability = $this->fetchFromReadability(parent::getLink());
-        if($contentFromReadability===false)
+        if ($contentFromReadability===false) {
             return "readability parse error <br />" . parent::getContent();
+        }
         return $contentFromReadability;
     }
-    
-    
+
+
     /**
      * fetch content from readability.com
      *
      * @author oxman @github
      * @return string content
      */
-    private function fetchFromReadability($url) {
+    private function fetchFromReadability($url)
+    {
         $content = @file_get_contents("https://readability.com/api/content/v1/parser?token=" . $this->apiKey . "&url=" . $url);
         $data = json_decode($content);
-        if(isset($data->content)===false)
+        if (isset($data->content)===false) {
             return false;
+        }
         return $data->content;
     }
 }

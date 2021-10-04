@@ -1,4 +1,4 @@
-<?PHP 
+<?PHP
 
 namespace spouts\rss;
 
@@ -11,7 +11,8 @@ namespace spouts\rss;
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  */
-class images extends feed {
+class images extends feed
+{
 
     /**
      * name of spout
@@ -19,50 +20,51 @@ class images extends feed {
      * @var string
      */
     public $name = 'RSS Feed Images';
-    
-    
+
+
     /**
      * description of this source type
      *
      * @var string
      */
     public $description = 'Fetching images from given rss feed';
-    
-    
+
+
     /**
      * returns the thumbnail of this item (for multimedia feeds)
      *
      * @return mixed thumbnail data
      */
-    public function getThumbnail() {
-        if($this->items===false || $this->valid()===false)
+    public function getThumbnail()
+    {
+        if ($this->items===false || $this->valid()===false) {
             return "";
-    
+        }
+
         $item = current($this->items);
-        
+
         // search enclosures (media tags)
-        if(count(@$item->get_enclosures()) > 0) {
-        
-            // thumbnail given?
-            if(@$item->get_enclosure(0)->get_thumbnail())
+        if (count(@$item->get_enclosures()) > 0) {
+            if (@$item->get_enclosure(0)->get_thumbnail()) {
+                // thumbnail given?
                 return @$item->get_enclosure(0)->get_thumbnail();
-            
-            // link given?
-            elseif(@$item->get_enclosure(0)->get_link())
+            } elseif (@$item->get_enclosure(0)->get_link()) {
+                // link given?
                 return @$item->get_enclosure(0)->get_link();
-        
+            }
+
         // no enclosures: search image link in content
         } else {
-            
-            $image = $this->getImage(@$item->get_content());  
-            if($image!==false)
+            $image = $this->getImage(@$item->get_content());
+            if ($image!==false) {
                 return $image;
+            }
         }
-        
+
         return "";
     }
-    
-   
+
+
     /**
      * taken from: http://zytzagoo.net/blog/2008/01/23/extracting-images-from-html-using-regular-expressions/
      * Searches for the first occurence of an html <img> element in a string
@@ -73,7 +75,8 @@ class images extends feed {
      *                           found <img> or boolean false if no <img>
      *                           is found
      */
-    public function getImage($html) {
+    public function getImage($html)
+    {
         if (stripos($html, '<img') !== false) {
             $imgsrc_regex = '#<\s*img [^\>]*src\s*=\s*(["\'])(.*?)\1#im';
             preg_match($imgsrc_regex, $html, $matches);
@@ -88,5 +91,4 @@ class images extends feed {
             return false;
         }
     }
-        
 }

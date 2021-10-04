@@ -1,4 +1,4 @@
-<?PHP 
+<?PHP
 
 namespace spouts\deviantart;
 
@@ -11,7 +11,8 @@ namespace spouts\deviantart;
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  */
-class dailydeviations extends \spouts\rss\images {
+class dailydeviations extends \spouts\rss\images
+{
 
     /**
      * name of source
@@ -19,23 +20,23 @@ class dailydeviations extends \spouts\rss\images {
      * @var string
      */
     public $name = 'deviantART - daily deviations';
-    
-    
+
+
     /**
      * description of this source type
      *
      * @var string
      */
     public $description = 'daily deviations of deviantART';
-    
-    
+
+
     /**
      * config params
      * array of arrays with name, type, default value, required, validation type
      *
      * - Values for type: text, password, checkbox
      * - Values for validation: alpha, email, numeric, int, alnum, notempty
-     * 
+     *
      * e.g.
      * array(
      *   "id" => array(
@@ -51,8 +52,8 @@ class dailydeviations extends \spouts\rss\images {
      * @var bool|mixed
      */
     public $params = false;
-    
-    
+
+
     /**
      * loads content for given source
      * I supress all Warnings of SimplePie for ensuring
@@ -61,7 +62,8 @@ class dailydeviations extends \spouts\rss\images {
      * @return void
      * @param mixed $params the params of this source
      */
-    public function load($params) {
+    public function load($params)
+    {
         parent::load(array( "url" => $this->getXmlUrl()));
     }
 
@@ -72,7 +74,8 @@ class dailydeviations extends \spouts\rss\images {
      * @return string url as xml
      * @param mixed $params params for the source
      */
-    public function getXmlUrl($params = null) {
+    public function getXmlUrl($params = null)
+    {
         return 'http://backend.deviantart.com/rss.xml?q=special%3Add&type=deviation&offset=0';
     }
 }

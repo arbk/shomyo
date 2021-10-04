@@ -11,7 +11,8 @@ namespace daos\mysql;
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     arbk (https://aruo.net/)
  */
-class Sources extends Database {
+class Sources extends Database
+{
 
     /**
      * add new source
@@ -22,18 +23,21 @@ class Sources extends Database {
      * @param string $spout the source type
      * @param mixed $params depends from spout
      */
-    public function add($title, $tags, $filter, $spout, $params) {
+    public function add($title, $tags, $filter, $spout, $params)
+    {
         // sanitize tag list
         $tags = implode(',', preg_split('/\s*,\s*/', trim($tags), -1, PREG_SPLIT_NO_EMPTY));
 
-        return $this->stmt->insert('INSERT INTO '.\F3::get('db_prefix').'sources (title, tags, filter, spout, params) VALUES (:title, :tags, :filter, :spout, :params)',
-                    array(
+        return $this->stmt->insert(
+            'INSERT INTO '.\F3::get('db_prefix').'sources (title, tags, filter, spout, params) VALUES (:title, :tags, :filter, :spout, :params)',
+            array(
                         ':title'  => trim($title),
                         ':tags'   => $tags,
                         ':filter' => $filter,
                         ':spout'  => $spout,
                         ':params' => htmlentities(json_encode($params))
-                    ));
+            )
+        );
     }
 
 
@@ -47,19 +51,22 @@ class Sources extends Database {
      * @param string $spout new spout
      * @param mixed $params the new params
      */
-    public function edit($id, $title, $tags, $filter, $spout, $params) {
+    public function edit($id, $title, $tags, $filter, $spout, $params)
+    {
         // sanitize tag list
         $tags = implode(',', preg_split('/\s*,\s*/', trim($tags), -1, PREG_SPLIT_NO_EMPTY));
 
-        \F3::get('db')->exec('UPDATE '.\F3::get('db_prefix').'sources SET title=:title, tags=:tags, filter=:filter, spout=:spout, params=:params WHERE id=:id',
-                    array(
+        \F3::get('db')->exec(
+            'UPDATE '.\F3::get('db_prefix').'sources SET title=:title, tags=:tags, filter=:filter, spout=:spout, params=:params WHERE id=:id',
+            array(
                         ':title'  => trim($title),
                         ':tags'   => $tags,
                         ':filter' => $filter,
                         ':spout'  => $spout,
                         ':params' => htmlentities(json_encode($params)),
                         ':id'     => $id
-                    ));
+            )
+        );
     }
 
 
@@ -69,13 +76,18 @@ class Sources extends Database {
      * @return void
      * @param int $id
      */
-    public function delete($id) {
-        \F3::get('db')->exec('DELETE FROM '.\F3::get('db_prefix').'sources WHERE id=:id',
-                    array(':id' => $id));
+    public function delete($id)
+    {
+        \F3::get('db')->exec(
+            'DELETE FROM '.\F3::get('db_prefix').'sources WHERE id=:id',
+            array(':id' => $id)
+        );
 
         // delete items of this source
-        \F3::get('db')->exec('DELETE FROM '.\F3::get('db_prefix').'items WHERE source=:id',
-                    array(':id' => $id));
+        \F3::get('db')->exec(
+            'DELETE FROM '.\F3::get('db_prefix').'items WHERE source=:id',
+            array(':id' => $id)
+        );
     }
 
 
@@ -86,7 +98,8 @@ class Sources extends Database {
      * @param int $id the source id
      * @param string $error error message
      */
-    public function error($id, $error) {
+    public function error($id, $error)
+    {
         if (strlen($error) == 0) {
             $arr = array(
                 ':id'    => $id
@@ -111,21 +124,25 @@ class Sources extends Database {
      * @param int $id the source id
      * @param int $lastEntry timestamp of the newest item or NULL when no items were added
      */
-    public function saveLastUpdate($id, $lastEntry) {
-        \F3::get('db')->exec('UPDATE '.\F3::get('db_prefix').'sources SET lastupdate=:lastupdate WHERE id=:id',
-                    array(
+    public function saveLastUpdate($id, $lastEntry)
+    {
+        \F3::get('db')->exec(
+            'UPDATE '.\F3::get('db_prefix').'sources SET lastupdate=:lastupdate WHERE id=:id',
+            array(
                         ':id'         => $id,
                         ':lastupdate' => time()
-                    ));
+            )
+        );
 
         if ($lastEntry !== null) {
-        	\F3::get('db')->exec('UPDATE '.\F3::get('db_prefix').'sources SET lastentry=:lastentry WHERE id=:id',
-        			array(
-        					':id'         => $id,
-        					':lastentry' => $lastEntry
-        			));
+            \F3::get('db')->exec(
+                'UPDATE '.\F3::get('db_prefix').'sources SET lastentry=:lastentry WHERE id=:id',
+                array(
+                            ':id'         => $id,
+                            ':lastentry' => $lastEntry
+                    )
+            );
         }
-
     }
 
 
@@ -134,11 +151,13 @@ class Sources extends Database {
      *
      * @return mixed all sources
      */
-    public function getByLastUpdate() {
+    public function getByLastUpdate()
+    {
         $ret = \F3::get('db')->exec('SELECT id, title, tags, spout, params, filter, error, lastupdate, lastentry FROM '.\F3::get('db_prefix').'sources ORDER BY lastupdate ASC');
         $spoutLoader = new \helpers\SpoutLoader();
-        for($i=0;$i<count($ret);$i++)
-            $ret[$i]['spout_obj'] = $spoutLoader->get( $ret[$i]['spout'] );
+        for ($i=0; $i<count($ret); $i++) {
+            $ret[$i]['spout_obj'] = $spoutLoader->get($ret[$i]['spout']);
+        }
         return $ret;
     }
 
@@ -150,23 +169,27 @@ class Sources extends Database {
      * @param integer $id (optional) specification of source id
      * @return mixed specified source or all sources
      */
-    public function get($id = null) {
+    public function get($id = null)
+    {
         // select source by id if specified or return all sources
         if (isset($id)) {
-            $ret = \F3::get('db')->exec('SELECT id, title, tags, spout, params, filter, error FROM '.\F3::get('db_prefix').'sources WHERE id=:id',
-                                    array(':id' => $id));
+            $ret = \F3::get('db')->exec(
+                'SELECT id, title, tags, spout, params, filter, error FROM '.\F3::get('db_prefix').'sources WHERE id=:id',
+                array(':id' => $id)
+            );
             $spoutLoader = new \helpers\SpoutLoader();
             if (isset($ret[0])) {
                 $ret = $ret[0];
-                $ret['spout_obj'] = $spoutLoader->get( $ret['spout'] );
+                $ret['spout_obj'] = $spoutLoader->get($ret['spout']);
             } else {
                 $ret = false;
             }
         } else {
             $ret = \F3::get('db')->exec('SELECT id, title, tags, spout, params, filter, error FROM '.\F3::get('db_prefix').'sources ORDER BY error DESC, lower(title) ASC');
             $spoutLoader = new \helpers\SpoutLoader();
-            for($i=0;$i<count($ret);$i++)
-                $ret[$i]['spout_obj'] = $spoutLoader->get( $ret[$i]['spout'] );
+            for ($i=0; $i<count($ret); $i++) {
+                $ret[$i]['spout_obj'] = $spoutLoader->get($ret[$i]['spout']);
+            }
         }
         return $ret;
     }
@@ -177,7 +200,8 @@ class Sources extends Database {
      *
      * @return mixed all sources
      */
-    public function getWithUnread() {
+    public function getWithUnread()
+    {
         return \F3::get('db')->exec('SELECT
             sources.id, sources.title, '.(\F3::get('auth')->isLoggedin()===true?'COUNT(items.id)':'0').' AS unread
             FROM '.\F3::get('db_prefix').'sources AS sources
@@ -193,7 +217,8 @@ class Sources extends Database {
      *
      * @return mixed all sources
      */
-    public function getWithIcon() {
+    public function getWithIcon()
+    {
         $ret = \F3::get('db')->exec('SELECT
                 sources.id, sources.title, sources.tags, sources.spout,
                 sources.params, sources.filter, sources.error, sources.lastentry,
@@ -211,8 +236,9 @@ class Sources extends Database {
                 ON sources.id=sourceicons.source
             ORDER BY '.$this->stmt->nullFirst('sources.error', 'DESC').', lower(sources.title)');
         $spoutLoader = new \helpers\SpoutLoader();
-        for($i=0;$i<count($ret);$i++)
-            $ret[$i]['spout_obj'] = $spoutLoader->get( $ret[$i]['spout'] );
+        for ($i=0; $i<count($ret); $i++) {
+            $ret[$i]['spout_obj'] = $spoutLoader->get($ret[$i]['spout']);
+        }
         return $ret;
     }
 
@@ -224,13 +250,14 @@ class Sources extends Database {
      * @param   string      $name
      * @param   mixed       $value
      */
-    public function isValid($name, $value) {
+    public function isValid($name, $value)
+    {
         $return = false;
 
         switch ($name) {
-        case 'id':
-            $return = is_numeric($value);
-            break;
+            case 'id':
+                $return = is_numeric($value);
+                break;
         }
 
         return $return;
@@ -242,11 +269,13 @@ class Sources extends Database {
      *
      * @return mixed all sources
      */
-    public function getAllTags() {
+    public function getAllTags()
+    {
         $result = \F3::get('db')->exec('SELECT tags FROM '.\F3::get('db_prefix').'sources');
         $tags = array();
-        foreach($result as $res)
-            $tags = array_merge($tags, explode(",",$res['tags']));
+        foreach ($result as $res) {
+            $tags = array_merge($tags, explode(",", $res['tags']));
+        }
         $tags = array_unique($tags);
         return $tags;
     }
@@ -256,13 +285,16 @@ class Sources extends Database {
      * @param integer $id
      * @return mixed tags of a source
      */
-    public function getTags($id) {
-      $result = \F3::get('db')->exec('SELECT tags FROM '.\F3::get('db_prefix').'sources WHERE id=:id',
-                                     array(
+    public function getTags($id)
+    {
+        $result = \F3::get('db')->exec(
+            'SELECT tags FROM '.\F3::get('db_prefix').'sources WHERE id=:id',
+            array(
                                            ':id' => $id
-                                           ));
+            )
+        );
         $tags = array();
-        $tags = array_merge($tags, explode(",",$result[0]['tags']));
+        $tags = array_merge($tags, explode(",", $result[0]['tags']));
         $tags = array_unique($tags);
         return $tags;
     }
@@ -277,17 +309,20 @@ class Sources extends Database {
      * @param  mixed   $params depends from spout
      * @return mixed   all sources
      */
-    public function checkIfExists($title, $spout, $params) {
+    public function checkIfExists($title, $spout, $params)
+    {
          // Check if a entry exists with same title, spout and params
-         $result = \F3::get('db')->exec('SELECT id FROM '.\F3::get('db_prefix').'sources WHERE title=:title AND spout=:spout AND params=:params',
-                 array(
+         $result = \F3::get('db')->exec(
+             'SELECT id FROM '.\F3::get('db_prefix').'sources WHERE title=:title AND spout=:spout AND params=:params',
+             array(
                      ':title'  => trim($title),
                      ':spout'  => $spout,
                      ':params' => htmlentities(json_encode($params))
-                ));
-         if ($result) {
-             return $result[0]['id'];
-         }
+             )
+         );
+        if ($result) {
+            return $result[0]['id'];
+        }
          return 0;
-     }
+    }
 }

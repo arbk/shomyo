@@ -11,7 +11,8 @@ namespace controllers;
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     arbk (https://aruo.net/)
  */
-class Sources extends BaseController {
+class Sources extends BaseController
+{
 
     /**
      * list all available sources
@@ -19,7 +20,8 @@ class Sources extends BaseController {
      *
      * @return void
      */
-    public function show() {
+    public function show()
+    {
         $this->needsLoggedIn();
 
         // get available spouts
@@ -34,7 +36,7 @@ class Sources extends BaseController {
         $sourcesHtml = '</a>';
         $i=0;
 
-        foreach($sourcesDao->getWithIcon() as $source) {
+        foreach ($sourcesDao->getWithIcon() as $source) {
             $this->view->source = $source;
             $sourcesHtml .= $this->view->render('templates/source.phtml');
         }
@@ -49,7 +51,8 @@ class Sources extends BaseController {
      *
      * @return void
      */
-    public function add() {
+    public function add()
+    {
         $this->needsLoggedIn();
 
         $spoutLoader = new \helpers\SpoutLoader();
@@ -64,21 +67,24 @@ class Sources extends BaseController {
      *
      * @return void
      */
-    public function params() {
+    public function params()
+    {
         $this->needsLoggedIn();
 
-        if(!isset($_GET['spout']))
+        if (!isset($_GET['spout'])) {
             $this->view->error('no spout type given');
+        }
 
         $spoutLoader = new \helpers\SpoutLoader();
 
         $spout = str_replace("_", "\\", $_GET['spout']);
         $this->view->spout = $spoutLoader->get($spout);
 
-        if($this->view->spout===false)
+        if ($this->view->spout===false) {
             $this->view->error('invalid spout type given');
+        }
 
-        if($this->view->spout->params!==false){
+        if ($this->view->spout->params!==false) {
             $this->view->idAttr = 'new-' . rand();
             echo $this->view->render('templates/source_params.phtml');
         }
@@ -91,10 +97,11 @@ class Sources extends BaseController {
      *
      * @return htmltext
      */
-    public function renderSources($sources) {
+    public function renderSources($sources)
+    {
         $html = "";
 //      $itemsDao = new \daos\Items();
-        foreach($sources as $source) {
+        foreach ($sources as $source) {
             $this->view->source = $source['title'];
             $this->view->sourceid = $source['id'];
             $this->view->unread = $source['unread'];
@@ -112,7 +119,8 @@ class Sources extends BaseController {
      *
      * @return htmltext
      */
-    public function sourcesListAsString() {
+    public function sourcesListAsString()
+    {
         $sourcesDao = new \daos\Sources();
         $sources = $sourcesDao->getWithUnread();
         return $this->renderSources($sources);
@@ -125,18 +133,21 @@ class Sources extends BaseController {
      *
      * @return void
      */
-    public function write() {
+    public function write()
+    {
         $this->needsLoggedIn();
 
         $sourcesDao = new \daos\Sources();
 
         // read data
-        parse_str(\F3::get('BODY'),$data);
+        parse_str(\F3::get('BODY'), $data);
 
-        if(!isset($data['title']))
+        if (!isset($data['title'])) {
             $this->view->jsonError(array('title' => 'no data for title given'));
-        if(!isset($data['spout']))
+        }
+        if (!isset($data['spout'])) {
             $this->view->jsonError(array('spout' => 'no data for spout given'));
+        }
 
         // clean up title and tag data to prevent XSS
         $title = htmlspecialchars($data['title']);
@@ -162,14 +173,14 @@ class Sources extends BaseController {
             $spoutLoader = new \helpers\SpoutLoader();
             $spoutInstance = $spoutLoader->get($spout);
 
-            foreach($spoutInstance->params as $spoutParamName => $spoutParam)
-            {
+            foreach ($spoutInstance->params as $spoutParamName => $spoutParam) {
                 if ($spoutParam['type'] == 'password'
                     && empty($data[$spoutParamName])) {
                     if (!isset($oldSource)) {
                         $oldSource = $sourcesDao->get($id);
                         $oldParams = json_decode(html_entity_decode(
-                                                   $oldSource['params']), true);
+                            $oldSource['params']
+                        ), true);
                     }
                     $data[$spoutParamName] = $oldParams[$spoutParamName];
                 }
@@ -177,20 +188,23 @@ class Sources extends BaseController {
         }
 
         $validation = $sourcesDao->validate($title, $spout, $data);
-        if($validation!==true)
-            $this->view->error( json_encode($validation) );
+        if ($validation!==true) {
+            $this->view->error(json_encode($validation));
+        }
 
         // add/edit source
-        if (!$sourceExists)
+        if (!$sourceExists) {
             $id = $sourcesDao->add($title, $tags, $filter, $spout, $data);
-        else
+        } else {
             $sourcesDao->edit($id, $title, $tags, $filter, $spout, $data);
+        }
 
         // autocolor tags
         $tagsDao = new \daos\Tags();
-        $tags = explode(",",$tags);
-        foreach($tags as $tag)
+        $tags = explode(",", $tags);
+        foreach ($tags as $tag) {
             $tagsDao->autocolorTag(trim($tag));
+        }
 
         // cleanup tags
         $tagsDao->cleanup($sourcesDao->getAllTags());
@@ -201,7 +215,7 @@ class Sources extends BaseController {
         );
 
         // only for shomyo ui (update stats in navigation)
-        if($isAjax) {
+        if ($isAjax) {
             // get new tag list with updated count values
             $tagController = new \controllers\Tags();
             $return['tags'] = $tagController->tagsListAsString();
@@ -221,7 +235,8 @@ class Sources extends BaseController {
      *
      * @return void
      */
-    public function sourcesStats() {
+    public function sourcesStats()
+    {
 //      $this->needsLoggedIn();
         $this->needsLoggedInOrPublicMode();
 
@@ -238,15 +253,17 @@ class Sources extends BaseController {
      *
      * @return void
      */
-    public function remove() {
+    public function remove()
+    {
         $this->needsLoggedIn();
 
         $id = \F3::get('PARAMS.id');
 
         $sourceDao = new \daos\Sources();
 
-        if (!$sourceDao->isValid('id', $id))
+        if (!$sourceDao->isValid('id', $id)) {
             $this->view->error('invalid id given');
+        }
 
         $sourceDao->delete($id);
 
@@ -267,7 +284,8 @@ class Sources extends BaseController {
      *
      * @return void
      */
-    public function listSources() {
+    public function listSources()
+    {
         $this->needsLoggedIn();
 
         // load sources
@@ -275,7 +293,7 @@ class Sources extends BaseController {
         $sources = $sourcesDao->getWithIcon();
 
         // get last icon
-        for($i=0; $i<count($sources); $i++) {
+        for ($i=0; $i<count($sources); $i++) {
             $sources[$i]['params'] = json_decode(html_entity_decode($sources[$i]['params']), true);
             $sources[$i]['error'] = $sources[$i]['error']==null ? '' : $sources[$i]['error'];
             unset($sources[$i]['spout_obj']);
@@ -291,7 +309,8 @@ class Sources extends BaseController {
      *
      * @return void
      */
-    public function spouts() {
+    public function spouts()
+    {
         $this->needsLoggedIn();
 
         $spoutLoader = new \helpers\SpoutLoader();
@@ -306,7 +325,8 @@ class Sources extends BaseController {
      *
      * @return void
      */
-    public function stats() {
+    public function stats()
+    {
         $this->needsLoggedInOrPublicMode();
 
 //      $itemDao = new \daos\Items();

@@ -12,7 +12,8 @@ namespace spouts\youtube;
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @copywork   Arndt Staudinger <info@clucose.com> April 2013
  */
-class youtube extends \spouts\rss\feed {
+class youtube extends \spouts\rss\feed
+{
 
     /**
      * name of source
@@ -34,7 +35,7 @@ class youtube extends \spouts\rss\feed {
      *
      * - Values for type: text, password, checkbox
      * - Values for validation: alpha, email, numeric, int, alnum, notempty
-     * 
+     *
      * e.g.
      * array(
      *   "id" => array(
@@ -67,8 +68,9 @@ class youtube extends \spouts\rss\feed {
      * @return void
      * @param mixed $params the params of this source
      */
-    public function load($params) {
-        parent::load(array( 'url' => $this->getXmlUrl($params)) );
+    public function load($params)
+    {
+        parent::load(array( 'url' => $this->getXmlUrl($params)));
     }
 
 
@@ -78,7 +80,8 @@ class youtube extends \spouts\rss\feed {
      * @return string url as xml
      * @param mixed $params params for the source
      */
-    public function getXmlUrl($params) {
+    public function getXmlUrl($params)
+    {
         return "http://gdata.youtube.com/feeds/api/users/" . $params['channel'] . "/uploads?alt=rss&orderby=published";
     }
 
@@ -88,14 +91,16 @@ class youtube extends \spouts\rss\feed {
      *
      * @return string date
      */
-    public function getDate() {
-        if($this->items!==false && $this->valid()){
+    public function getDate()
+    {
+        if ($this->items!==false && $this->valid()) {
             $date1 = @current($this->items)->get_item_tags('', 'pubDate');
             $date = date('Y-m-d H:i:s', strtotime($date1[0]['data']));
-        } 
-        if(strlen($date)==0)
+        }
+        if (strlen($date)==0) {
             $date = date('Y-m-d H:i:s');
-        return $date;         
+        }
+        return $date;
     }
 
 
@@ -104,29 +109,32 @@ class youtube extends \spouts\rss\feed {
      *
      * @return mixed thumbnail data
      */
-    public function getThumbnail() {
-        if($this->items===false || $this->valid()===false)
+    public function getThumbnail()
+    {
+        if ($this->items===false || $this->valid()===false) {
             return "";
+        }
 
         $item = current($this->items);
 
         // search enclosures (media tags)
-        if(count(@$item->get_enclosures()) > 0) {
-
+        if (count(@$item->get_enclosures()) > 0) {
             // thumbnail given?
-            if(@$item->get_enclosure(0)->get_thumbnail())
+            if (@$item->get_enclosure(0)->get_thumbnail()) {
                 return @$item->get_enclosure(0)->get_thumbnail();
+            }
 
             // link given?
-            elseif(@$item->get_enclosure(0)->get_link())
+            elseif (@$item->get_enclosure(0)->get_link()) {
                 return @$item->get_enclosure(0)->get_link();
+            }
 
         // no enclosures: search image link in content
         } else {
-
-            $image = $this->getImage(@$item->get_content());  
-            if($image!==false)
+            $image = $this->getImage(@$item->get_content());
+            if ($image!==false) {
                 return $image;
+            }
         }
 
         return "";

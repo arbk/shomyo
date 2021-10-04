@@ -12,7 +12,8 @@ namespace daos\mysql;
  * @author     Harald Lapp <harald.lapp@gmail.com>
  * @author     arbk (https://aruo.net/)
  */
-class Items extends Database {
+class Items extends Database
+{
 
     /**
      * indicates whether last run has more
@@ -28,8 +29,9 @@ class Items extends Database {
      * @return void
      * @param mixed $id
      */
-    public function mark($id) {
-     $this->updateItemflg($id, 'unread', false);
+    public function mark($id)
+    {
+        $this->updateItemflg($id, 'unread', false);
     }
 
 
@@ -39,8 +41,9 @@ class Items extends Database {
      * @return void
      * @param mixed $id
      */
-    public function unmark($id) {
-     $this->updateItemflg($id, 'unread', true);
+    public function unmark($id)
+    {
+        $this->updateItemflg($id, 'unread', true);
     }
 
 
@@ -50,7 +53,8 @@ class Items extends Database {
      * @return void
      * @param mixed $id
      */
-    public function starr($id) {
+    public function starr($id)
+    {
         $this->updateItemflg($id, 'starred', true);
     }
 
@@ -61,7 +65,8 @@ class Items extends Database {
      * @return void
      * @param mixed $id
      */
-    public function unstarr($id) {
+    public function unstarr($id)
+    {
         $this->updateItemflg($id, 'starred', false);
     }
 
@@ -74,9 +79,14 @@ class Items extends Database {
      * @param string $flg ('unread' or 'starred')
      * @param bool $on
      */
-    private function updateItemflg($id, $flg, $on) {
-        if( false===$this->isValid('id', $id) ) { return; }
-        if( is_array($id) ){ $id = implode(",", $id); }
+    private function updateItemflg($id, $flg, $on)
+    {
+        if (false===$this->isValid('id', $id)) {
+            return;
+        }
+        if (is_array($id)) {
+            $id = implode(",", $id);
+        }
 
         \F3::get('db')->exec('UPDATE '.\F3::get('db_prefix')
             .'items SET '.($on?$this->stmt->isTrue($flg):$this->stmt->isFalse($flg)).' WHERE id IN ('.$id.')');
@@ -89,8 +99,10 @@ class Items extends Database {
      * @return void
      * @param mixed $values
      */
-    public function add($values) {
-        \F3::get('db')->exec('INSERT INTO '.\F3::get('db_prefix').'items (
+    public function add($values)
+    {
+        \F3::get('db')->exec(
+            'INSERT INTO '.\F3::get('db_prefix').'items (
                     datetime,
                     title,
                     content,
@@ -115,7 +127,7 @@ class Items extends Database {
                     :link,
                     :author
                   )',
-                 array(
+            array(
                     ':datetime'    => $values['datetime'],
                     ':title'       => $values['title'],
                     ':content'     => $values['content'],
@@ -127,7 +139,8 @@ class Items extends Database {
                     ':uid'         => $values['uid'],
                     ':link'        => $values['link'],
                     ':author'      => $values['author']
-                 ));
+            )
+        );
     }
 
 
@@ -138,9 +151,12 @@ class Items extends Database {
      * @return bool
      * @param string $uid
      */
-    public function exists($uid) {
-        $res = \F3::get('db')->exec('SELECT COUNT(*) AS amount FROM '.\F3::get('db_prefix').'items WHERE uid=:uid',
-                    array( ':uid' => array($uid, \PDO::PARAM_STR) ) );
+    public function exists($uid)
+    {
+        $res = \F3::get('db')->exec(
+            'SELECT COUNT(*) AS amount FROM '.\F3::get('db_prefix').'items WHERE uid=:uid',
+            array( ':uid' => array($uid, \PDO::PARAM_STR) )
+        );
         return $res[0]['amount']>0;
     }
 
@@ -151,12 +167,16 @@ class Items extends Database {
      * @return array with all existing ids from itemsInFeed (array (id => true))
      * @param array $itemsInFeed list with ids for checking whether they are already in database or not
      */
-    public function findAll($itemsInFeed) {
+    public function findAll($itemsInFeed)
+    {
         $itemsFound = array();
-        if( count($itemsInFeed) < 1 )
+        if (count($itemsInFeed) < 1) {
             return $itemsFound;
+        }
 
-        array_walk($itemsInFeed, function( &$value ) { $value = \F3::get('db')->quote($value); });
+        array_walk($itemsInFeed, function (&$value) {
+            $value = \F3::get('db')->quote($value);
+        });
         $query = 'SELECT uid AS uid FROM '.\F3::get('db_prefix').'items WHERE uid IN ('. implode(',', $itemsInFeed) .')';
         $res = \F3::get('db')->query($query);
         if ($res) {
@@ -176,15 +196,18 @@ class Items extends Database {
      * @return void
      * @param DateTime $date date to delete all items older than this value [optional]
      */
-    public function cleanup(\DateTime $date = NULL) {
+    public function cleanup(\DateTime $date = null)
+    {
         \F3::get('db')->exec('DELETE FROM '.\F3::get('db_prefix').'items
             WHERE source NOT IN (
                 SELECT id FROM '.\F3::get('db_prefix').'sources)');
-        if ($date !== NULL)
-            \F3::get('db')->exec('DELETE FROM '.\F3::get('db_prefix').'items
+        if ($date !== null) {
+            \F3::get('db')->exec(
+                'DELETE FROM '.\F3::get('db_prefix').'items
                 WHERE '.$this->stmt->isFalse('starred').' AND datetime<:date',
-                    array(':date' => $date->format('Y-m-d').' 00:00:00')
+                array(':date' => $date->format('Y-m-d').' 00:00:00')
             );
+        }
     }
 
 
@@ -194,25 +217,25 @@ class Items extends Database {
      * @return mixed items as array
      * @param mixed $options search, offset and filter params
      */
-    public function get($options = array()) {
+    public function get($options = array())
+    {
         $params = array();
         $where = '';
         $order = 'DESC';
 
-        // only starred
-        if(isset($options['type']) && $options['type']=='starred')
+        if (isset($options['type']) && $options['type']=='starred') {
+            // only starred
             $where .= ' AND '.$this->stmt->isTrue('starred');
-
-        // only unread
-        else if(isset($options['type']) && $options['type']=='unread' && \F3::get('auth')->isLoggedin()===true){
+        } elseif (isset($options['type']) && $options['type']=='unread' && \F3::get('auth')->isLoggedin()===true) {
+            // only unread
             $where .= ' AND '.$this->stmt->isTrue('unread');
-            if(\F3::get('unread_order')=='asc'){
+            if (\F3::get('unread_order')=='asc') {
                 $order = 'ASC';
             }
         }
 
         // search
-        if(isset($options['search']) && strlen($options['search'])>0) {
+        if (isset($options['search']) && strlen($options['search'])>0) {
             $search = implode('%', \helpers\Search::splitTerms($options['search']));
             $params[':search'] = $params[':search2'] = $params[':search3'] = array("%".$search."%", \PDO::PARAM_STR);
             $where .= ' AND (items.title LIKE :search OR items.content LIKE :search2 OR sources.title LIKE :search3) ';
@@ -222,50 +245,50 @@ class Items extends Database {
         //  ex1)  2015-09-28             (start only)
         //  ex2)  2015-01-01_2015-12-31  (start to end)
         //  ex3)  _2015-12-31            (end only)
-        if(isset($options['date']) && strlen($options['date'])>0) {
-            $dates = explode('_', $options['date'], 2 );
-            if( isset($dates[0]) && $dates[0] === date("Y-m-d", strtotime($dates[0])) ){
-              $params[':date_start'] = array($dates[0]." 00:00:00", \PDO::PARAM_STR);
-              $where .= " AND items.datetime >= :date_start ";
+        if (isset($options['date']) && strlen($options['date'])>0) {
+            $dates = explode('_', $options['date'], 2);
+            if (isset($dates[0]) && $dates[0] === date("Y-m-d", strtotime($dates[0]))) {
+                $params[':date_start'] = array($dates[0]." 00:00:00", \PDO::PARAM_STR);
+                $where .= " AND items.datetime >= :date_start ";
             }
-            if( isset($dates[1]) && $dates[1] === date("Y-m-d", strtotime($dates[1])) ){
-              $params[':date_end'] = array($dates[1]." 23:59:59", \PDO::PARAM_STR);
-              $where .= " AND items.datetime <= :date_end ";
+            if (isset($dates[1]) && $dates[1] === date("Y-m-d", strtotime($dates[1]))) {
+                $params[':date_end'] = array($dates[1]." 23:59:59", \PDO::PARAM_STR);
+                $where .= " AND items.datetime <= :date_end ";
             }
         }
 
-        // tag filter
-        if(isset($options['tag']) && strlen($options['tag'])>0) {
+        if (isset($options['tag']) && strlen($options['tag'])>0) {
+            // tag filter
             $params[':tag'] = array( "%,".$options['tag'].",%" , \PDO::PARAM_STR );
-            if ( \F3::get( 'db_type' ) == 'mysql' ) {
-              $where .= " AND ( CONCAT( ',' , sources.tags , ',' ) LIKE _utf8 :tag COLLATE utf8_bin ) ";
+            if (\F3::get('db_type') == 'mysql') {
+                $where .= " AND ( CONCAT( ',' , sources.tags , ',' ) LIKE _utf8 :tag COLLATE utf8_bin ) ";
             } else {
-              $where .= " AND ( (',' || sources.tags || ',') LIKE :tag ) ";
+                $where .= " AND ( (',' || sources.tags || ',') LIKE :tag ) ";
             }
-        }
-        // source filter
-        elseif(isset($options['source']) && strlen($options['source'])>0) {
+        } elseif (isset($options['source']) && strlen($options['source'])>0) {
+            // source filter
             $params[':source'] = array($options['source'], \PDO::PARAM_INT);
             $where .= " AND items.source=:source ";
         }
 
         // update time filter
-        if(isset($options['updatedsince']) && strlen($options['updatedsince'])>0) {
+        if (isset($options['updatedsince']) && strlen($options['updatedsince'])>0) {
             $params[':updatedsince'] = array($options['updatedsince'], \PDO::PARAM_STR);
             $where .= " AND items.updatetime > :updatedsince ";
         }
 
         // set limit
-        if(is_numeric($options['items'])===false || 0>$options['items']){
+        if (is_numeric($options['items'])===false || 0>$options['items']) {
             $options['items'] = \F3::get('items_perpage');
         }
-        if( \F3::get('public_max_items')<$options['items'] && \F3::get('auth')->isLoggedin()!==true ){
+        if (\F3::get('public_max_items')<$options['items'] && \F3::get('auth')->isLoggedin()!==true) {
             $options['items'] = \F3::get('public_max_items');
         }
 
         // set offset
-        if(is_numeric($options['offset'])===false || 0>$options['offset'])
+        if (is_numeric($options['offset'])===false || 0>$options['offset']) {
             $options['offset'] = 0;
+        }
 
         // first check whether more items are available
         $result = \F3::get('db')->exec('SELECT items.id
@@ -290,7 +313,8 @@ class Items extends Database {
      *
      * @return bool
      */
-    public function hasMore() {
+    public function hasMore()
+    {
         return $this->hasMore;
     }
 
@@ -300,13 +324,15 @@ class Items extends Database {
      *
      * @return string[] array with thumbnails
      */
-    public function getThumbnails() {
+    public function getThumbnails()
+    {
         $thumbnails = array();
         $result = \F3::get('db')->exec('SELECT thumbnail
                    FROM '.\F3::get('db_prefix').'items
                    WHERE thumbnail!=""');
-        foreach($result as $thumb)
+        foreach ($result as $thumb) {
             $thumbnails[] = $thumb['thumbnail'];
+        }
         return $thumbnails;
     }
 
@@ -316,13 +342,15 @@ class Items extends Database {
      *
      * @return string[] array with all icons
      */
-    public function getIcons() {
+    public function getIcons()
+    {
         $icons = array();
         $result = \F3::get('db')->exec('SELECT icon
                    FROM '.\F3::get('db_prefix').'items
                    WHERE icon!=""');
-        foreach($result as $icon)
+        foreach ($result as $icon) {
             $icons[] = $icon['icon'];
+        }
         return $icons;
     }
 
@@ -333,14 +361,18 @@ class Items extends Database {
      * @return bool true if thumbnail is still in use
      * @param string $thumbnail name
      */
-    public function hasThumbnail($thumbnail) {
-        $res = \F3::get('db')->exec('SELECT count(*) AS amount
+    public function hasThumbnail($thumbnail)
+    {
+        $res = \F3::get('db')->exec(
+            'SELECT count(*) AS amount
                    FROM '.\F3::get('db_prefix').'items
                    WHERE thumbnail=:thumbnail',
-                  array(':thumbnail' => $thumbnail));
+            array(':thumbnail' => $thumbnail)
+        );
         $amount = $res[0]['amount'];
-        if($amount==0)
+        if ($amount==0) {
             \F3::get('logger')->log('thumbnail not found: '.$thumbnail, \DEBUG);
+        }
         return $amount>0;
     }
 
@@ -351,11 +383,14 @@ class Items extends Database {
      * @return bool true if icon is still in use
      * @param string $icon file
      */
-    public function hasIcon($icon) {
-        $res = \F3::get('db')->exec('SELECT count(*) AS amount
+    public function hasIcon($icon)
+    {
+        $res = \F3::get('db')->exec(
+            'SELECT count(*) AS amount
                    FROM '.\F3::get('db_prefix').'items
                    WHERE icon=:icon',
-                  array(':icon' => $icon));
+            array(':icon' => $icon)
+        );
         return $res[0]['amount']>0;
     }
 
@@ -366,23 +401,24 @@ class Items extends Database {
      * @param   string      $name
      * @param   mixed       $value
      */
-    public function isValid($name, $value) {
+    public function isValid($name, $value)
+    {
         $return = false;
 
         switch ($name) {
-        case 'id':
-            $return = is_numeric($value);
+            case 'id':
+                $return = is_numeric($value);
 
-            if(is_array($value)) {
-                $return = true;
-                foreach($value as $id) {
-                    if(is_numeric($id)===false) {
-                        $return = false;
-                        break;
+                if (is_array($value)) {
+                    $return = true;
+                    foreach ($value as $id) {
+                        if (is_numeric($id)===false) {
+                            $return = false;
+                            break;
+                        }
                     }
                 }
-            }
-            break;
+                break;
         }
 
         return $return;
@@ -395,14 +431,19 @@ class Items extends Database {
      * @return bool|string false if none was found
      * @param number $sourceid id of the source
      */
-    public function getLastIcon($sourceid) {
-        if(is_numeric($sourceid)===false)
+    public function getLastIcon($sourceid)
+    {
+        if (is_numeric($sourceid)===false) {
             return false;
+        }
 
-        $res = \F3::get('db')->exec('SELECT icon FROM '.\F3::get('db_prefix').'items WHERE source=:sourceid AND icon!=\'\' AND icon IS NOT NULL ORDER BY ID DESC LIMIT 1',
-                    array(':sourceid' => $sourceid));
-        if(count($res)==1)
+        $res = \F3::get('db')->exec(
+            'SELECT icon FROM '.\F3::get('db_prefix').'items WHERE source=:sourceid AND icon!=\'\' AND icon IS NOT NULL ORDER BY ID DESC LIMIT 1',
+            array(':sourceid' => $sourceid)
+        );
+        if (count($res)==1) {
             return $res[0]['icon'];
+        }
 
         return false;
     }
@@ -413,8 +454,11 @@ class Items extends Database {
      *
      * @return int amount of entries in database which are unread
      */
-    public function numberOfUnread() {
-        if(\F3::get('auth')->isLoggedin()!==true){ return 0; }
+    public function numberOfUnread()
+    {
+        if (\F3::get('auth')->isLoggedin()!==true) {
+            return 0;
+        }
 
         $res = \F3::get('db')->exec('SELECT count(*) AS amount
                    FROM '.\F3::get('db_prefix').'items
@@ -428,7 +472,8 @@ class Items extends Database {
     *
     * @return array mount of total, unread, starred entries in database
     */
-    public function stats() {
+    public function stats()
+    {
         $res = \F3::get('db')->exec('SELECT
             COUNT(*) AS total,
             '.(\F3::get('auth')->isLoggedin()===true?$this->stmt->sumBool('unread'):'0').' AS unread,

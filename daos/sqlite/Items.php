@@ -12,4 +12,7 @@ namespace daos\sqlite;
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  */
 // class Items extends Database {
-class Items extends \daos\mysql\Items { }
+class Items extends \daos\mysql\Items
+{
+
+}

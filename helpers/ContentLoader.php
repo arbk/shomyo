@@ -11,7 +11,8 @@ namespace helpers;
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     arbk (https://aruo.net/)
  */
-class ContentLoader {
+class ContentLoader
+{
 
     /**
      * @var \daos\Items database access for saving new item
@@ -26,10 +27,12 @@ class ContentLoader {
     /**
      * ctor
      */
-    public function __construct() {
+    public function __construct()
+    {
         // include htmLawed
-        if(!function_exists('htmLawed'))
+        if (!function_exists('htmLawed')) {
             require('libs/htmLawed.php');
+        }
 
         $this->itemsDao = new \daos\Items();
         $this->sourceDao = new \daos\Sources();
@@ -41,9 +44,10 @@ class ContentLoader {
      *
      * @return void
      */
-    public function update() {
+    public function update()
+    {
         $sourcesDao = new \daos\Sources();
-        foreach($sourcesDao->getByLastUpdate() as $source) {
+        foreach ($sourcesDao->getByLastUpdate() as $source) {
             $this->fetch($source);
         }
         $this->cleanup();
@@ -57,14 +61,16 @@ class ContentLoader {
      * @return void
      * @param mixed $source the current source
      */
-    public function fetch($source) {
+    public function fetch($source)
+    {
 
         $lastEntry = $source['lastentry'];
 
         // at least 20 seconds wait until next update of a given source
         $this->updateSource($source, null);
-        if(time() - $source['lastupdate'] < 20)
+        if (time() - $source['lastupdate'] < 20) {
             return;
+        }
 
         @set_time_limit(5000);
 //      @error_reporting(E_ERROR);
@@ -75,7 +81,7 @@ class ContentLoader {
         // get spout
         $spoutLoader = new \helpers\SpoutLoader();
         $spout = $spoutLoader->get($source['spout']);
-        if($spout===false) {
+        if ($spout===false) {
             \F3::get('logger')->log('unknown spout: ' . $source['spout'], \ERROR);
             return;
         }
@@ -87,7 +93,7 @@ class ContentLoader {
             $spout->load(
                 json_decode(html_entity_decode($source['params']), true)
             );
-        } catch(\exception $e) {
+        } catch (\exception $e) {
             \F3::get('logger')->log('error loading feed content for "' . $source['title'] . '" : ' . $e->getMessage(), \ERROR);
             $this->sourceDao->error($source['id'], date('Y-m-d H:i:s') . 'error loading feed content: ' . $e->getMessage());
             return;
@@ -109,11 +115,13 @@ class ContentLoader {
 
         // exclusion filter keys
         $efkeys = (array)(\F3::get('exclusion_filter'));
-        if( is_string($source['filter']) && !empty($source['filter']) ){
+        if (is_string($source['filter']) && !empty($source['filter'])) {
             $srckeys = explode(',', $source['filter']);
-            foreach( $srckeys as $key ){ $efkeys[] = trim($key); }
+            foreach ($srckeys as $key) {
+                $efkeys[] = trim($key);
+            }
         }
-        \F3::get('logger')->log('exclusion filter keys: '.print_r($efkeys,true), \TRACE);
+        \F3::get('logger')->log('exclusion filter keys: '.print_r($efkeys, true), \TRACE);
 
         $lasticon = false;
         foreach ($spout as $item) {
@@ -125,15 +133,16 @@ class ContentLoader {
 
             // test date: continue with next if item too old
             $itemDate = new \DateTime($item->getDate());
-            if($itemDate < $minDate) {
+            if ($itemDate < $minDate) {
                 \F3::get('logger')->log('item is too old: "' . $item->getTitle() . '" (' . $item->getDate() . ') older than '.\F3::get('items_lifetime').' days', \INFO);
                 continue;
             }
 
             // date in future? Set current date
             $now = new \DateTime();
-            if($itemDate > $now)
+            if ($itemDate > $now) {
                 $itemDate = $now;
+            }
 
             // insert new item
             \F3::get('logger')->log('start insertion of new item: '.$item->getTitle(), \TRACE);
@@ -145,15 +154,16 @@ class ContentLoader {
 
                 // sanitize content html
                 $content = $this->sanitizeContent($content);
-            } catch(\exception $e) {
+            } catch (\exception $e) {
                 $content = 'Error: Content not fetched. Reason: ' . $e->getMessage();
                 \F3::get('logger')->log('can not fetch "'.$item->getTitle().'" : ' . $e->getMessage(), \ERROR);
             }
 
             // sanitize title
             $title = $this->sanitize2Text($item->getTitle());
-            if(strlen(trim($title))==0)
+            if (strlen(trim($title))==0) {
                 $title = "[" . \F3::get('lang_no_title') . "]";
+            }
 
             // Check sanitized title against filter
 //          if($this->filter($source, $title,$content)===false)
@@ -168,7 +178,7 @@ class ContentLoader {
             \F3::get('logger')->log('item content sanitized', \TRACE);
 
             // exclusion filter
-            if( $this->exfilter($efkeys, array($title, $author)) ){
+            if ($this->exfilter($efkeys, array($title, $author))) {
                 \F3::get('logger')->log('item is excluded: '.$title.', '.$author.', '.$source['title'].' (id:'.$source['id'].')', \INFO);
                 continue;
             }
@@ -221,17 +231,19 @@ class ContentLoader {
      * @param $feed object and new item to add
      * @return boolean indicating filter success
      */
-    protected function filter($source, $title,$content) {
-        if(strlen(trim($source['filter']))!=0) {
+    protected function filter($source, $title, $content)
+    {
+        if (strlen(trim($source['filter']))!=0) {
             $resultTitle = @preg_match($source['filter'], $title);
             $resultContent = @preg_match($source['filter'], $content);
-            if($resultTitle===false || $resultContent===false) {
-               \F3::get('logger')->log('filter error: ' . $source['filter'], \ERROR);
+            if ($resultTitle===false || $resultContent===false) {
+                \F3::get('logger')->log('filter error: ' . $source['filter'], \ERROR);
                 return true; // do not filter out item
             }
             // test filter
-            if($resultTitle==0 && $resultContent==0)
+            if ($resultTitle==0 && $resultContent==0) {
                 return false;
+            }
         }
         return true;
     }
@@ -243,14 +255,21 @@ class ContentLoader {
      * @param array $targs strings of filter target.
      * @return boolean indicating filter success
      */
-    protected function exfilter($keys, $targs) {
-        if( !is_array($keys) || empty($keys) ||
-            !is_array($targs) || empty($targs) ){ return false; }
-        foreach($keys as $key){
-            foreach( $targs as $targ ){
-                if( !is_string($key) || empty($key) ||
-                    !is_string($targ) || empty($targ) ){ continue; }
-                if( false !== strpos($targ,$key) ){ return true; }
+    protected function exfilter($keys, $targs)
+    {
+        if (!is_array($keys) || empty($keys) ||
+            !is_array($targs) || empty($targs)) {
+            return false;
+        }
+        foreach ($keys as $key) {
+            foreach ($targs as $targ) {
+                if (!is_string($key) || empty($key) ||
+                    !is_string($targ) || empty($targ)) {
+                    continue;
+                }
+                if (false !== strpos($targ, $key)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -262,27 +281,38 @@ class ContentLoader {
      * @param $content content of the given feed
      * @return mixed|string sanitized content
      */
-    protected function sanitizeContent($content) {
-        if( !function_exists('\helpers\editContentTag') ){
+    protected function sanitizeContent($content)
+    {
+        if (!function_exists('\helpers\editContentTag')) {
             // http://www.bioinformatics.org/phplabware/internal_utilities/htmLawed/htmLawed_README.htm#s3.4.9
-            function editContentTag($elm, $attrs = 0){
+            function editContentTag($elm, $attrs = 0)
+            {
                 // return end tag -- if second argument is not received, it means a closing tag is being handled
-                if( is_numeric($attrs) ){ return "</$elm>"; }
+                if (is_numeric($attrs)) {
+                    return "</$elm>";
+                }
 
                 // remove invisible image or remove width and height attribute of visible image
-                if( 'img' === $elm ){
-                    if( isset($attrs['width']) && isset($attrs['height']) 
-                        && 1 >= intval($attrs['width']) && 1 >= intval($attrs['height']) ){ return ''; }
-                    else{
-                        if( isset($attrs['width']) ){ unset($attrs['width']); }
-                        if( isset($attrs['height']) ){ unset($attrs['height']); }
+                if ('img' === $elm) {
+                    if (isset($attrs['width']) && isset($attrs['height'])
+                        && 1 >= intval($attrs['width']) && 1 >= intval($attrs['height'])) {
+                        return '';
+                    } else {
+                        if (isset($attrs['width'])) {
+                            unset($attrs['width']);
+                        }
+                        if (isset($attrs['height'])) {
+                            unset($attrs['height']);
+                        }
                     }
                 }
 
                 // return tag
                 static $empEs = array('area'=>1, 'br'=>1, 'col'=>1, 'embed'=>1, 'hr'=>1, 'img'=>1, 'input'=>1, 'isindex'=>1, 'param'=>1); // empty element
                 $aStr = '';
-                foreach($attrs as $k=>$v){ $aStr .= " {$k}=\"{$v}\""; }
+                foreach ($attrs as $k => $v) {
+                    $aStr .= " {$k}=\"{$v}\"";
+                }
                 return "<{$elm}{$aStr}".(isset($empEs[$elm])?' /':'').'>';
             }
         }
@@ -307,7 +337,8 @@ class ContentLoader {
      * @param $value content of the given field
      * @return mixed|string sanitized content
      */
-    protected function sanitizeField($value) {
+    protected function sanitizeField($value)
+    {
         return htmLawed(
             htmlspecialchars_decode($value),
             array(
@@ -327,8 +358,9 @@ class ContentLoader {
      * @param $value content of the given field
      * @return mixed|string sanitized content
      */
-    protected function sanitize2Text($value) {
-      return strip_tags( htmlspecialchars_decode($value) );
+    protected function sanitize2Text($value)
+    {
+        return strip_tags(htmlspecialchars_decode($value));
     }
 
     /**
@@ -338,7 +370,8 @@ class ContentLoader {
      * @param $newItem new item for saving in database
      * @return the newItem Object with thumbnail
      */
-    protected function fetchThumbnail($thumbnail, $newItem) {
+    protected function fetchThumbnail($thumbnail, $newItem)
+    {
         if (strlen(trim($thumbnail)) > 0) {
             $extension = 'jpg';
             $imageHelper = new \helpers\Image();
@@ -368,16 +401,17 @@ class ContentLoader {
      * @param $lasticon the last fetched icon (byref)
      * @return mixed newItem with icon
      */
-    protected function fetchIcon($icon, $newItem, &$lasticon) {
-        if(strlen(trim($icon)) > 0) {
+    protected function fetchIcon($icon, $newItem, &$lasticon)
+    {
+        if (strlen(trim($icon)) > 0) {
             $extension = 'png';
-            if($icon==$lasticon) {
+            if ($icon==$lasticon) {
                 \F3::get('logger')->log('use last icon: '.$lasticon, \DEBUG);
                 $newItem['icon'] = md5($lasticon) . '.' . $extension;
             } else {
                 $imageHelper = new \helpers\Image();
                 $iconAsPng = $imageHelper->loadImage($icon, $extension, 30, null);
-                if($iconAsPng!==false) {
+                if ($iconAsPng!==false) {
                     file_put_contents(
                         'data/favicons/' . md5($icon) . '.' . $extension,
                         $iconAsPng
@@ -400,7 +434,8 @@ class ContentLoader {
      *
      * @return void
      */
-    public function cleanup() {
+    public function cleanup()
+    {
         // cleanup orphaned and old items
         \F3::get('logger')->log('cleanup orphaned and old items', \TRACE);
         $this->itemsDao->cleanup(\F3::get('items_lifetime'));
@@ -423,12 +458,13 @@ class ContentLoader {
      *
      * @return void
      */
-    public function optimize() {
+    public function optimize()
+    {
       // optimize database
-      \F3::get('logger')->log('optimize database', \TRACE);
-      $database = new \daos\Database();
-      $database->optimize();
-      \F3::get('logger')->log('optimize database finished', \TRACE);
+        \F3::get('logger')->log('optimize database', \TRACE);
+        $database = new \daos\Database();
+        $database->optimize();
+        \F3::get('logger')->log('optimize database finished', \TRACE);
     }
 
 
@@ -438,20 +474,25 @@ class ContentLoader {
      * @return void
      * @param string $type thumbnails or icons
      */
-    protected function cleanupFiles($type) {
+    protected function cleanupFiles($type)
+    {
         \F3::set('im', $this->itemsDao);
-        if($type=='thumbnails') {
-            $checker = function($file) { return \F3::get('im')->hasThumbnail($file);};
+        if ($type=='thumbnails') {
+            $checker = function ($file) {
+                return \F3::get('im')->hasThumbnail($file);
+            };
             $itemPath = 'data/thumbnails/';
-        } else if($type=='icons') {
-            $checker = function($file) { return \F3::get('im')->hasIcon($file);};
+        } elseif ($type=='icons') {
+            $checker = function ($file) {
+                return \F3::get('im')->hasIcon($file);
+            };
             $itemPath = 'data/favicons/';
         }
 
-        foreach(scandir($itemPath) as $file) {
-            if(is_file($itemPath . $file) && $file!=".htaccess") {
+        foreach (scandir($itemPath) as $file) {
+            if (is_file($itemPath . $file) && $file!=".htaccess") {
                 $inUsage = $checker($file);
-                if($inUsage===false) {
+                if ($inUsage===false) {
                     unlink($itemPath . $file);
                 }
             }
@@ -465,9 +506,10 @@ class ContentLoader {
      * @param mixed $source source object
      * @param int $lastEntry timestamp of the newest item or NULL when no items were added
      */
-    protected function updateSource($source, $lastEntry) {
+    protected function updateSource($source, $lastEntry)
+    {
         // remove previous error
-        if ( !is_null($source['error']) ) {
+        if (!is_null($source['error'])) {
             $this->sourceDao->error($source['id'], '');
         }
         // save last update

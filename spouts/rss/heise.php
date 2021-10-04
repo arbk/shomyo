@@ -1,4 +1,4 @@
-<?PHP 
+<?PHP
 
 namespace spouts\rss;
 
@@ -12,7 +12,8 @@ namespace spouts\rss;
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     Daniel Seither <post@tiwoc.de>
  */
-class heise extends feed {
+class heise extends feed
+{
 
 
     /**
@@ -21,16 +22,16 @@ class heise extends feed {
      * @var string
      */
     public $name = 'News: Heise';
-    
-    
+
+
     /**
      * description of this source type
      *
      * @var string
      */
     public $description = 'This feed fetches the heise news with full content (not only the header as content)';
-    
-    
+
+
     /**
      * config params
      * array of arrays with name, type, default value, required, validation type
@@ -41,7 +42,7 @@ class heise extends feed {
      * When type is "select", a new entry "values" must be supplied, holding
      * key/value pairs of internal names (key) and displayed labels (value).
      * See /spouts/rss/heise for an example.
-     * 
+     *
      * e.g.
      * array(
      *   "id" => array(
@@ -141,10 +142,12 @@ class heise extends feed {
     /**
      * ctor
      */
-    public function __construct() {
+    public function __construct()
+    {
         // include htmLawed
-        if(!function_exists('htmLawed'))
+        if (!function_exists('htmLawed')) {
             require('libs/htmLawed.php');
+        }
     }
 
 
@@ -154,8 +157,9 @@ class heise extends feed {
      * @return void
      * @param string $url
      */
-    public function load($params) {
-        parent::load(array( 'url' => $this->getXmlUrl($params)) );
+    public function load($params)
+    {
+        parent::load(array( 'url' => $this->getXmlUrl($params)));
     }
 
 
@@ -165,7 +169,8 @@ class heise extends feed {
      * @return string url as xml
      * @param mixed $params params for the source
      */
-    public function getXmlUrl($params) {
+    public function getXmlUrl($params)
+    {
         return $this->feedUrls[$params['section']];
     }
 
@@ -175,20 +180,21 @@ class heise extends feed {
      *
      * @return string content
      */
-    public function getContent() {
-        if($this->items!==false && $this->valid()) {
+    public function getContent()
+    {
+        if ($this->items!==false && $this->valid()) {
             $originalContent = file_get_contents($this->getLink());
-            foreach($this->textDivs as $div) {
+            foreach ($this->textDivs as $div) {
                 $content = $this->getTag($div[1], $div[2], $originalContent, $div[0], $div[3]);
-                if(is_array($content) && count($content)>=1) {
+                if (is_array($content) && count($content)>=1) {
                     return htmLawed($content[0], $this->htmLawedConfig);
                 }
             }
         }
         return parent::getContent();
     }
-    
-    
+
+
     /**
      * get tag by attribute
      * taken from http://www.catswhocode.com/blog/15-php-regular-expressions-for-web-developers
@@ -199,16 +205,19 @@ class heise extends feed {
      * @return string $xml data string
      * @return string $tag optional tag
      */
-    private function getTag($attr, $value, $xml, $tag=null, $end=null) {
-        if(is_null($tag))
+    private function getTag($attr, $value, $xml, $tag = null, $end = null)
+    {
+        if (is_null($tag)) {
             $tag = '\w+';
-        else
+        } else {
             $tag = preg_quote($tag);
+        }
 
-        if(is_null($end))
+        if (is_null($end)) {
             $end = '</\1>';
-        else
+        } else {
             $end = preg_quote($end);
+        }
 
         $attr = preg_quote($attr);
         $value = preg_quote($value);

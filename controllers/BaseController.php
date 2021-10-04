@@ -11,7 +11,8 @@ namespace controllers;
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     arbk (https://aruo.net/)
  */
-class BaseController {
+class BaseController
+{
 
     /**
      * view helper
@@ -26,7 +27,8 @@ class BaseController {
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct()
+    {
         $this->view = new \helpers\View();
     }
 
@@ -35,8 +37,9 @@ class BaseController {
      *
      * @return void
     */
-    public function needsLoggedInOrPublicMode() {
-        if(\F3::get('auth')->isLoggedin()!==true && \F3::get('public')!=1) {
+    public function needsLoggedInOrPublicMode()
+    {
+        if (\F3::get('auth')->isLoggedin()!==true && \F3::get('public')!=1) {
             \F3::error(403);
         }
     }
@@ -46,8 +49,9 @@ class BaseController {
      *
      * @return void
     */
-    public function needsLoggedIn() {
-        if(\F3::get('auth')->isLoggedin()!==true) {
+    public function needsLoggedIn()
+    {
+        if (\F3::get('auth')->isLoggedin()!==true) {
             \F3::error(403);
         }
     }
@@ -57,8 +61,10 @@ class BaseController {
      *
      * @return void
      */
-    public function loginInvalid() {
-      if( \F3::get('login_invalidate')==1 ){ \F3::error(403); }
+    public function loginInvalid()
+    {
+        if (\F3::get('login_invalidate')==1) {
+            \F3::error(403);
+        }
     }
-
 }

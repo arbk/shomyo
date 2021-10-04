@@ -1,4 +1,4 @@
-<?PHP 
+<?PHP
 
 namespace spouts\rss;
 
@@ -34,11 +34,12 @@ class enclosures extends feed
      *
      * @return string content
      */
-    public function getContent() {
-        if($this->items!==false && $this->valid()) {
+    public function getContent()
+    {
+        if ($this->items!==false && $this->valid()) {
             $content = parent::getContent();
-            foreach(@current($this->items)->get_enclosures() as $enclosure) {
-                if($enclosure->get_medium()=='image') {
+            foreach (@current($this->items)->get_enclosures() as $enclosure) {
+                if ($enclosure->get_medium()=='image') {
                     $title = htmlspecialchars(strip_tags($enclosure->get_title()));
                     $content .= '<img src="'.$enclosure->get_link().'" alt="'.$title.'" title="'.$title.'" />';
                 }
@@ -47,5 +48,4 @@ class enclosures extends feed
         }
         return parent::getContent();
     }
-
 }

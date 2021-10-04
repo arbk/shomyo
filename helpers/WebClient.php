@@ -10,16 +10,20 @@ namespace helpers;
  * @author     Alexandre Rossi <alexandre.rossi@gmail.com>
  * @author     arbk (https://aruo.net/)
  */
-class WebClient {
+class WebClient
+{
     /**
      * get the user agent to use for web based spouts
      *
      * @return the user agent string for this spout
      */
-    public static function getUserAgent($agentInfo=null){
+    public static function getUserAgent($agentInfo = null)
+    {
         $userAgent = 'shomyo/'.\F3::get('version');
 
-        if( is_null($agentInfo) ){ $agentInfo = array(); }
+        if (is_null($agentInfo)) {
+            $agentInfo = array();
+        }
 
         $agentInfo[] = '+https://github.com/arbk/shomyo';
 
@@ -33,7 +37,8 @@ class WebClient {
      * @param string $subagent Extra user agent info to use in the request
      * @return request data
      */
-    public static function request($url, $agentInfo=null) {
+    public static function request($url, $agentInfo = null)
+    {
         $options  = array(
             'user_agent' => self::getUserAgent($agentInfo),
             'ignore_errors' => true,
@@ -43,15 +48,16 @@ class WebClient {
 
         // parse last (in case of redirects) HTTP status
         $http_status = null;
-        foreach( $request['headers'] as $header ) {
-            if( substr($header, 0, 5) == 'HTTP/' ) {
+        foreach ($request['headers'] as $header) {
+            if (substr($header, 0, 5) == 'HTTP/') {
                 $tokens = explode(' ', $header);
-                if( isset($tokens[1]) )
+                if (isset($tokens[1])) {
                     $http_status = $tokens[1];
+                }
             }
         }
 
-        if( $http_status != '200' ) {
+        if ($http_status != '200') {
             throw new \exception(substr($request['body'], 0, 512));
         }
         return $request['body'];

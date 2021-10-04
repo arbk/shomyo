@@ -10,5 +10,6 @@ namespace daos\sqlite;
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  */
-class Tags extends \daos\mysql\Tags {
+class Tags extends \daos\mysql\Tags
+{
 }

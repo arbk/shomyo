@@ -1,4 +1,4 @@
-<?PHP 
+<?PHP
 
 namespace spouts\rss;
 
@@ -11,7 +11,8 @@ namespace spouts\rss;
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  */
-class golem extends feed {
+class golem extends feed
+{
 
 
     /**
@@ -20,16 +21,16 @@ class golem extends feed {
      * @var string
      */
     public $name = 'News: Golem';
-    
-    
+
+
     /**
      * description of this source type
      *
      * @var string
      */
     public $description = 'This feed fetches the golem news with full content (not only the header as content)';
-    
-    
+
+
     /**
      * config params
      * array of arrays with name, type, default value, required, validation type
@@ -40,7 +41,7 @@ class golem extends feed {
      * When type is "select", a new entry "values" must be supplied, holding
      * key/value pairs of internal names (key) and displayed labels (value).
      * See /spouts/rss/heise for an example.
-     * 
+     *
      * e.g.
      * array(
      *   "id" => array(
@@ -123,8 +124,9 @@ class golem extends feed {
      * @return void
      * @param string $url
      */
-    public function load($params) {
-        parent::load(array( 'url' => $this->getXmlUrl($params)) );
+    public function load($params)
+    {
+        parent::load(array( 'url' => $this->getXmlUrl($params)));
     }
 
 
@@ -134,7 +136,8 @@ class golem extends feed {
      * @return string url as xml
      * @param mixed $params params for the source
      */
-    public function getXmlUrl($params) {
+    public function getXmlUrl($params)
+    {
         return $this->feedUrls[$params['section']];
     }
 
@@ -144,15 +147,15 @@ class golem extends feed {
      *
      * @return string content
      */
-    public function getContent() {
-        if($this->items!==false && $this->valid()) {
+    public function getContent()
+    {
+        if ($this->items!==false && $this->valid()) {
             $originalContent = file_get_contents($this->getLink());
             preg_match_all('|<!--content-->(.*?)<!--/content-->|ims', $originalContent, $matches, PREG_PATTERN_ORDER);
-            if(is_array($matches) && is_array($matches[0]) && isset($matches[0][0])) {
+            if (is_array($matches) && is_array($matches[0]) && isset($matches[0][0])) {
                 return $matches[0][0];
             }
         }
         return parent::getContent();
     }
-
 }

@@ -11,7 +11,8 @@ namespace controllers;
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     arbk (https://aruo.net/)
  */
-class Items extends BaseController {
+class Items extends BaseController
+{
 
     /**
      * mark items as read. Allows one id or an array of ids
@@ -19,8 +20,9 @@ class Items extends BaseController {
      *
      * @return void
      */
-    public function mark() {
-      $this->updateItemStatus('mark');
+    public function mark()
+    {
+        $this->updateItemStatus('mark');
     }
 
 
@@ -30,8 +32,9 @@ class Items extends BaseController {
      *
      * @return void
      */
-    public function unmark() {
-      $this->updateItemStatus('unmark');
+    public function unmark()
+    {
+        $this->updateItemStatus('unmark');
     }
 
 
@@ -41,8 +44,9 @@ class Items extends BaseController {
      *
      * @return void
      */
-    public function starr() {
-      $this->updateItemStatus('starr');
+    public function starr()
+    {
+        $this->updateItemStatus('starr');
     }
 
 
@@ -52,8 +56,9 @@ class Items extends BaseController {
      *
      * @return void
      */
-    public function unstarr() {
-      $this->updateItemStatus('unstarr');
+    public function unstarr()
+    {
+        $this->updateItemStatus('unstarr');
     }
 
 
@@ -64,37 +69,45 @@ class Items extends BaseController {
      * @return void
      * @param string $type ('mark' or 'unmark' or 'starr' or 'unstarr')
      */
-    private function updateItemStatus($type) {
-      $this->needsLoggedIn();
+    private function updateItemStatus($type)
+    {
+        $this->needsLoggedIn();
 
-      $id = null;
-      if( null!=\F3::get('PARAMS.item') ){ $id = \F3::get('PARAMS.item'); }  // id: numeric
-      else if( isset($_POST['ids']) ){ $id = $_POST['ids']; }               // id: array
+        $id = null;
+        if (null!=\F3::get('PARAMS.item')) {
+            // id: numeric
+            $id = \F3::get('PARAMS.item');
+        } elseif (isset($_POST['ids'])) {
+            // id: array
+            $id = $_POST['ids'];
+        }
 
-      $itemDao = new \daos\Items();
+        $itemDao = new \daos\Items();
 
-      if( !$itemDao->isValid('id', $id) ){ $this->view->error('invalid id'); }
+        if (!$itemDao->isValid('id', $id)) {
+            $this->view->error('invalid id');
+        }
 
-      $success = true;
-      switch( $type ){
-        case 'mark':
-          $itemDao->mark($id);
-          break;
-        case 'unmark':
-          $itemDao->unmark($id);
-          break;
-        case 'starr':
-          $itemDao->starr($id);
-          break;
-        case 'unstarr':
-          $itemDao->unstarr($id);
-          break;
-        default:
-          $success = false;
-          break;
-      }
+        $success = true;
+        switch ($type) {
+            case 'mark':
+                $itemDao->mark($id);
+                break;
+            case 'unmark':
+                $itemDao->unmark($id);
+                break;
+            case 'starr':
+                $itemDao->starr($id);
+                break;
+            case 'unstarr':
+                $itemDao->unstarr($id);
+                break;
+            default:
+                $success = false;
+                break;
+        }
 
-      $this->view->jsonSuccess( array('success' => $success) );
+        $this->view->jsonSuccess(array('success' => $success));
     }
 
 
@@ -104,13 +117,15 @@ class Items extends BaseController {
      *
      * @return void
      */
-    public function listItems() {
+    public function listItems()
+    {
         $this->needsLoggedInOrPublicMode();
 
         // parse params
         $options = array();
-        if(count($_GET)>0)
+        if (count($_GET)>0) {
             $options = $_GET;
+        }
 
         // get items
         $itemDao = new \daos\Items();
@@ -126,7 +141,8 @@ class Items extends BaseController {
      *
      * @return void
      */
-    public function stats() {
+    public function stats()
+    {
         $this->needsLoggedInOrPublicMode();
 
         $itemsDao = new \daos\Items();
@@ -135,21 +151,21 @@ class Items extends BaseController {
         $stats['unread'] -= $itemsDao->numberOfUnreadForTag("#");
         $tagsDao = new \daos\Tags();
         $tags = $tagsDao->getWithUnread();
-        if( $tagsDao->hasTag("#") ){
-            foreach( $tags as $tag ){
-                if(strcmp($tag["tag"], "#") !== 0) {
+        if ($tagsDao->hasTag("#")) {
+            foreach ($tags as $tag) {
+                if (strcmp($tag["tag"], "#") !== 0) {
                     continue;
                 }
                 $stats['unread'] -= $tag["unread"];
             }
         }
 
-        if( array_key_exists('tags', $_GET) && $_GET['tags'] == 'true' ) {
+        if (array_key_exists('tags', $_GET) && $_GET['tags'] == 'true') {
             $tagsDao = new \daos\Tags();
             $tagsController = new \controllers\Tags();
             $stats['tagshtml'] = $tagsController->renderTags($tagsDao->getWithUnread());
         }
-        if( array_key_exists('sources', $_GET) && $_GET['sources'] == 'true' ) {
+        if (array_key_exists('sources', $_GET) && $_GET['sources'] == 'true') {
             $sourcesDao = new \daos\Sources();
             $sourcesController = new \controllers\Sources();
             $stats['sourceshtml'] = $sourcesController->renderSources($sourcesDao->getWithUnread());

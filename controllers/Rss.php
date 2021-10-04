@@ -11,14 +11,16 @@ namespace controllers;
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     arbk (https://aruo.net/)
  */
-class Rss extends BaseController {
+class Rss extends BaseController
+{
 
     /**
      * rss feed
      *
      * @return void
      */
-    public function rss() {
+    public function rss()
+    {
         $this->needsLoggedInOrPublicMode();
 
         $feedWriter = new \RSS2FeedWriter();
@@ -33,15 +35,18 @@ class Rss extends BaseController {
 
         // set options
         $options = array();
-        if(count($_GET)>0)
+        if (count($_GET)>0) {
             $options = $_GET;
+        }
         $options['items'] = \F3::get('rss_max_items');
-        if(\F3::get('PARAMS.tag')!=null)
+        if (\F3::get('PARAMS.tag')!=null) {
             $options['tag'] = \F3::get('PARAMS.tag');
-        if(\F3::get('PARAMS.type')!=null)
+        }
+        if (\F3::get('PARAMS.type')!=null) {
             $options['type'] = \F3::get('PARAMS.type');
+        }
 
-        if( isset($options['type']) && $options['type']==='unread' && \F3::get('auth')->isLoggedin()!==true ){
+        if (isset($options['type']) && $options['type']==='unread' && \F3::get('auth')->isLoggedin()!==true) {
             $options['type'] = 'newest';
         }
 
@@ -49,14 +54,15 @@ class Rss extends BaseController {
         $newestEntryDate = false;
         $lastid = -1;
         $itemDao = new \daos\Items();
-        foreach($itemDao->get($options) as $item) {
-            if($newestEntryDate===false)
+        foreach ($itemDao->get($options) as $item) {
+            if ($newestEntryDate===false) {
                 $newestEntryDate = $item['datetime'];
+            }
             $newItem = $feedWriter->createNewItem();
 
             // get Source Name
-            if ($item['source'] != $lastSourceId){
-                foreach($sourceDao->get() as $source) {
+            if ($item['source'] != $lastSourceId) {
+                foreach ($sourceDao->get() as $source) {
                     if ($source['id'] == $item['source']) {
                         $lastSourceId = $source['id'];
                         $lastSourceName = $source['title'];
@@ -71,23 +77,26 @@ class Rss extends BaseController {
             $newItem->setDescription(str_replace('&#34;', '"', $item['content']));
 
             // add tags in category node
-            $itemsTags = explode(",",$item['tags']);
-            foreach($itemsTags as $tag) {
+            $itemsTags = explode(",", $item['tags']);
+            foreach ($itemsTags as $tag) {
                 $tag = trim($tag);
-                if(strlen($tag)>0)
+                if (strlen($tag)>0) {
                     $newItem->addElement('category', $tag);
+                }
             }
 
             $feedWriter->addItem($newItem);
             $lastid = $item['id'];
 
             // mark as read
-            if(\F3::get('rss_mark_as_read')==1 && $lastid!=-1)
+            if (\F3::get('rss_mark_as_read')==1 && $lastid!=-1) {
                 $itemDao->mark($lastid);
+            }
         }
 
-        if($newestEntryDate===false)
-            $newestEntryDate = date(\DATE_ATOM , time());
+        if ($newestEntryDate===false) {
+            $newestEntryDate = date(\DATE_ATOM, time());
+        }
         $feedWriter->setChannelElement('updated', $newestEntryDate);
 
 
@@ -99,7 +108,8 @@ class Rss extends BaseController {
      *
      * @return string
      */
-    private function sanitizeTitle($title) {
+    private function sanitizeTitle($title)
+    {
         $title = strip_tags($title);
         $title = html_entity_decode($title, ENT_HTML5, 'UTF-8');
 

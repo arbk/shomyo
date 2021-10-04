@@ -11,7 +11,8 @@ namespace helpers;
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     arbk (https://aruo.net/)
  */
-class Authentication {
+class Authentication
+{
 
     /**
      * loggedin
@@ -23,9 +24,11 @@ class Authentication {
     /**
      * start session and check login
      */
-    public function __construct() {
-        if ($this->enabled()===false)
+    public function __construct()
+    {
+        if ($this->enabled()===false) {
             return;
+        }
 
         // session cookie will be valid for one month.
         $cookie_expire = 3600*24*30;
@@ -33,30 +36,37 @@ class Authentication {
         $cookie_httponly = true;
 
         // check for SSL proxy and special cookie options
-        if(isset($_SERVER['HTTP_X_FORWARDED_SERVER']) && isset($_SERVER['HTTP_X_FORWARDED_HOST'])
+        if (isset($_SERVER['HTTP_X_FORWARDED_SERVER']) && isset($_SERVER['HTTP_X_FORWARDED_HOST'])
            && ($_SERVER['HTTP_X_FORWARDED_SERVER']===$_SERVER['HTTP_X_FORWARDED_HOST'])) {
-            $cookie_path = '/'.$_SERVER['SERVER_NAME'].preg_replace('/\/[^\/]+$/','',$_SERVER['PHP_SELF']).'/';
+            $cookie_path = '/'.$_SERVER['SERVER_NAME'].preg_replace('/\/[^\/]+$/', '', $_SERVER['PHP_SELF']).'/';
             $cookie_domain = $_SERVER['HTTP_X_FORWARDED_SERVER'];
         } else {
             // cookie path is script dir.
             $cookie_path = dirname($_SERVER['SCRIPT_NAME'])==='/'?'/':dirname($_SERVER['SCRIPT_NAME']).'/';
             $cookie_domain = $_SERVER['SERVER_NAME'];
         }
-        session_set_cookie_params($cookie_expire, $cookie_path, $cookie_domain,
-                                  $cookie_secure, $cookie_httponly);
+        session_set_cookie_params(
+            $cookie_expire,
+            $cookie_path,
+            $cookie_domain,
+            $cookie_secure,
+            $cookie_httponly
+        );
         \F3::get('logger')->log('set cookie on '.$cookie_domain.$cookie_path.' expiring in '.$cookie_expire.' seconds', \DEBUG);
 
 //      session_name();
-        if(session_id()==""){
+        if (session_id()=="") {
             $save_path = "/tmp/shomyo";
-            if(!file_exists($save_path)){ mkdir($save_path, 0705); }
+            if (!file_exists($save_path)) {
+                mkdir($save_path, 0705);
+            }
             session_save_path($save_path);
             ini_set('session.gc_maxlifetime', $cookie_expire);
             session_start();
             \F3::get('logger')->log('start session. ['.session_name().':'.session_id().', save_path:'.session_save_path().', gc_maxlifetime:'.ini_get('session.gc_maxlifetime').']', \DEBUG);
         }
 
-        if(isset($_SESSION['loggedin']) && $_SESSION['loggedin']===true){
+        if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']===true) {
             $this->loggedin = true;
             \F3::get('logger')->log('logged in using valid session', \DEBUG);
         } else {
@@ -64,7 +74,7 @@ class Authentication {
         }
 
         // autologin if request contains unsername and password
-        if($this->loggedin===false
+        if ($this->loggedin===false
             && isset($_REQUEST['username'])
             && isset($_REQUEST['password'])) {
             $this->login($_REQUEST['username'], $_REQUEST['password']);
@@ -79,7 +89,8 @@ class Authentication {
      * @param string $username
      * @param string $password
      */
-    public function enabled() {
+    public function enabled()
+    {
         return strlen(trim(\F3::get('username')))!=0 && strlen(trim(\F3::get('password')))!=0;
     }
 
@@ -91,7 +102,8 @@ class Authentication {
      * @param string $username
      * @param string $password
      */
-    public function loginWithoutUser() {
+    public function loginWithoutUser()
+    {
         $this->loggedin = true;
     }
 
@@ -103,15 +115,15 @@ class Authentication {
      * @param string $username
      * @param string $password
      */
-    public function login($username, $password) {
-        if($this->enabled()) {
-            if( \F3::get('login_invalidate')==1 ){
+    public function login($username, $password)
+    {
+        if ($this->enabled()) {
+            if (\F3::get('login_invalidate')==1) {
                 \F3::get('logger')->log('login: failed to log in with login-invalidate settings: '.$username, \WARNING);
                 return false;
             }
 
-            if(
-                $username == \F3::get('username') &&  hash("sha512", \F3::get('salt') . $password) == \F3::get('password')
+            if ($username == \F3::get('username') &&  hash("sha512", \F3::get('salt') . $password) == \F3::get('password')
             ) {
                 session_regenerate_id(true);
                 $this->loggedin = true;
@@ -132,9 +144,11 @@ class Authentication {
      *
      * @return bool
      */
-    public function isLoggedin() {
-        if($this->enabled()===false)
+    public function isLoggedin()
+    {
+        if ($this->enabled()===false) {
             return true;
+        }
         return $this->loggedin;
     }
 
@@ -144,17 +158,19 @@ class Authentication {
      *
      * @return bool
      */
-    public function showPrivateTags() {
-       return $this->isLoggedin();
-     }
+    public function showPrivateTags()
+    {
+        return $this->isLoggedin();
+    }
 
-    
+
     /**
      * logout
      *
      * @return void
      */
-    public function logout() {
+    public function logout()
+    {
         $this->loggedin = false;
         @session_start();
         $_SESSION = array();

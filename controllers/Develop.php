@@ -9,14 +9,16 @@ namespace controllers;
  * @license    GPLv3 (http://www.gnu.org/licenses/gpl-3.0.html)
  * @author     arbk (https://aruo.net/)
  */
-class Develop extends BaseController {
+class Develop extends BaseController
+{
 
     /**
      * view enviroment information
      *
      * @return void
      */
-    public function info() {
+    public function info()
+    {
         \F3::get('logger')->log('start view env info', \TRACE);
 
         $this->needsLoggedIn();

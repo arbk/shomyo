@@ -1,4 +1,4 @@
-<?PHP 
+<?PHP
 
 namespace spouts\facebook;
 
@@ -12,7 +12,8 @@ namespace spouts\facebook;
  * @author     Tobias Zeising <tobias.zeising@aditu.de>
  * @author     Thomas Muguet <t.muguet@thomasmuguet.info>
  */
-class page extends \spouts\rss\feed {
+class page extends \spouts\rss\feed
+{
 
     /**
      * name of source
@@ -20,23 +21,23 @@ class page extends \spouts\rss\feed {
      * @var string
      */
     public $name = 'Facebook page feed';
-    
-    
+
+
     /**
      * description of this source type
      *
      * @var string
      */
     public $description = 'Page wall';
-    
-    
+
+
     /**
      * config params
      * array of arrays with name, type, default value, required, validation type
      *
      * - Values for type: text, password, checkbox
      * - Values for validation: alpha, email, numeric, int, alnum, notempty
-     * 
+     *
      * e.g.
      * array(
      *   "id" => array(
@@ -60,14 +61,14 @@ class page extends \spouts\rss\feed {
             "validation" => array("notempty")
         )
     );
-    
-    
-    
+
+
+
     //
     // Source Methods
     //
-    
-    
+
+
     /**
      * loads content for given source
      * I supress all Warnings of SimplePie for ensuring
@@ -76,7 +77,8 @@ class page extends \spouts\rss\feed {
      * @return void
      * @param mixed $params the params of this source
      */
-    public function load($params) {
+    public function load($params)
+    {
         parent::load(array('url' => $this->getXmlUrl($params)));
     }
 
@@ -87,13 +89,14 @@ class page extends \spouts\rss\feed {
      * @return string url as xml
      * @param mixed $params params for the source
      */
-    public function getXmlUrl($params) {
+    public function getXmlUrl($params)
+    {
         $protocol = "http://";
         if (version_compare(PHP_VERSION, "5.3.0") >= 0 && defined("OPENSSL_VERSION_NUMBER")) {
             $protocol = "https://";
         }
         $content = @file_get_contents($protocol . "graph.facebook.com/" . urlencode($params['user']));
-        $data = json_decode($content, TRUE);
+        $data = json_decode($content, true);
 
         return $protocol . "www.facebook.com/feeds/page.php?format=atom10&id=" . $data['id'];
     }
