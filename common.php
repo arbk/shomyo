@@ -3,7 +3,7 @@
 $f3 = require(__DIR__.'/libs/f3/base.php');
 
 $f3->set('DEBUG', 0);
-$f3->set('version', '2.17.2');
+$f3->set('version', '2.17.3');
 $f3->set('AUTOLOAD', __DIR__ . '/;libs/f3/;libs/;libs/JShrink/;libs/WideImage/;daos/;libs/twitteroauth/;libs/FeedWriter/');
 $f3->set('cache', __DIR__ . '/data/cache');
 $f3->set('BASEDIR', __DIR__);
