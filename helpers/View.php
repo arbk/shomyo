@@ -299,21 +299,24 @@ class View
     /**
      * echo lead sentence text with html string removed.
      */
-    public static function el($str, $output = true, $width = 143, $trimmarker = '...')
+    public static function el($str, $output = true, $width = null, $trimmarker = '...')
     {
-        return self::e(
-            mb_strimwidth(
-                trim(str_replace(
-                    array('　', '   ', '  ', "\r\n", "\r", "\n"),
-                    array( ' ',   ' ',  ' ',     '',   '',   ''),
-                    self::et($str, false)
-                )),
+        $lsstr = trim(str_replace(
+            array('　', '   ', '  ', "\r\n", "\r", "\n"),
+            array( ' ',   ' ',  ' ',     '',   '',   ''),
+            self::et($str, false)
+        ));
+
+        if (is_numeric($width)) {
+            $lsstr = mb_strimwidth(
+                $lsstr,
                 0,
                 $width,
                 $trimmarker,
                 self::ENCODING
-            ),
-            $output
-        );
+            );
+        }
+
+        return self::e($lsstr, $output);
     }
 }

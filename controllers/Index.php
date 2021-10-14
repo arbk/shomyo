@@ -291,6 +291,11 @@ class Index extends BaseController
     {
         $tagColors = $this->convertTagsToAssocArray($tags);
 
+        $lswidth = \F3::get('lead_sentence_width');
+        if (!is_numeric($lswidth)) {
+            $lswidth = false;
+        }
+
         $itemDao = new \daos\Items();
         $itemsHtml = "";
         $lastItemId = "";
@@ -302,6 +307,14 @@ class Index extends BaseController
                 $tag = trim($tag);
                 if (strlen($tag)>0 && isset($tagColors[$tag])) {
                     $item['tags'][$tag] = $tagColors[$tag];
+                }
+            }
+
+            if (false!==$lswidth) {
+                if (0>=$lswidth) {
+                    $item['content'] = '';
+                } elseif (mb_strwidth(strip_tags($item['content']))>$lswidth) {
+                    $item['content'] = $this->view::el($item['content'], false, $lswidth);
                 }
             }
 

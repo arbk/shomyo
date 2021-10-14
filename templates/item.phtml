@@ -15,8 +15,8 @@
  $date = $this->viewHelper->dateago($this->item['datetime']);
  $anonlink = \helpers\Anonymizer::anonymize($this->item['link']);
 ?>
-<div id="entry<?PHP echo $this->item['id']; ?>" 
-  class="entry 
+<div id="entry<?PHP echo $this->item['id']; ?>"
+  class="entry
    <?PHP echo $this->item['unread']==1 ? 'unread' : ''; ?>" role="article">
 
  <!-- icon -->
@@ -62,7 +62,7 @@
  <?PHP endif; ?>
 
  <!-- content -->
- <div class="entry-content <?PHP if(strlen(strip_tags($content))<500) : ?>entry-content-nocolumns<?PHP endif; ?>">
+ <div class="entry-content <?PHP if(mb_strwidth(strip_tags($content))<500) : ?>entry-content-nocolumns<?PHP endif; ?>">
   <?PHP echo $content; ?>
 
   <div class="entry-smartphone-share">
