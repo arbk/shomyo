@@ -50,6 +50,11 @@ class Rss extends BaseController
             $options['type'] = 'newest';
         }
 
+        $lswidth = \F3::get('lead_sentence_width');
+        if (!is_numeric($lswidth)) {
+            $lswidth = false;
+        }
+
         // get items
         $newestEntryDate = false;
         $lastid = -1;
@@ -74,6 +79,14 @@ class Rss extends BaseController
             $newItem->setTitle($this->sanitizeTitle($item['title'] . ' (' . $lastSourceName . ')'));
             @$newItem->setLink($item['link']);
             $newItem->setDate($item['datetime']);
+            
+            if (false!==$lswidth) {
+                if (0>=$lswidth) {
+                    $item['content'] = '';
+                } elseif (mb_strwidth(strip_tags($item['content']))>$lswidth) {
+                    $item['content'] = $this->view::el($item['content'], false, $lswidth);
+                }
+            }
             $newItem->setDescription(str_replace('&#34;', '"', $item['content']));
 
             // add tags in category node
